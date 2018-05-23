@@ -5,12 +5,12 @@
     <description>陈建辉</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 23 May 2018 22:52:50 +0800</pubDate>
-    <lastBuildDate>Wed, 23 May 2018 22:52:50 +0800</lastBuildDate>
+    <pubDate>Wed, 23 May 2018 23:21:33 +0800</pubDate>
+    <lastBuildDate>Wed, 23 May 2018 23:21:33 +0800</lastBuildDate>
     <generator>Jekyll v3.5.1</generator>
     
       <item>
-        <title>个人博客搭建</title>
+        <title>Mac下搭建个人博客</title>
         <description>&lt;blockquote&gt;
   &lt;p&gt;作者：陈建辉&lt;/p&gt;
 
@@ -42,7 +42,7 @@
 
 &lt;h3 id=&quot;三-博客搭建&quot;&gt;三. 博客搭建&lt;/h3&gt;
 
-&lt;p&gt;###1. 启动本地博客命令&lt;/p&gt;
+&lt;h4 id=&quot;1-启动本地博客命令&quot;&gt;1. 启动本地博客命令&lt;/h4&gt;
 
 &lt;p&gt;我们直接运行启动本地博客命令，看看自己环境到底缺啥，直接根据问题去找原因，这样搭建也不会无厘头。&lt;/p&gt;
 
@@ -63,7 +63,7 @@ jekyll:sudo gem install jekyll
 bundler:sudo gem install bundler
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;###2. 部署github&lt;/p&gt;
+&lt;h4 id=&quot;2-部署github&quot;&gt;2. 部署github&lt;/h4&gt;
 
 &lt;p&gt;如果没有github的赶紧注册自己的账号，注册之后按照username.github.io创建一个仓库。 
 这里重点需要讲一下部署keys,方便文件从仓库上传和下载。
@@ -75,19 +75,19 @@ settings-&amp;gt;Deploys keys-&amp;gt;add Deploys key&lt;/p&gt;
   &lt;li&gt;获取key：&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ssh-keygen -t rsa -C &quot;xxx@163.com&quot;&lt;/code&gt;  //替换自己注册邮箱&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ssh-keygen -t rsa -C &quot;xxx@163.com&quot;&lt;/code&gt;  &lt;!--替换自己注册邮箱--&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cat /Users/chenjh/.ssh/id_rsa.pub &lt;/code&gt; //直接把输出的key拷贝到github上&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cat /Users/chenjh/.ssh/id_rsa.pub &lt;/code&gt; &lt;!--直接把输出的key拷贝到github上--&gt;&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;clone博客代码文件夹&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/bitchenjh/bitchenjh.github.io.git&lt;/code&gt;  //替换成自己的github code 路径&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/bitchenjh/bitchenjh.github.io.git&lt;/code&gt;  &lt;!--替换成自己的github code 路径--&gt;&lt;/p&gt;
 
 &lt;p&gt;执行之后，本地就出现一个bitchenjh.github.io的文件夹。&lt;/p&gt;
 
-&lt;p&gt;###3. 编写博客并且上传github仓库&lt;/p&gt;
+&lt;h4 id=&quot;3-编写博客并且上传github仓库&quot;&gt;3. 编写博客并且上传github仓库&lt;/h4&gt;
 
 &lt;p&gt;本地博客结构如下图：&lt;/p&gt;
 
@@ -118,7 +118,7 @@ settings-&amp;gt;Deploys keys-&amp;gt;add Deploys key&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-angular2html&quot;&gt;cd  bitchenjh.github.io    //替换自己的clone目录
+&lt;pre&gt;&lt;code class=&quot;language-angular2html&quot;&gt;cd  bitchenjh.github.io    &amp;lt;!--替换自己的clone目录--&amp;gt;
 
 git add *
 
@@ -129,15 +129,15 @@ git commit -m &quot;init&quot;
 git push -u origin master
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;###4. 登入个人博客&lt;/p&gt;
+&lt;h4 id=&quot;4-登入个人博客&quot;&gt;4. 登入个人博客&lt;/h4&gt;
 
 &lt;p&gt;上面操作完成之后，这个时候在浏览器上输入: username.github.io，就可以看见博客了。&lt;/p&gt;
 
-&lt;p&gt;###四. 其他&lt;/p&gt;
+&lt;h3 id=&quot;四-其他&quot;&gt;四. 其他&lt;/h3&gt;
 
 &lt;p&gt;以下内容为扩展，如果让你的博客显得高大尚，可以部署自己的独立域名。同时也可以借助一个平台将博客进行云存储。&lt;/p&gt;
 
-&lt;p&gt;###1. 阿里云域名绑定&lt;/p&gt;
+&lt;h4 id=&quot;1-阿里云域名绑定&quot;&gt;1. ∂∂阿里云域名绑定&lt;/h4&gt;
 
 &lt;ol&gt;
   &lt;li&gt;
@@ -156,7 +156,7 @@ git push -u origin master
 
 &lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/github%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;###2. 云存储托管博客图片&lt;/p&gt;
+&lt;h4 id=&quot;2-云存储托管博客图片&quot;&gt;2. 云存储托管博客图片&lt;/h4&gt;
 
 &lt;p&gt;在非自己搭的博客如csdn中，如果想在文章中插入一张图片，其实是非常简单的，只要从你本机进行图片选择，然后选择上传，图片就会上传到CSDN的服务器，
 到时候在文章显示的时候就会读取该图片。但是如果是在自己的搭建的网站中要进行图片的显示就会遇到问题，因为图片无法从你本机读取，除非你的

@@ -6,20 +6,20 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>个人博客搭建</title>
-  <meta name="description" content="个人博客的搭建过程">
+  <title>Mac下搭建个人博客</title>
+  <meta name="description" content="使用Jekyll和github搭建个人博客">
   <meta name="author" content="黎跃春">
 
   <meta name="keywords" content="Mac,Git，Github，Markdown，jekyll"
   />
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="个人博客搭建">
-  <meta name="twitter:description" content="个人博客的搭建过程">
+  <meta name="twitter:title" content="Mac下搭建个人博客">
+  <meta name="twitter:description" content="使用Jekyll和github搭建个人博客">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="个人博客搭建">
-  <meta property="og:description" content="个人博客的搭建过程">
+  <meta property="og:title" content="Mac下搭建个人博客">
+  <meta property="og:description" content="使用Jekyll和github搭建个人博客">
   <meta property="og:site_name" content="Mac,Git，Github，Markdown，jekylle"
   />
 
@@ -195,7 +195,7 @@
     <div class="content-wrapper__inner">
       <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">个人博客搭建</h1>
+    <h1 class="post-title">Mac下搭建个人博客</h1>
     <div class="post-meta">
       <img src="/images/calendar.png" width="20px"/>
       <time datetime="2018-05-20 00:00:00 +0800" itemprop="datePublished" class="post-meta__date date">2018-05-20</time>
@@ -237,7 +237,7 @@
 
 <h3 id="三-博客搭建">三. 博客搭建</h3>
 
-<p>###1. 启动本地博客命令</p>
+<h4 id="1-启动本地博客命令">1. 启动本地博客命令</h4>
 
 <p>我们直接运行启动本地博客命令，看看自己环境到底缺啥，直接根据问题去找原因，这样搭建也不会无厘头。</p>
 
@@ -258,7 +258,7 @@ jekyll:sudo gem install jekyll
 bundler:sudo gem install bundler
 </code></pre>
 
-<p>###2. 部署github</p>
+<h4 id="2-部署github">2. 部署github</h4>
 
 <p>如果没有github的赶紧注册自己的账号，注册之后按照username.github.io创建一个仓库。 
 这里重点需要讲一下部署keys,方便文件从仓库上传和下载。
@@ -270,19 +270,19 @@ settings-&gt;Deploys keys-&gt;add Deploys key</p>
   <li>获取key：</li>
 </ol>
 
-<p><code class="highlighter-rouge">ssh-keygen -t rsa -C "xxx@163.com"</code>  //替换自己注册邮箱</p>
+<p><code class="highlighter-rouge">ssh-keygen -t rsa -C "xxx@163.com"</code>  <!--替换自己注册邮箱--></p>
 
-<p><code class="highlighter-rouge">cat /Users/chenjh/.ssh/id_rsa.pub </code> //直接把输出的key拷贝到github上</p>
+<p><code class="highlighter-rouge">cat /Users/chenjh/.ssh/id_rsa.pub </code> <!--直接把输出的key拷贝到github上--></p>
 
 <ol>
   <li>clone博客代码文件夹</li>
 </ol>
 
-<p><code class="highlighter-rouge">git clone https://github.com/bitchenjh/bitchenjh.github.io.git</code>  //替换成自己的github code 路径</p>
+<p><code class="highlighter-rouge">git clone https://github.com/bitchenjh/bitchenjh.github.io.git</code>  <!--替换成自己的github code 路径--></p>
 
 <p>执行之后，本地就出现一个bitchenjh.github.io的文件夹。</p>
 
-<p>###3. 编写博客并且上传github仓库</p>
+<h4 id="3-编写博客并且上传github仓库">3. 编写博客并且上传github仓库</h4>
 
 <p>本地博客结构如下图：</p>
 
@@ -313,7 +313,7 @@ settings-&gt;Deploys keys-&gt;add Deploys key</p>
   </li>
 </ul>
 
-<pre><code class="language-angular2html">cd  bitchenjh.github.io    //替换自己的clone目录
+<pre><code class="language-angular2html">cd  bitchenjh.github.io    &lt;!--替换自己的clone目录--&gt;
 
 git add *
 
@@ -324,15 +324,15 @@ git commit -m "init"
 git push -u origin master
 </code></pre>
 
-<p>###4. 登入个人博客</p>
+<h4 id="4-登入个人博客">4. 登入个人博客</h4>
 
 <p>上面操作完成之后，这个时候在浏览器上输入: username.github.io，就可以看见博客了。</p>
 
-<p>###四. 其他</p>
+<h3 id="四-其他">四. 其他</h3>
 
 <p>以下内容为扩展，如果让你的博客显得高大尚，可以部署自己的独立域名。同时也可以借助一个平台将博客进行云存储。</p>
 
-<p>###1. 阿里云域名绑定</p>
+<h4 id="1-阿里云域名绑定">1. ∂∂阿里云域名绑定</h4>
 
 <ol>
   <li>
@@ -351,7 +351,7 @@ git push -u origin master
 
 <p><img src="http://p96hyfqf4.bkt.clouddn.com/github%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png" alt="" /></p>
 
-<p>###2. 云存储托管博客图片</p>
+<h4 id="2-云存储托管博客图片">2. 云存储托管博客图片</h4>
 
 <p>在非自己搭的博客如csdn中，如果想在文章中插入一张图片，其实是非常简单的，只要从你本机进行图片选择，然后选择上传，图片就会上传到CSDN的服务器，
 到时候在文章显示的时候就会读取该图片。但是如果是在自己的搭建的网站中要进行图片的显示就会遇到问题，因为图片无法从你本机读取，除非你的
@@ -465,7 +465,7 @@ git push -u origin master
 
 <section class="post-comments">
   <!--PC和WAP自适应版-->
-<div id="SOHUCS" sid=个人博客搭建 ></div>
+<div id="SOHUCS" sid=Mac下搭建个人博客 ></div>
 <script type="text/javascript">
 (function(){
 var appid = 'cytfSz8yx';
