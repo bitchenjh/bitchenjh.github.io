@@ -6,21 +6,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>第二篇 - EOS Currency 合约案例</title>
-  <meta name="description" content="目前来讲，任何学习`EOS`相关技术的资料都来自[https://github.com/EOSIO/eos](https://github.com/EOSIO/eos)，可能大家在搭建`EOS`开发环境的过程中，会很迷茫，网上资料都很乱，自己也理不清头绪，不知如何下手。在这里，[春哥](http://liyuechun.org)将一步步为你揭开层层面纱。">
+  <title>个人博客搭建</title>
+  <meta name="description" content="个人博客的搭建过程">
   <meta name="author" content="黎跃春">
 
-  <meta name="keywords" content="EOS Currency 案例 MAC"
+  <meta name="keywords" content="Mac,Git，Github，Markdown，jekyll"
   />
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="第二篇 - EOS Currency 合约案例">
-  <meta name="twitter:description" content="目前来讲，任何学习`EOS`相关技术的资料都来自[https://github.com/EOSIO/eos](https://github.com/EOSIO/eos)，可能大家在搭建`EOS`开发环境的过程中，会很迷茫，网上资料都很乱，自己也理不清头绪，不知如何下手。在这里，[春哥](http://liyuechun.org)将一步步为你揭开层层面纱。">
+  <meta name="twitter:title" content="个人博客搭建">
+  <meta name="twitter:description" content="个人博客的搭建过程">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="第二篇 - EOS Currency 合约案例">
-  <meta property="og:description" content="目前来讲，任何学习`EOS`相关技术的资料都来自[https://github.com/EOSIO/eos](https://github.com/EOSIO/eos)，可能大家在搭建`EOS`开发环境的过程中，会很迷茫，网上资料都很乱，自己也理不清头绪，不知如何下手。在这里，[春哥](http://liyuechun.org)将一步步为你揭开层层面纱。">
-  <meta property="og:site_name" content="EOS Currency 案例 MACe"
+  <meta property="og:title" content="个人博客搭建">
+  <meta property="og:description" content="个人博客的搭建过程">
+  <meta property="og:site_name" content="Mac,Git，Github，Markdown，jekylle"
   />
 
 
@@ -31,7 +31,7 @@
   <link rel="stylesheet" href=" /css/main.css ">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="http://localhost:4000/2018/04/13/eos-contract/">
+  <link rel="canonical" href="http://localhost:4000/2018/05/20/buildblog-interview/">
   <link rel="alternate" type="application/rss+xml" title="陈建辉区块链博客" href="http://localhost:4000 /feed.xml
     ">
 
@@ -195,10 +195,10 @@
     <div class="content-wrapper__inner">
       <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">第二篇 - EOS Currency 合约案例</h1>
+    <h1 class="post-title">个人博客搭建</h1>
     <div class="post-meta">
       <img src="/images/calendar.png" width="20px"/>
-      <time datetime="2018-04-13 00:00:00 +0800" itemprop="datePublished" class="post-meta__date date">2018-04-13</time>
+      <time datetime="2018-05-20 00:00:00 +0800" itemprop="datePublished" class="post-meta__date date">2018-05-20</time>
 
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -207,223 +207,189 @@
 
   <section class="post">
     <blockquote>
-  <table>
-    <tbody>
-      <tr>
-        <td>主讲人：黎跃春</td>
-        <td>孔壹学院创始人</td>
-      </tr>
-    </tbody>
-  </table>
+  <p>作者：陈建辉</p>
 
-  <p>课程咨询，添加莉莉微信(kongyixueyuan)咨询</p>
+  <p>博客：www.chenjianhui.org</p>
 </blockquote>
-
-<p>切换到<code class="highlighter-rouge">eos/build/programs/cleos</code>路径下面。</p>
-
-<h3 id="1-钱包设置">1. 钱包设置</h3>
-
-<p>秘钥需要保存好，后面解锁时会用到。</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos wallet create
-Creating wallet: default
-Save password to use in the future to unlock this wallet.
-Without password imported keys will not be retrievable.
-"PW5HtkrzGaNKGNKVGXc6icWiWdo7PFsjWJAdE2dJbt5bSnbwb7spd"
-</code></pre>
-</div>
-
-<h3 id="2-为账号部署合约">2. 为账号部署合约</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos set contract eosio ../../contracts/eosio.bios -p eosio
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos set contract eosio ../../contracts/eosio.bios -p eosio 
-Reading WAST/WASM from ../../contracts/eosio.bios/eosio.bios.wast...
-Assembling WASM...
-Publishing contract...
-executed transaction: 32735994889238e18ba60341bb79f6b674738727e9d5996991f8f34b496e3a18  3288 bytes  2200576 cycles
-#         eosio &lt;= eosio::setcode               {"account":"eosio","vmtype":0,"vmversion":0,"code":"0061736d0100000001581060037f7e7f0060057f7e7e7e7e...
-#         eosio &lt;= eosio::setabi                {"account":"eosio","abi":{"types":[],"structs":[{"name":"set_account_limits","base":"","fields":[{"n...
-liyuechun:cleos yuechunli$ 
-</code></pre>
-</div>
-
-<h3 id="3-创建2个key导入key的私钥">3. 创建2个<code class="highlighter-rouge">key</code>，导入<code class="highlighter-rouge">key</code>的私钥</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos create key
-Private key: 5Kg4i6WW6mfGXGjriU552KdAQ8tQyCU4mqtevVganWWbzQf1rD1
-Public key: EOS5MSkE5DGgSurc7k3Sv9kWrev6E3GBBqasdiiC3yajPwrW7c4Uq
-
-liyuechun:cleos yuechunli$ ./cleos create key 
-Private key: 5Kg2P7PRA7wWrW2s53JiaBur7PhDtDsCMZUwQ8Yvn8uAmu8xEMB
-Public key: EOS7wERhooVJwqYLuQn5v6UDZnL5KQpGJBDMQoktkxz4baNzicwLX
-
-liyuechun:cleos yuechunli$ ./cleos wallet import 5Kg4i6WW6mfGXGjriU552KdAQ8tQyCU4mqtevVganWWbzQf1rD1
-imported private key for: EOS5MSkE5DGgSurc7k3Sv9kWrev6E3GBBqasdiiC3yajPwrW7c4Uq
-liyuechun:cleos yuechunli$ ./cleos wallet import 5Kg2P7PRA7wWrW2s53JiaBur7PhDtDsCMZUwQ8Yvn8uAmu8xEMB
-imported private key for: EOS7wERhooVJwqYLuQn5v6UDZnL5KQpGJBDMQoktkxz4baNzicwLX
-liyuechun:cleos yuechunli$ 
-
-</code></pre>
-</div>
-
-<h3 id="4-根据生成的公钥创建帐号">4. 根据生成的公钥，创建帐号</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>$ liyuechun:cleos yuechunli$ ./cleos create account eosio eostoken EOS5MSkE5DGgSurc7k3Sv9kWrev6E3GBBqasdiiC3yajPwrW7c4Uq EOS7wERhooVJwqYLuQn5v6UDZnL5KQpGJBDMQoktkxz4baNzicwLX
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos create account eosio eostoken EOS5MSkE5DGgSurc7k3Sv9kWrev6E3GBBqasdiiC3yajPwrW7c4Uq EOS7wERhooVJwqYLuQn5v6UDZnL5KQpGJBDMQoktkxz4baNzicwLX
-executed transaction: e691042df8074a25f47b8364f58a03c2c407e64d2cbc7248e1e9a611a06fe547  352 bytes  102400 cycles
-#         eosio &lt;= eosio::newaccount            {"creator":"eosio","name":"eostoken","owner":{"threshold":1,"keys":[{"key":"EOS5MSkE5DGgSurc7k3Sv9kW...
-</code></pre>
-</div>
-
-<h3 id="5-查看账号信息">5. 查看账号信息</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos get account eostoken
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos get account eostoken
-{
-  "account_name": "eostoken",
-  "permissions": [{
-      "perm_name": "active",
-      "parent": "owner",
-      "required_auth": {
-        "threshold": 1,
-        "keys": [{
-            "key": "EOS7wERhooVJwqYLuQn5v6UDZnL5KQpGJBDMQoktkxz4baNzicwLX",
-            "weight": 1
-          }
-        ],
-        "accounts": []
-      }
-    },{
-      "perm_name": "owner",
-      "parent": "",
-      "required_auth": {
-        "threshold": 1,
-        "keys": [{
-            "key": "EOS5MSkE5DGgSurc7k3Sv9kWrev6E3GBBqasdiiC3yajPwrW7c4Uq",
-            "weight": 1
-          }
-        ],
-        "accounts": []
-      }
-    }
-  ]
-}
-liyuechun:cleos yuechunli$
-</code></pre>
-</div>
-
-<h3 id="6-检测并部署合约">6. 检测，并部署合约</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>$ ./cleos get code currency
-$ ./cleos set contract currency ../../contracts/currency 
-$ ./cleos get code currency 
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos get code currency 
-code hash: 0000000000000000000000000000000000000000000000000000000000000000
-liyuechun:cleos yuechunli$ ./cleos set contract currency ../../contracts/currency 
-Reading WAST/WASM from ../../contracts/currency/currency.wast...
-Assembling WASM...
-Publishing contract...
-executed transaction: eec4d42d5c1aab8785ce8e55618bf209d2e4dbcaf881e004c260c779d5571cef  7112 bytes  2200576 cycles
-#         eosio &lt;= eosio::setcode               {"account":"currency","vmtype":0,"vmversion":0,"code":"0061736d010000000199011860000060027e7e0060017...
-#         eosio &lt;= eosio::setabi                {"account":"currency","abi":{"types":[{"new_type_name":"account_name","type":"name"}],"structs":[{"n...
-liyuechun:cleos yuechunli$ ./cleos get code currency 
-code hash: d6c891fbdfcff597d82e17c81354574399b01d533e53d412093f03e1950fb9d4
-liyuechun:cleos yuechunli$ 
-</code></pre>
-</div>
-
-<h3 id="7-创建货币">7. 创建货币</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>$ ./cleos push action currency create '{"issuer":"currency","maximum_supply":"1000000.0000 CUR","can_freeze":"0","can_recall":"0","can_whitelist":"0"}' --permission currency@active
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos push action currency create '{"issuer":"currency","maximum_supply":"1000000.0000 CUR","can_freeze":"0","can_recall":"0","can_whitelist":"0"}' --permission currency@active
-executed transaction: ae92a14b810e1437e9a0e8ae0527268a1e0fbd834d8c0a6906c8b65d9b503dc4  248 bytes  103424 cycles
-#      currency &lt;= currency::create             {"issuer":"currency","maximum_supply":"1000000.0000 CUR","can_freeze":0,"can_recall":0,"can_whitelis...
-&gt;&gt; create
-liyuechun:cleos yuechunli$
-</code></pre>
-</div>
-
-<h3 id="8-发行货币">8. 发行货币</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>$ ./cleos push action currency issue '{"to":"currency","quantity":"1000.0000 CUR","memo":""}' --permission currency@active 
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos push action currency issue '{"to":"currency","quantity":"1000.0000 CUR","memo":""}' --permission currency@active 
-executed transaction: 7b8108d19aba6c8dcc601c321ef3c433cd2a3aedbd3ac1b217f06477792b40f7  248 bytes  106496 cycles
-#      currency &lt;= currency::issue              {"to":"currency","quantity":"1000.0000 CUR","memo":""}
-&gt;&gt; issue
-liyuechun:cleos yuechunli$ 
-</code></pre>
-</div>
-
-<h3 id="9-查看帐号信息">9. 查看帐号信息</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>$ ./cleos get table currency currency accounts 
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos get table currency currency accounts 
-{
-  "rows": [{
-      "balance": "1000.0000 CUR",
-      "frozen": 0,
-      "whitelist": 1
-    }
-  ],
-  "more": false
-}
-liyuechun:cleos yuechunli$ 
-</code></pre>
-</div>
-
-<h3 id="10-转账">10. 转账</h3>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>$ ./cleos push action currency transfer '{"from":"currency","to":"eosio","quantity":"20.0000 CUR","memo":"my first transfer"}' --permission currency@active 
-$ ./cleos get table currency currency accounts
-</code></pre>
-</div>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>liyuechun:cleos yuechunli$ ./cleos push action currency transfer '{"from":"currency","to":"eosio","quantity":"20.0000 CUR","memo":"my first transfer"}' --permission currency@active 
-executed transaction: 4a24e5a9afd17abe61dcb3b3aff06a1c5ec94663f803d3d1801bd7a5046fea9e  272 bytes  109568 cycles
-#      currency &lt;= currency::transfer           {"from":"currency","to":"eosio","quantity":"20.0000 CUR","memo":"my first transfer"}
-&gt;&gt; transfer
-#         eosio &lt;= currency::transfer           {"from":"currency","to":"eosio","quantity":"20.0000 CUR","memo":"my first transfer"}
-liyuechun:cleos yuechunli$ ./cleos get table currency currency accounts 
-{
-  "rows": [{
-      "balance": "980.0000 CUR",
-      "frozen": 0,
-      "whitelist": 1
-    }
-  ],
-  "more": false
-}
-</code></pre>
-</div>
-
-<h3 id="11-视频获取方式">11. 视频获取方式</h3>
 
 <blockquote>
-  <p>关注公众，发送<code class="highlighter-rouge">eos</code>自动获取视频链接</p>
+  <p>备注：如有错误，请指正，不断更新迭代</p>
 </blockquote>
 
-<p><img src="http://om1c35wrq.bkt.clouddn.com/%E5%8C%BA%E5%9D%97%E9%93%BE%E9%83%A8%E8%90%BD-1.jpg" alt="" /></p>
+<h3 id="一-前言">一. 前言</h3>
+<p>最近听大牛指导，觉得非常必要拥有一个属于自己的个人博客。通过写博客，可以对学习进行归纳总结，对经验进行分享，以后是一笔不小的人生财富。回想自己工作多年，
+要写的东西实在太多，所以心血来潮，自己动手搭建个人博客，本来认为非常容易，花不了多少时间，但是中途还是碰到不少问题，网上资料很多很杂，都不是特别适合自己，
+而且过程不全面，经过自己不断摸索，不断重装，花了几天时间终于搭建起来了。下面我把自己在Mac上的搭建过程及问题跟大家分享下，希望大家也尽量开启自己的博客之旅。</p>
+
+<h3 id="二-架构选型">二. 架构选型</h3>
+
+<p>目前所了解到的，受欢迎的博客搭建架构如下：</p>
+<ul>
+  <li>Git+Github+Markdown+jekyll （免费）</li>
+  <li>Git+Github+Markdown+hexo （免费）</li>
+  <li>虚拟主机＋插件＋Wordpress （付费）</li>
+</ul>
+
+<p>第1，2免费，第3付费
+如果决定花钱，那么选3，省心省力。不过我个人还是介意自己去搭建一个博客，而且作为一个合格程序员，熟悉github网站的使用还是非常必要的。
+1，2的话看个人喜好，各有各的优缺点，看你注重哪个，具体的话自己网上了解，资料一堆。
+我选择架构1，虽然jekyll麻烦点，但是github默认支持jekyll，可以直接在github网页版上编辑和发布博客，所以也就选他了。</p>
+
+<h3 id="三-博客搭建">三. 博客搭建</h3>
+
+<p>###1. 启动本地博客命令</p>
+
+<p>我们直接运行启动本地博客命令，看看自己环境到底缺啥，直接根据问题去找原因，这样搭建也不会无厘头。</p>
+
+<pre><code class="language-angular2html">bunddle exec jekyll server 
+</code></pre>
+<p>理论上输出：
+<img src="http://p96hyfqf4.bkt.clouddn.com/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%91%BD%E4%BB%A4.png" alt="" /></p>
+
+<p>安装过程中可能每个人的环境不同，终端提示问题不同，然后根据提示选择性安装ruby,gem,jekyll,bundler等包，缺什么安装什么，终端都有提示。
+参考如下命令：</p>
+
+<pre><code class="language-angular2html">ruby:brew install ruby
+
+gem:sudo gem install --system
+
+jekyll:sudo gem install jekyll
+
+bundler:sudo gem install bundler
+</code></pre>
+
+<p>###2. 部署github</p>
+
+<p>如果没有github的赶紧注册自己的账号，注册之后按照username.github.io创建一个仓库。 
+这里重点需要讲一下部署keys,方便文件从仓库上传和下载。
+settings-&gt;Deploys keys-&gt;add Deploys key</p>
+
+<p>本地操作</p>
+
+<ol>
+  <li>获取key：</li>
+</ol>
+
+<p><code class="highlighter-rouge">ssh-keygen -t rsa -C "xxx@163.com"</code>  //替换自己注册邮箱</p>
+
+<p><code class="highlighter-rouge">cat /Users/chenjh/.ssh/id_rsa.pub </code> //直接把输出的key拷贝到github上</p>
+
+<ol>
+  <li>clone博客代码文件夹</li>
+</ol>
+
+<p><code class="highlighter-rouge">git clone https://github.com/bitchenjh/bitchenjh.github.io.git</code>  //替换成自己的github code 路径</p>
+
+<p>执行之后，本地就出现一个bitchenjh.github.io的文件夹。</p>
+
+<p>###3. 编写博客并且上传github仓库</p>
+
+<p>本地博客结构如下图：</p>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/%E6%9C%AC%E5%9C%B0%E5%8D%9A%E5%AE%A2%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84.jpg" alt="" /></p>
+
+<p>_posts:存放博客的目录，注意博客命名需要严格按照一定格式：xxxx-xx-xx-xxxx-xxxx.md</p>
+
+<p>_site:该目录是jekyll编译出来的博客运行文件，修改之后可以直接删除，然后重新编译生成该文件夹。编译完成之后只需要直接将该文件内容
+       直接更新到github</p>
+
+<p>更新博客过程：</p>
+
+<ul>
+  <li>
+    <p>将_site删除</p>
+  </li>
+  <li>
+    <p>更新博客</p>
+  </li>
+  <li>
+    <p>编译：bundle exec jekyll serve build</p>
+  </li>
+  <li>
+    <p>重新生成_sites,将里面的内容全部拷贝到clone的文件夹：</p>
+  </li>
+  <li>
+    <p>执行如下命令：</p>
+  </li>
+</ul>
+
+<pre><code class="language-angular2html">cd  bitchenjh.github.io    //替换自己的clone目录
+
+git add *
+
+git status
+
+git commit -m "init"
+
+git push -u origin master
+</code></pre>
+
+<p>###4. 登入个人博客</p>
+
+<p>上面操作完成之后，这个时候在浏览器上输入: username.github.io，就可以看见博客了。</p>
+
+<p>###四. 其他</p>
+
+<p>以下内容为扩展，如果让你的博客显得高大尚，可以部署自己的独立域名。同时也可以借助一个平台将博客进行云存储。</p>
+
+<p>###1. 阿里云域名绑定</p>
+
+<ol>
+  <li>
+    <p>进入阿里云<a href="https://www.aliyun.com/">https://www.aliyun.com/</a>够买个人域名，比如我的：www.chenjianhui.org</p>
+  </li>
+  <li>
+    <p>对域名进行DNS解析。</p>
+  </li>
+</ol>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/%E9%98%BF%E9%87%8C%E4%BA%91%E5%9F%9F%E5%90%8D.png" alt="" /></p>
+
+<ol>
+  <li>进入个人github-&gt;Settings</li>
+</ol>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/github%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png" alt="" /></p>
+
+<p>###2. 云存储托管博客图片</p>
+
+<p>在非自己搭的博客如csdn中，如果想在文章中插入一张图片，其实是非常简单的，只要从你本机进行图片选择，然后选择上传，图片就会上传到CSDN的服务器，
+到时候在文章显示的时候就会读取该图片。但是如果是在自己的搭建的网站中要进行图片的显示就会遇到问题，因为图片无法从你本机读取，除非你的
+本机是一台服务器。所以我们要选择一个专门存储图片的服务商，同时存储的图片还能进行外链，即获得图片的URL地址，到时候就可以通过该URL访问并
+显示这张图片。我这边使用的图片存储商是七牛云存储，这是一个免费的存储空间。</p>
+
+<p>简要描述下步骤：</p>
+
+<ol>
+  <li>
+    <p>进入七牛云存储官网<a href="https://www.qiniu.com]">https://www.qiniu.com</a>登陆注册。新建一个空间。</p>
+  </li>
+  <li>
+    <p>然后在内容管理中上传一张图片，点击该图片，即可获得该图片的外链地址。然后复制即可。</p>
+  </li>
+</ol>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/%E4%B8%83%E7%89%9B%E4%BA%91.jpg" alt="image" /></p>
+
+<ol>
+  <li>然后在新建的博客中进行访问，由于博客使用markdown语法进行编辑的，所以要使用以下语法访问这张图片的URL地址。
+我在Markdown中的格式：</li>
+</ol>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/%E5%BC%95%E7%94%A8%E5%9B%BE%E7%89%87%E5%A4%96%E9%93%BE.png" alt="" /></p>
+
+<p>最后注意事项：</p>
+
+<ol>
+  <li>
+    <p>git只允许每个人有一个以用户名.github.io命名的仓库，例如，我的用户是bitchenjh, 那么我的唯一对应主页应该是
+  bitchenjh.github.io, 仓库名也必须命名为bitchenjh.github.io。</p>
+  </li>
+  <li>
+    <p>Domain’s DNS record could not be retrieved问题，说明你的域名云解析有问题，你去阿里云上仔细核对你的独立域名，
+最好设置同时添加’www’及’@’记录，这样访问博客更加方便。</p>
+  </li>
+</ol>
 
 
   </section>
@@ -493,23 +459,13 @@ liyuechun:cleos yuechunli$ ./cleos get table currency currency accounts
 
        <ul class="pager">
         
-        <li class="previous">
-            <a href="/2018/04/04/eos-dev/" data-toggle="tooltip" data-placement="top" title="第一篇 - 手把手教你理清EOS各种开发环境搭建来龙去脉">上一篇：  <span>第一篇 - 手把手教你理清EOS各种开发环境搭建来龙去脉</span>
-            </a>
-        </li>
-        
-        
-        <li class="next">
-            <a href="/2018/04/18/eos-contract/" data-toggle="tooltip" data-placement="top" title="第三篇 - EOS DAWN-V3.0.0 智能合约开发之Hello World">下一篇：  <span>第三篇 - EOS DAWN-V3.0.0 智能合约开发之Hello World</span>
-            </a>
-        </li>
         
     </ul>
 </section>
 
 <section class="post-comments">
   <!--PC和WAP自适应版-->
-<div id="SOHUCS" sid=第二篇 - EOS Currency 合约案例 ></div>
+<div id="SOHUCS" sid=个人博客搭建 ></div>
 <script type="text/javascript">
 (function(){
 var appid = 'cytfSz8yx';
