@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>陈建辉区块链博客</title>
-    <description>陈建辉</description>
+    <description>陈建辉，项目经理，高级软件工程师，早期区块链从业人员，拥有多年传统金融软件开发经验</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 29 May 2018 19:43:38 +0800</pubDate>
-    <lastBuildDate>Tue, 29 May 2018 19:43:38 +0800</lastBuildDate>
+    <pubDate>Tue, 29 May 2018 20:15:05 +0800</pubDate>
+    <lastBuildDate>Tue, 29 May 2018 20:15:05 +0800</lastBuildDate>
     <generator>Jekyll v3.5.1</generator>
     
       <item>
