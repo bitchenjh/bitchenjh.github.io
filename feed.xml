@@ -5,8 +5,8 @@
     <description>陈建辉</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 24 May 2018 17:19:50 +0800</pubDate>
-    <lastBuildDate>Thu, 24 May 2018 17:19:50 +0800</lastBuildDate>
+    <pubDate>Tue, 29 May 2018 19:43:38 +0800</pubDate>
+    <lastBuildDate>Tue, 29 May 2018 19:43:38 +0800</lastBuildDate>
     <generator>Jekyll v3.5.1</generator>
     
       <item>
@@ -42,7 +42,7 @@
 
 &lt;h3 id=&quot;三-博客搭建&quot;&gt;三. 博客搭建&lt;/h3&gt;
 
-&lt;p&gt;####1. 启动本地博客命令&lt;/p&gt;
+&lt;h4 id=&quot;1-启动本地博客命令&quot;&gt;1. 启动本地博客命令&lt;/h4&gt;
 
 &lt;p&gt;我们直接运行启动本地博客命令，看看自己环境到底缺啥，直接根据问题去找原因，这样搭建也不会无厘头。&lt;/p&gt;
 
@@ -71,17 +71,17 @@ settings-&amp;gt;Deploys keys-&amp;gt;add Deploys key&lt;/p&gt;
 
 &lt;p&gt;本地操作&lt;/p&gt;
 
-&lt;ol&gt;
-  &lt;li&gt;获取key：&lt;/li&gt;
-&lt;/ol&gt;
+&lt;ul&gt;
+  &lt;li&gt;获取key&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ssh-keygen -t rsa -C &quot;xxx@163.com&quot;&lt;/code&gt;  &lt;!--替换自己注册邮箱--&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cat /Users/chenjh/.ssh/id_rsa.pub &lt;/code&gt; &lt;!--直接把输出的key拷贝到github上--&gt;&lt;/p&gt;
 
-&lt;ol&gt;
+&lt;ul&gt;
   &lt;li&gt;clone博客代码文件夹&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/bitchenjh/bitchenjh.github.io.git&lt;/code&gt;  &lt;!--替换成自己的github code 路径--&gt;&lt;/p&gt;
 
@@ -137,22 +137,15 @@ git push -u origin master
 
 &lt;p&gt;以下内容为扩展，如果让你的博客显得高大尚，可以部署自己的独立域名。同时也可以借助一个平台将博客进行云存储。&lt;/p&gt;
 
-&lt;h4 id=&quot;1-阿里云域名绑定&quot;&gt;1. ∂∂阿里云域名绑定&lt;/h4&gt;
+&lt;h4 id=&quot;1-阿里云域名绑定&quot;&gt;1. 阿里云域名绑定&lt;/h4&gt;
 
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;进入阿里云&lt;a href=&quot;https://www.aliyun.com/&quot;&gt;https://www.aliyun.com/&lt;/a&gt;够买个人域名，比如我的：www.chenjianhui.org&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;对域名进行DNS解析。&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;a. 进入阿里云&lt;a href=&quot;https://www.aliyun.com/&quot;&gt;https://www.aliyun.com/&lt;/a&gt;够买个人域名，比如我的：www.chenjianhui.org&lt;/p&gt;
+
+&lt;p&gt;b. 对域名进行DNS解析。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E9%98%BF%E9%87%8C%E4%BA%91%E5%9F%9F%E5%90%8D.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;ol&gt;
-  &lt;li&gt;进入个人github-&amp;gt;Settings&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;c. 进入个人github-&amp;gt;Settings&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/github%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
@@ -165,25 +158,18 @@ git push -u origin master
 
 &lt;p&gt;简要描述下步骤：&lt;/p&gt;
 
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;进入七牛云存储官网&lt;a href=&quot;https://www.qiniu.com]&quot;&gt;https://www.qiniu.com&lt;/a&gt;登陆注册。新建一个空间。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;然后在内容管理中上传一张图片，点击该图片，即可获得该图片的外链地址。然后复制即可。&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;a. 进入七牛云存储官网&lt;a href=&quot;https://www.qiniu.com]&quot;&gt;https://www.qiniu.com&lt;/a&gt;登陆注册。新建一个空间。&lt;/p&gt;
+
+&lt;p&gt;b. 然后在内容管理中上传一张图片，点击该图片，即可获得该图片的外链地址。然后复制即可。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E4%B8%83%E7%89%9B%E4%BA%91.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
-&lt;ol&gt;
-  &lt;li&gt;然后在新建的博客中进行访问，由于博客使用markdown语法进行编辑的，所以要使用以下语法访问这张图片的URL地址。
-我在Markdown中的格式：&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;c. 然后在新建的博客中进行访问，由于博客使用markdown语法进行编辑的，所以要使用以下语法访问这张图片的URL地址。
+我在Markdown中的格式：&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E5%BC%95%E7%94%A8%E5%9B%BE%E7%89%87%E5%A4%96%E9%93%BE.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;最后注意事项：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;最后注意事项&lt;/strong&gt;：&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;

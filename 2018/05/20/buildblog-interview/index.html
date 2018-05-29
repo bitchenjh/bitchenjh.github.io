@@ -168,17 +168,6 @@
           </div>
         </div>
 
-        <div style="display:flex;justify-content:center;-webkit-justify-content:center">
-          <div style="display:flex;flex-direction:column;align-items:center;-webkit-flex-direction:column;-webkit-align-items:center;margin-right:10px">
-            <img src="/images/zhishixingqiu.png" style="width:120px;height:120px;margin-top:30px;margin-bottom:10px" />
-            <span class="panel-cover__subtitle panel-subtitle" style="font-size: 12px">链乎问答社区</span>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:center;-webkit-flex-direction:column;-webkit-align-items:center;margin-left:10px">
-            <img src="/images/lianhu.jpg" style="width:120px;height:120px;margin-top:30px;margin-bottom:10px" />
-            <span class="panel-cover__subtitle panel-subtitle" style="font-size: 12px">链乎公众号</span>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
@@ -237,7 +226,7 @@
 
 <h3 id="三-博客搭建">三. 博客搭建</h3>
 
-<p>####1. 启动本地博客命令</p>
+<h4 id="1-启动本地博客命令">1. 启动本地博客命令</h4>
 
 <p>我们直接运行启动本地博客命令，看看自己环境到底缺啥，直接根据问题去找原因，这样搭建也不会无厘头。</p>
 
@@ -266,17 +255,17 @@ settings-&gt;Deploys keys-&gt;add Deploys key</p>
 
 <p>本地操作</p>
 
-<ol>
-  <li>获取key：</li>
-</ol>
+<ul>
+  <li>获取key</li>
+</ul>
 
 <p><code class="highlighter-rouge">ssh-keygen -t rsa -C "xxx@163.com"</code>  <!--替换自己注册邮箱--></p>
 
 <p><code class="highlighter-rouge">cat /Users/chenjh/.ssh/id_rsa.pub </code> <!--直接把输出的key拷贝到github上--></p>
 
-<ol>
+<ul>
   <li>clone博客代码文件夹</li>
-</ol>
+</ul>
 
 <p><code class="highlighter-rouge">git clone https://github.com/bitchenjh/bitchenjh.github.io.git</code>  <!--替换成自己的github code 路径--></p>
 
@@ -332,22 +321,15 @@ git push -u origin master
 
 <p>以下内容为扩展，如果让你的博客显得高大尚，可以部署自己的独立域名。同时也可以借助一个平台将博客进行云存储。</p>
 
-<h4 id="1-阿里云域名绑定">1. ∂∂阿里云域名绑定</h4>
+<h4 id="1-阿里云域名绑定">1. 阿里云域名绑定</h4>
 
-<ol>
-  <li>
-    <p>进入阿里云<a href="https://www.aliyun.com/">https://www.aliyun.com/</a>够买个人域名，比如我的：www.chenjianhui.org</p>
-  </li>
-  <li>
-    <p>对域名进行DNS解析。</p>
-  </li>
-</ol>
+<p>a. 进入阿里云<a href="https://www.aliyun.com/">https://www.aliyun.com/</a>够买个人域名，比如我的：www.chenjianhui.org</p>
+
+<p>b. 对域名进行DNS解析。</p>
 
 <p><img src="http://p96hyfqf4.bkt.clouddn.com/%E9%98%BF%E9%87%8C%E4%BA%91%E5%9F%9F%E5%90%8D.png" alt="" /></p>
 
-<ol>
-  <li>进入个人github-&gt;Settings</li>
-</ol>
+<p>c. 进入个人github-&gt;Settings</p>
 
 <p><img src="http://p96hyfqf4.bkt.clouddn.com/github%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png" alt="" /></p>
 
@@ -360,25 +342,18 @@ git push -u origin master
 
 <p>简要描述下步骤：</p>
 
-<ol>
-  <li>
-    <p>进入七牛云存储官网<a href="https://www.qiniu.com]">https://www.qiniu.com</a>登陆注册。新建一个空间。</p>
-  </li>
-  <li>
-    <p>然后在内容管理中上传一张图片，点击该图片，即可获得该图片的外链地址。然后复制即可。</p>
-  </li>
-</ol>
+<p>a. 进入七牛云存储官网<a href="https://www.qiniu.com]">https://www.qiniu.com</a>登陆注册。新建一个空间。</p>
+
+<p>b. 然后在内容管理中上传一张图片，点击该图片，即可获得该图片的外链地址。然后复制即可。</p>
 
 <p><img src="http://p96hyfqf4.bkt.clouddn.com/%E4%B8%83%E7%89%9B%E4%BA%91.jpg" alt="image" /></p>
 
-<ol>
-  <li>然后在新建的博客中进行访问，由于博客使用markdown语法进行编辑的，所以要使用以下语法访问这张图片的URL地址。
-我在Markdown中的格式：</li>
-</ol>
+<p>c. 然后在新建的博客中进行访问，由于博客使用markdown语法进行编辑的，所以要使用以下语法访问这张图片的URL地址。
+我在Markdown中的格式：</p>
 
 <p><img src="http://p96hyfqf4.bkt.clouddn.com/%E5%BC%95%E7%94%A8%E5%9B%BE%E7%89%87%E5%A4%96%E9%93%BE.png" alt="" /></p>
 
-<p>最后注意事项：</p>
+<p><strong>最后注意事项</strong>：</p>
 
 <ol>
   <li>
@@ -393,7 +368,7 @@ git push -u origin master
 
 
   </section>
-  <h2 style="color:red"><strong>版权声明：博客中的文章版权归博主所有，未经授权，禁止转载，转载请注明出处，合作请联系：liyc1215(微信)</strong></h2>
+  <h2 style="color:red"><strong>版权声明：博客中的文章版权归博主所有，未经授权，禁止转载，转载请注明出处，合作请联系：chenjh07507(微信)</strong></h2>
 </article>
 
 <section>
@@ -558,7 +533,7 @@ window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="tex
 
     <div class="footer_div">
       <p class="copyright text-muted">
-        Copyright &copy; 2018 陈建辉区块链博客 京ICP备15065741号. 区块链部落QQ群：348924182
+        Copyright &copy; 2018 陈建辉区块链博客 QQ：905739007
       </p>
       <div align="right">
         <link rel="stylesheet" href="http://cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">

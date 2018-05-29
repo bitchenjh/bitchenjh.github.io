@@ -8,7 +8,3 @@
 - QQ：905739007
 
 
-
-## 关注链乎官方公众号
-
-![](http://om1c35wrq.bkt.clouddn.com/lianhu.jpg)
