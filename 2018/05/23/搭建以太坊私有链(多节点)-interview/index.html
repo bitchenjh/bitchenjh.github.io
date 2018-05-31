@@ -1,0 +1,507 @@
+<h1 id="搭建以太坊私有链多节点">搭建以太坊私有链(多节点)</h1>
+
+<p>上一篇博客我们了解了使用geth搭建以太坊私有网络,这一次则要在私有网络中建立多个node组成的集群,并互相发现,产生交易.</p>
+
+<p>为了在本地网络运行多个以太坊节点的实例,必须确保一下几点:</p>
+<ol>
+  <li>每个实例都有独立的数据目录(–datadir)</li>
+  <li>每个实例运行都有独立的端口.(eth和rpc两者都是)(–port 和 –rpcprot)</li>
+  <li>在集群的情况下, 实例之间都必须要知道彼此.</li>
+  <li>唯一的ipc通信端点,或者禁用ipc.</li>
+</ol>
+
+<p>通过上一篇博客，我们产生了一个节点，相关数据在data0中。今天为了演示，我们另外新建两个目录data1,data2,分别代表另外两个节点，本地的目录结构如下：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>|-- data0
+|   |-- geth
+|   |   |-- LOCK
+|   |   |-- chaindata
+|   |   |-- lightchaindata
+|   |   |-- nodekey
+|   |   |-- nodes
+|   |   `-- transactions.rlp
+|   |-- history
+|   `-- keystore
+|       |-- UTC--2018-05-30T08-06-12.333261000Z
+|       `-- UTC--2018-05-30T08-06-30.067324000Z
+|-- data1
+|   |-- geth
+|   |   |-- LOCK
+|   |   |-- chaindata
+|   |   |-- ethash
+|   |   |-- lightchaindata
+|   |   |-- nodekey
+|   |   |-- nodes
+|   |   `-- transactions.rlp
+|   `-- keystore
+|-- data2
+|   |-- geth
+|   |   |-- LOCK
+|   |   |-- chaindata
+|   |   |-- ethash
+|   |   |-- lightchaindata
+|   |   |-- nodekey
+|   |   |-- nodes
+|   |   `-- transactions.rlp
+|   `-- keystore
+`-- genesis.json
+</code></pre>
+</div>
+
+<h2 id="启动第一个节点指定端口并禁用ipc">启动第一个节点(指定端口,并禁用ipc)</h2>
+
+<p><code class="highlighter-rouge">geth --datadir data0 --networkid 314590 --ipcdisable --port 61910 --rpcport 8200 console</code></p>
+
+<p>控制台输出：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>CjhMacPro:privatechain chenjh$ geth --datadir data0 --networkid 314590 --ipcdisable --port 61910 --rpcport 8200 console
+
+INFO [05-30|17:41:52] Starting peer-to-peer node               instance=Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
+
+INFO [05-30|17:41:52] Allocated cache and file handles         database=/Users/chenjh/privatechain/data0/geth/chaindata cache=128 handles=1024
+
+INFO [05-30|17:41:52] Initialised chain configuration          config="{ChainID: 10 Homestead: 0 DAO: &lt;nil&gt; DAOSupport: false EIP150: &lt;nil&gt; EIP155: 0 EIP158: 0 Byzantium: &lt;nil&gt; Engine: unknown}"
+
+INFO [05-30|17:41:52] Disk storage enabled for ethash caches   dir=/Users/chenjh/privatechain/data0/geth/ethash count=3
+
+INFO [05-30|17:41:52] Disk storage enabled for ethash DAGs     dir=/Users/chenjh/.ethash                        count=2
+
+INFO [05-30|17:41:52] Initialising Ethereum protocol           versions="[63 62]" network=314590
+
+INFO [05-30|17:41:52] Loaded most recent local header          number=155 hash=1327ab…ddd9e2 td=21205924
+
+INFO [05-30|17:41:52] Loaded most recent local full block      number=155 hash=1327ab…ddd9e2 td=21205924
+
+INFO [05-30|17:41:52] Loaded most recent local fast block      number=155 hash=1327ab…ddd9e2 td=21205924
+
+INFO [05-30|17:41:52] Loaded local transaction journal         transactions=0 dropped=0
+
+INFO [05-30|17:41:52] Regenerated local transaction journal    transactions=0 accounts=0
+
+WARN [05-30|17:41:52] Blockchain not empty, fast sync disabled
+
+INFO [05-30|17:41:52] Starting P2P networking
+
+INFO [05-30|17:41:52] UDP listener up                          self=enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910
+
+INFO [05-30|17:41:52] RLPx listener up                         self=enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910
+
+Welcome to the Geth JavaScript console!
+
+instance: Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
+
+INFO [05-30|17:41:52] Etherbase automatically configured       address=0x66035B6F180224CE2095ba162eBBD83173d6b574
+
+coinbase: 0x66035b6f180224ce2095ba162ebbd83173d6b574
+
+at block: 155 (Wed, 30 May 2018 16:22:40 CST)
+
+ datadir: /Users/chenjh/privatechain/data0
+
+ modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txpool:1.0 web3:1.0
+
+</code></pre>
+</div>
+
+<p>上面的命令以命令行的(console)的方式启动了节点, 所以我们可以通过继续输入下面的命令获取节点实例的enode url</p>
+
+<p><code class="highlighter-rouge">admin.nodeInfo.enode</code></p>
+
+<p>控制台输出：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; admin.nodeInfo.enode
+"enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910"
+</code></pre>
+</div>
+
+<p>其他信息</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; eth.accounts
+
+["0x66035b6f180224ce2095ba162ebbd83173d6b574", "0x04e34feefd824e65dd55e863b4ddda02a12fa505"]
+
+&gt; admin.nodeInfo.enode
+
+"enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910"
+
+&gt; net.peerCount
+
+1
+
+&gt; admin.peers
+
+[]
+
+&gt; personal.unlockAccount(eth.accounts[0])
+
+Unlock account 0x66035b6f180224ce2095ba162ebbd83173d6b574
+
+Passphrase:
+
+true
+
+&gt; web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
+
+649.999622
+
+&gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
+
+125.000378
+
+</code></pre>
+</div>
+
+<h2 id="启动第二个节点指定端口并禁用ipc">启动第二个节点(指定端口,并禁用ipc)</h2>
+
+<p><code class="highlighter-rouge">geth --datadir data1  init genesis.json</code></p>
+
+<p><code class="highlighter-rouge">geth --datadir data1 --networkid 314590 --ipcdisable --port 61911 --rpcport 8101 --bootnodes "enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910" console</code></p>
+
+<p>控制台输出：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>CjhMacPro:privatechain chenjh$ geth --datadir data1  init genesis.json
+
+INFO [05-30|17:47:53] Allocated cache and file handles         database=/Users/chenjh/privatechain/data1/geth/chaindata cache=16 handles=16
+
+INFO [05-30|17:47:53] Successfully wrote genesis state         database=chaindata                                       hash=5e1fc7…d790e0
+
+INFO [05-30|17:47:53] Allocated cache and file handles         database=/Users/chenjh/privatechain/data1/geth/lightchaindata cache=16 handles=16
+
+INFO [05-30|17:47:53] Successfully wrote genesis state         database=lightchaindata                                       hash=5e1fc7…d790e0
+
+CjhMacPro:privatechain chenjh$ geth --datadir data1 --networkid 314590 --ipcdisable --port 61911 --rpcport 8101 --bootnodes "enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910" console
+
+INFO [05-30|17:48:07] Starting peer-to-peer node               instance=Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
+
+INFO [05-30|17:48:07] Allocated cache and file handles         database=/Users/chenjh/privatechain/data1/geth/chaindata cache=128 handles=1024
+
+INFO [05-30|17:48:07] Initialised chain configuration          config="{ChainID: 10 Homestead: 0 DAO: &lt;nil&gt; DAOSupport: false EIP150: &lt;nil&gt; EIP155: 0 EIP158: 0 Byzantium: &lt;nil&gt; Engine: unknown}"
+
+INFO [05-30|17:48:07] Disk storage enabled for ethash caches   dir=/Users/chenjh/privatechain/data1/geth/ethash count=3
+
+INFO [05-30|17:48:07] Disk storage enabled for ethash DAGs     dir=/Users/chenjh/.ethash                        count=2
+
+INFO [05-30|17:48:07] Initialising Ethereum protocol           versions="[63 62]" network=314590
+
+INFO [05-30|17:48:07] Loaded most recent local header          number=155 hash=1327ab…ddd9e2 td=21205924
+
+INFO [05-30|17:48:07] Loaded most recent local full block      number=155 hash=1327ab…ddd9e2 td=21205924
+
+INFO [05-30|17:48:07] Loaded most recent local fast block      number=155 hash=1327ab…ddd9e2 td=21205924
+
+INFO [05-30|17:48:07] Loaded local transaction journal         transactions=0 dropped=0
+
+INFO [05-30|17:48:07] Regenerated local transaction journal    transactions=0 accounts=0
+
+WARN [05-30|17:48:07] Blockchain not empty, fast sync disabled
+
+INFO [05-30|17:48:07] Starting P2P networking
+
+INFO [05-30|17:48:07] UDP listener up                          self=enode://eaa5ff26d4aa243d8bae4eb455d7da151bdd900ffd8652273f28e758032090b08058de01a832898a78922bf0f6cc4a86754abc62b4948682464324d89ae66c3a@10.0.154.153:61911
+
+INFO [05-30|17:48:07] RLPx listener up                         self=enode://eaa5ff26d4aa243d8bae4eb455d7da151bdd900ffd8652273f28e758032090b08058de01a832898a78922bf0f6cc4a86754abc62b4948682464324d89ae66c3a@10.0.154.153:61911
+
+Welcome to the Geth JavaScript console!
+
+instance: Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
+
+ modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txpool:1.0 web3:1.0
+
+
+</code></pre>
+</div>
+
+<p>其他信息</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; eth.accounts
+
+[]
+
+&gt; admin.nodeInfo
+
+{
+
+  enode: "enode://eaa5ff26d4aa243d8bae4eb455d7da151bdd900ffd8652273f28e758032090b08058de01a832898a78922bf0f6cc4a86754abc62b4948682464324d89ae66c3a@10.0.154.153:61911",
+
+  id: "eaa5ff26d4aa243d8bae4eb455d7da151bdd900ffd8652273f28e758032090b08058de01a832898a78922bf0f6cc4a86754abc62b4948682464324d89ae66c3a",
+
+  ip: "10.0.154.153",
+
+  listenAddr: "[::]:61911",
+
+  name: "Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2",
+
+  ports: {
+
+    discovery: 61911,
+
+    listener: 61911
+
+  },
+
+  protocols: {
+
+    eth: {
+
+      difficulty: 21205924,
+
+      genesis: "0x5e1fc79cb4ffa4739177b5408045cd5d51c6cf766133f23f7cd72ee1f8d790e0",
+
+      head: "0x1327ab7c58e655cf0b80d769d697017976e190fe91e3a4c525081034a1ddd9e2",
+
+      network: 314590
+
+    }
+
+  }
+
+}
+
+&gt; net.peerCount
+
+2
+
+&gt; admin.peers
+
+[{
+
+    caps: ["eth/62", "eth/63"],
+
+    id: "d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e",
+
+    name: "Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2",
+
+    network: {
+
+      localAddress: "10.0.154.153:51063",
+
+      remoteAddress: "10.0.154.153:61910"
+
+    },
+
+    protocols: {
+
+      eth: {
+
+        difficulty: 21205924,
+
+        head: "0x1327ab7c58e655cf0b80d769d697017976e190fe91e3a4c525081034a1ddd9e2",
+
+        version: 63
+
+      }
+
+    }
+
+}]
+</code></pre>
+</div>
+
+<h2 id="启动第三个节点指定端口并禁用ipc">启动第三个节点(指定端口,并禁用ipc)</h2>
+
+<p><code class="highlighter-rouge">geth --datadir data2  init genesis.json</code></p>
+
+<p><code class="highlighter-rouge">geth --datadir data2 --networkid 314590 --ipcdisable --port 61912 --rpcport 8122 --bootnodes "enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910" console</code></p>
+
+<p>控制台输出：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>CjhMacPro:privatechain chenjh$ geth --datadir data2  init genesis.json
+
+INFO [05-30|17:51:26] Allocated cache and file handles         database=/Users/chenjh/privatechain/data2/geth/chaindata cache=16 handles=16
+
+INFO [05-30|17:51:26] Successfully wrote genesis state         database=chaindata                                       hash=5e1fc7…d790e0
+
+INFO [05-30|17:51:26] Allocated cache and file handles         database=/Users/chenjh/privatechain/data2/geth/lightchaindata cache=16 handles=16
+
+INFO [05-30|17:51:26] Successfully wrote genesis state         database=lightchaindata                                       hash=5e1fc7…d790e0
+
+CjhMacPro:privatechain chenjh$ geth --datadir data2 --networkid 314590 --ipcdisable --port 61912 --rpcport 8122 --bootnodes "enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910" console
+
+INFO [05-30|17:51:40] Starting peer-to-peer node               instance=Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
+
+INFO [05-30|17:51:40] Allocated cache and file handles         database=/Users/chenjh/privatechain/data2/geth/chaindata cache=128 handles=1024
+
+INFO [05-30|17:51:40] Initialised chain configuration          config="{ChainID: 10 Homestead: 0 DAO: &lt;nil&gt; DAOSupport: false EIP150: &lt;nil&gt; EIP155: 0 EIP158: 0 Byzantium: &lt;nil&gt; Engine: unknown}"
+
+INFO [05-30|17:51:40] Disk storage enabled for ethash caches   dir=/Users/chenjh/privatechain/data2/geth/ethash count=3
+
+INFO [05-30|17:51:40] Disk storage enabled for ethash DAGs     dir=/Users/chenjh/.ethash                        count=2
+
+INFO [05-30|17:51:40] Initialising Ethereum protocol           versions="[63 62]" network=314590
+
+INFO [05-30|17:51:40] Loaded most recent local header          number=155 hash=1327ab…ddd9e2 td=21205924
+
+INFO [05-30|17:51:40] Loaded most recent local full block      number=155 hash=1327ab…ddd9e2 td=21205924
+
+INFO [05-30|17:51:40] Loaded most recent local fast block      number=155 hash=1327ab…ddd9e2 td=21205924
+
+INFO [05-30|17:51:40] Loaded local transaction journal         transactions=0 dropped=0
+
+INFO [05-30|17:51:40] Regenerated local transaction journal    transactions=0 accounts=0
+
+WARN [05-30|17:51:40] Blockchain not empty, fast sync disabled
+
+INFO [05-30|17:51:40] Starting P2P networking
+
+INFO [05-30|17:51:40] UDP listener up                          self=enode://78cf9ddf0c8923818130417fd60bd7e325e1419d5c0f0f27102e352fecc6d118b98203a8abf0ce2204c1da541385325bab74d76e01e318f4af494679d7f2db1d@10.0.154.153:61912
+
+INFO [05-30|17:51:40] RLPx listener up                         self=enode://78cf9ddf0c8923818130417fd60bd7e325e1419d5c0f0f27102e352fecc6d118b98203a8abf0ce2204c1da541385325bab74d76e01e318f4af494679d7f2db1d@10.0.154.153:61912
+
+Welcome to the Geth JavaScript console!
+
+instance: Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
+
+ modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txpool:1.0 web3:1.0
+
+</code></pre>
+</div>
+
+<p>其它查询信息：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; eth.accounts
+
+[]
+
+&gt; net.peerCount
+
+1
+
+&gt; admin.p
+
+admin.peers admin.propertyIsEnumerable
+
+&gt; admin.peers
+
+[{
+
+    caps: ["eth/62", "eth/63"],
+
+    id: "d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e",
+
+    name: "Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2",
+
+    network: {
+
+      localAddress: "10.0.154.153:52250",
+
+      remoteAddress: "10.0.154.153:61910"
+
+    },
+
+    protocols: {
+
+      eth: {
+
+        difficulty: 21205924,
+
+        head: "0x1327ab7c58e655cf0b80d769d697017976e190fe91e3a4c525081034a1ddd9e2",
+
+        version: 63
+
+      }
+
+    }
+
+}]
+
+&gt; eth.blockNumber
+
+155
+
+</code></pre>
+</div>
+
+<h2 id="钱包之间交易转账">钱包之间交易转账</h2>
+
+<p>在第一个节点命令行中,执行下面的操作:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; personal.unlockAccount(eth.accounts[0])
+
+Unlock account 0x66035b6f180224ce2095ba162ebbd83173d6b574
+
+Passphrase:
+
+true
+
+&gt; web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
+
+649.999622
+
+&gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
+
+125.000378
+
+&gt; eth.sendTransaction({from: "0x66035b6f180224ce2095ba162ebbd83173d6b574", to: "0x04e34feefd824e65dd55e863b4ddda02a12fa505", gas:31000, 'gasPrice': web3.toWei(20, 'gwei'), "value": "1"})
+
+INFO [05-30|17:59:38] Submitted transaction                    fullhash=0xae61ea9623cf06efedc2a40e61af089550f29cc251a9a6665797f145419241bd recipient=0x04E34fEefD824E65Dd55E863b4ddDA02a12FA505
+
+"0xae61ea9623cf06efedc2a40e61af089550f29cc251a9a6665797f145419241bd"
+
+&gt; txpool.status
+
+{
+
+  pending: 1,
+
+  queued: 0
+
+}
+
+&gt; web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
+
+649.999622
+
+&gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
+
+125.000378
+
+&gt; miner.start()
+
+INFO [05-30|18:01:12] Updated mining threads                   threads=0
+
+INFO [05-30|18:01:12] Transaction pool price threshold updated price=18000000000
+
+INFO [05-30|18:01:12] Starting mining operation
+
+INFO [05-30|18:02:01] Commit new mining work                   number=206 txs=0 uncles=0 elapsed=407.553µs
+
+INFO [05-30|18:02:02] Successfully sealed new block            number=206 hash=69f31d…bfd898
+
+INFO [05-30|18:02:02] 🔗 block reached canonical chain          number=201 hash=d576ee…8398a4
+
+INFO [05-30|18:02:02] 🔨 mined potential block                  number=206 hash=69f31d…bfd898
+
+INFO [05-30|18:02:02] Commit new mining work                   number=207 txs=0 uncles=0 elapsed=189.102µs
+
+INFO [05-30|18:02:02] Successfully sealed new block            number=207 hash=8bd575…473072
+
+INFO [05-30|18:02:02] 🔗 block reached canonical chain          number=202 hash=ee475f…bc0189
+
+INFO [05-30|18:02:02] 🔨 mined potential block                  number=207 hash=8bd575…473072
+
+INFO [05-30|18:02:02] Mining too far in the future             wait=2s
+
+&gt; miner.stop()
+
+INFO [05-30|18:02:04] Commit new mining work                   number=208 txs=0 uncles=0 elapsed=2.001s
+
+true
+
+&gt; txpool.status
+
+{
+
+  pending: 0,
+
+  queued: 0
+
+}
+
+&gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
+
+125.000378000000000001
+
+&gt; web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
+
+909.999621999999999999
+
+&gt;
+
+</code></pre>
+</div>
