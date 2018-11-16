@@ -6,21 +6,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>ethereum源码分析(一)</title>
-  <meta name="description" content="ethereum源码分析(一)">
+  <title>Mac下搭建个人博客</title>
+  <meta name="description" content="使用Jekyll和github搭建个人博客">
   <meta name="author" content="陈建辉">
 
-  <meta name="keywords" content="go-ethereum,源码分析"
+  <meta name="keywords" content="Mac,Git，Github，Markdown，jekyll"
   />
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="ethereum源码分析(一)">
-  <meta name="twitter:description" content="ethereum源码分析(一)">
+  <meta name="twitter:title" content="Mac下搭建个人博客">
+  <meta name="twitter:description" content="使用Jekyll和github搭建个人博客">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="ethereum源码分析(一)">
-  <meta property="og:description" content="ethereum源码分析(一)">
-  <meta property="og:site_name" content="go-ethereum,源码分析e"
+  <meta property="og:title" content="Mac下搭建个人博客">
+  <meta property="og:description" content="使用Jekyll和github搭建个人博客">
+  <meta property="og:site_name" content="Mac,Git，Github，Markdown，jekylle"
   />
 
 
@@ -31,7 +31,7 @@
   <link rel="stylesheet" href=" /css/main.css ">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="http://localhost:4000/2018/05/25/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%B3%BB%E5%88%97(%E4%B8%80)/">
+  <link rel="canonical" href="http://localhost:4000/2018/04/10/buildblog-interview0/">
   <link rel="alternate" type="application/rss+xml" title="陈建辉区块链博客" href="http://localhost:4000 /feed.xml
     ">
 
@@ -161,10 +161,10 @@
     <div class="content-wrapper__inner">
       <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">ethereum源码分析(一)</h1>
+    <h1 class="post-title">Mac下搭建个人博客</h1>
     <div class="post-meta">
       <img src="/images/calendar.png" width="20px"/>
-      <time datetime="2018-05-25 00:00:00 +0800" itemprop="datePublished" class="post-meta__date date">2018-05-25</time>
+      <time datetime="2018-04-10 00:00:00 +0800" itemprop="datePublished" class="post-meta__date date">2018-04-10</time>
 
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -182,60 +182,165 @@
   <p>备注：如有错误，请指正，不断更新迭代</p>
 </blockquote>
 
-<h3 id="一-下载源码">一. 下载源码</h3>
+<h3 id="一-前言">一. 前言</h3>
 
-<p><code class="highlighter-rouge">git clone https://github.com/ethereum/go-ethereum</code></p>
+<p>拥有一个属于自己的个人博客是非常必要的，通过写博客，可以对学习进行归纳总结，对经验进行分享。如何搭建自己的个人博客，其实还是需要做不少工作的，下面是本人搭建的一个区块链博客过程，分享给大家，希望大家也尽量开启自己的博客之旅。</p>
 
-<p>命令执行成功之后，代码就会下载到下面这个目录，%GOPATH%\src\github.com\ethereum\go-ethereum</p>
+<h3 id="二-架构选型">二. 架构选型</h3>
 
-<h3 id="二-go-ethereum-目录大概介绍">二. go ethereum 目录大概介绍</h3>
+<p>目前所了解到的，受欢迎的博客搭建架构如下：</p>
+<ul>
+  <li>Git+Github+Markdown+jekyll （免费）</li>
+  <li>Git+Github+Markdown+hexo （免费）</li>
+  <li>虚拟主机＋插件＋Wordpress （付费）</li>
+</ul>
 
-<p>go-ethereum项目的组织结构基本上是按照功能模块划分的目录，下面简单介绍一下各个目录的结构，每个目录在GO语言里面又被成为一个Package</p>
+<p>第1，2免费，第3付费
+如果决定花钱，那么选3，省心省力。不过我个人还是介意自己去搭建一个博客，而且作为一个合格程序员，熟悉github网站的使用还是非常必要的。
+1，2的话看个人喜好，各有各的优缺点，看你注重哪个，具体的话自己网上了解，资料一堆。
+我选择架构1，虽然jekyll麻烦点，但是github默认支持jekyll，可以直接在github网页版上编辑和发布博客，所以也就选他了。</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>accounts  实现了一个高等级的以太坊账户管理
-bmt			二进制的默克尔树的实现
-build			主要是编译和构建的一些脚本和配置
-cmd			命令行工具，又分了很多的命令行工具，下面一个一个介绍
-	/abigen		Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages
-	/bootnode	启动一个仅仅实现网络发现的节点
-	/evm		以太坊虚拟机的开发工具， 用来提供一个可配置的，受隔离的代码调试环境
-	/faucet		
-	/geth		以太坊命令行客户端，最重要的一个工具
-	/p2psim		提供了一个工具来模拟http的API
-	/puppeth	创建一个新的以太坊网络的向导
-	/rlpdump 	提供了一个RLP数据的格式化输出
-	/swarm		swarm网络的接入点
-	/util		提供了一些公共的工具
-	/wnode		这是一个简单的Whisper节点。 它可以用作独立的引导节点。此外，可以用于不同的测试和诊断目的。
-common			提供了一些公共的工具类
-compression		Package rle implements the run-length encoding used for Ethereum data.
-consensus		提供了以太坊的一些共识算法，比如ethhash, clique(proof-of-authority)
-console			console类
-contracts
-core			以太坊的核心数据结构和算法(虚拟机，状态，区块链，布隆过滤器)
-crypto			加密和hash算法，
-eth			实现了以太坊的协议
-ethclient		提供了以太坊的RPC客户端
-ethdb			eth的数据库(包括实际使用的leveldb和供测试使用的内存数据库)
-ethstats		提供网络状态的报告
-event			处理实时的事件
-les			实现了以太坊的轻量级协议子集
-light			实现为以太坊轻量级客户端提供按需检索的功能
-log			提供对人机都友好的日志信息
-metrics			提供磁盘计数器
-miner			提供以太坊的区块创建和挖矿
-mobile			移动端使用的一些warpper
-node			以太坊的多种类型的节点
-p2p			以太坊p2p网络协议
-rlp			以太坊序列化处理
-rpc			远程方法调用
-swarm			swarm网络处理
-tests			测试
-trie			以太坊重要的数据结构Package trie implements Merkle Patricia Tries.
-whisper			提供了whisper节点的协议。
+<h3 id="三-博客搭建">三. 博客搭建</h3>
+
+<h4 id="1-启动本地博客命令">1. 启动本地博客命令</h4>
+
+<p>我们直接运行启动本地博客命令，看看自己环境到底缺啥，直接根据问题去找原因，这样搭建也不会无厘头。</p>
+
+<pre><code class="language-angular2html">bunddle exec jekyll server
 </code></pre>
-</div>
-<p>接下去，我会选一些重点模块，比如p2p,rpc,创世区块，交易，创建账户，虚拟机miner等重点来学习，抓大放小，方便大家抓住核心，整体了解之后然后深入了解，循序渐进。</p>
+<p>理论上输出：
+<img src="http://p96hyfqf4.bkt.clouddn.com/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%91%BD%E4%BB%A4.png" alt="" /></p>
+
+<p>安装过程中可能每个人的环境不同，终端提示问题不同，然后根据提示选择性安装ruby,gem,jekyll,bundler等包，缺什么安装什么，终端都有提示。
+参考如下命令：</p>
+
+<pre><code class="language-angular2html">ruby:brew install ruby
+
+gem:sudo gem install --system
+
+jekyll:sudo gem install jekyll
+
+bundler:sudo gem install bundler
+</code></pre>
+
+<h4 id="2-部署github">2. 部署github</h4>
+
+<p>如果没有github的赶紧注册自己的账号，注册之后按照username.github.io创建一个仓库。
+这里重点需要讲一下部署keys,方便文件从仓库上传和下载。
+settings-&gt;Deploys keys-&gt;add Deploys key</p>
+
+<p>本地操作</p>
+
+<ul>
+  <li>获取key</li>
+</ul>
+
+<p><code class="highlighter-rouge">ssh-keygen -t rsa -C "xxx@163.com"</code>  <!--替换自己注册邮箱--></p>
+
+<p><code class="highlighter-rouge">cat /Users/chenjh/.ssh/id_rsa.pub </code> <!--直接把输出的key拷贝到github上--></p>
+
+<ul>
+  <li>clone博客代码文件夹</li>
+</ul>
+
+<p><code class="highlighter-rouge">git clone https://github.com/bitchenjh/bitchenjh.github.io.git</code>  <!--替换成自己的github code 路径--></p>
+
+<p>执行之后，本地就出现一个bitchenjh.github.io的文件夹。</p>
+
+<h4 id="3-编写博客并且上传github仓库">3. 编写博客并且上传github仓库</h4>
+
+<p>本地博客结构如下图：</p>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/%E6%9C%AC%E5%9C%B0%E5%8D%9A%E5%AE%A2%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84.jpg" alt="" /></p>
+
+<p>_posts:存放博客的目录，注意博客命名需要严格按照一定格式：xxxx-xx-xx-xxxx-xxxx.md</p>
+
+<p>_site:该目录是jekyll编译出来的博客运行文件，修改之后可以直接删除，然后重新编译生成该文件夹。编译完成之后只需要直接将该文件内容
+       直接更新到github</p>
+
+<p>更新博客过程：</p>
+
+<ul>
+  <li>
+    <p>将_site删除</p>
+  </li>
+  <li>
+    <p>更新博客</p>
+  </li>
+  <li>
+    <p>编译：bundle exec jekyll serve build</p>
+  </li>
+  <li>
+    <p>重新生成_sites,将里面的内容全部拷贝到clone的文件夹：</p>
+  </li>
+  <li>
+    <p>执行如下命令：</p>
+  </li>
+</ul>
+
+<pre><code class="language-angular2html">cd  bitchenjh.github.io    &lt;!--替换自己的clone目录--&gt;
+
+git add *
+
+git status
+
+git commit -m "init"
+
+git push -u origin master
+</code></pre>
+
+<h4 id="4-登入个人博客">4. 登入个人博客</h4>
+
+<p>上面操作完成之后，这个时候在浏览器上输入: username.github.io，就可以看见博客了。</p>
+
+<h3 id="四-其他">四. 其他</h3>
+
+<p>以下内容为扩展，如果让你的博客显得高大尚，可以部署自己的独立域名。同时也可以借助一个平台将博客进行云存储。</p>
+
+<h4 id="1-阿里云域名绑定">1. 阿里云域名绑定</h4>
+
+<p>a. 进入阿里云<a href="https://www.aliyun.com/">https://www.aliyun.com/</a>够买个人域名，比如我的：www.chenjianhui.org</p>
+
+<p>b. 对域名进行DNS解析。</p>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/%E9%98%BF%E9%87%8C%E4%BA%91%E5%9F%9F%E5%90%8D.png" alt="" /></p>
+
+<p>c. 进入个人github-&gt;Settings</p>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/github%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png" alt="" /></p>
+
+<h4 id="2-云存储托管博客图片">2. 云存储托管博客图片</h4>
+
+<p>在非自己搭的博客如csdn中，如果想在文章中插入一张图片，其实是非常简单的，只要从你本机进行图片选择，然后选择上传，图片就会上传到CSDN的服务器，
+到时候在文章显示的时候就会读取该图片。但是如果是在自己的搭建的网站中要进行图片的显示就会遇到问题，因为图片无法从你本机读取，除非你的
+本机是一台服务器。所以我们要选择一个专门存储图片的服务商，同时存储的图片还能进行外链，即获得图片的URL地址，到时候就可以通过该URL访问并
+显示这张图片。我这边使用的图片存储商是七牛云存储，这是一个免费的存储空间。</p>
+
+<p>简要描述下步骤：</p>
+
+<p>a. 进入七牛云存储官网<a href="https://www.qiniu.com]">https://www.qiniu.com</a>登陆注册。新建一个空间。</p>
+
+<p>b. 然后在内容管理中上传一张图片，点击该图片，即可获得该图片的外链地址。然后复制即可。</p>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/%E4%B8%83%E7%89%9B%E4%BA%91.jpg" alt="image" /></p>
+
+<p>c. 然后在新建的博客中进行访问，由于博客使用markdown语法进行编辑的，所以要使用以下语法访问这张图片的URL地址。
+我在Markdown中的格式：</p>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/%E5%BC%95%E7%94%A8%E5%9B%BE%E7%89%87%E5%A4%96%E9%93%BE.png" alt="" /></p>
+
+<p><strong>最后注意事项</strong>：</p>
+
+<ol>
+  <li>
+    <p>git只允许每个人有一个以用户名.github.io命名的仓库，例如，我的用户是bitchenjh, 那么我的唯一对应主页应该是
+  bitchenjh.github.io, 仓库名也必须命名为bitchenjh.github.io。</p>
+  </li>
+  <li>
+    <p>Domain’s DNS record could not be retrieved问题，说明你的域名云解析有问题，你去阿里云上仔细核对你的独立域名，
+最好设置同时添加’www’及’@’记录，这样访问博客更加方便。</p>
+  </li>
+</ol>
 
   </section>
   <h2 style="color:red"><strong>版权声明：博客中的文章版权归博主所有，未经授权，禁止转载，转载请注明出处，合作请联系：chenjh07507(微信)</strong></h2>
@@ -304,14 +409,9 @@ whisper			提供了whisper节点的协议。
 
        <ul class="pager">
         
-        <li class="previous">
-            <a href="/2018/05/18/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%A4%9A%E8%8A%82%E7%82%B9)/" data-toggle="tooltip" data-placement="top" title="搭建以太坊私有链(多节点)">上一篇：  <span>搭建以太坊私有链(多节点)</span>
-            </a>
-        </li>
-        
         
         <li class="next">
-            <a href="/2018/05/25/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E5%92%8C%E5%8A%A0%E5%AF%86/" data-toggle="tooltip" data-placement="top" title="数字签名验证和加密解密">下一篇：  <span>数字签名验证和加密解密</span>
+            <a href="/2018/05/15/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%8D%95%E8%8A%82%E7%82%B9)/" data-toggle="tooltip" data-placement="top" title="搭建以太坊私有链(单节点)">下一篇：  <span>搭建以太坊私有链(单节点)</span>
             </a>
         </li>
         
@@ -320,7 +420,7 @@ whisper			提供了whisper节点的协议。
 
 <section class="post-comments">
   <!--PC和WAP自适应版-->
-<div id="SOHUCS" sid=ethereum源码分析(一) ></div>
+<div id="SOHUCS" sid=Mac下搭建个人博客 ></div>
 <script type="text/javascript">
 (function(){
 var appid = 'cytfSz8yx';

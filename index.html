@@ -164,33 +164,12 @@
   <ol class="post-list">
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2018/05/25/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%B3%BB%E5%88%97(%E4%B8%80)/" title="访问 ethereum源码分析(一)">ethereum源码分析(一)</a></h2>
-      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代一. 下载源码git clone https://github.com/ethereum/go-ethereum命令执行成功之后，代码就会下载到下面这个目录，%GOPATH%\src\github.com\ethereum\go-ethereum二. go ethereum 目录大概介绍go-ethereum项目的组织结构基本上是按照功能模块划分的目录，下面简单介绍一下各个目录的结构，每...&hellip;</p>
+      <h2 class="post-list__post-title post-title"><a href="/2018/11/16/%E4%BB%A5%E5%A4%AA%E5%9D%8ARPC%E6%8E%A5%E5%8F%A3/" title="访问 以太坊RPC接口">以太坊RPC接口</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代Internal包简介Internal包主要是封装了js的命令行界面，并且包含了命令行所调用的api信息。ethapi/api包分析ethapi/api包主要是进入js的命令行界面后，输入的命令实现部分。js的命令实现在ethapi/api和node/api中。目前一共有三种api的命令。(1)第一种是admin相关的命令，这个是通过安全的RPC通道实现的。其结构体为PrivateAdm...&hellip;</p>
       <div class="post-list__meta">        
-        <time datetime="2018-05-25 00:00:00 +0800" class="post-list__meta--date date">
+        <time datetime="2018-11-16 00:00:00 +0800" class="post-list__meta--date date">
           <img src="/images/calendar.png" width="20px" /> 
-          2018-05-25</time> 
-        <div class = "tag-img-icon">
-          <img src="/images/tag-icon.svg" width="20px" /> 
-        </div>
-        <a href="/tags">
-          <div class = "post-list-icon-mate">
-            <span class="post-list__meta--tags-right">go-ethereum</span>
-          </div>
-          <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2018/05/25/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%B3%BB%E5%88%97(%E4%B8%80)/>阅读全文 » </a>
-          </div>
-      </div>
-      <hr class="post-list__divider" />
-    </li>
-    
-    <li>
-      <h2 class="post-list__post-title post-title"><a href="/2018/05/18/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%A4%9A%E8%8A%82%E7%82%B9)/" title="访问 搭建以太坊私有链(多节点)">搭建以太坊私有链(多节点)</a></h2>
-      <p class="excerpt">layout: posttitle: “搭建以太坊私有链(多节点)”date: 2018-05-18description: “搭建以太坊私有链(多节点)”tag: 以太坊多节点私有链搭建keywords: “go-ethereum,私有链，多节点，集群”—  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代搭建以太坊私有链(多节点)上一篇博客我们了解了使用geth搭建以太坊私有网络,这一次则要在私有网络中建立多个node组成的集群,并互...&hellip;</p>
-      <div class="post-list__meta">        
-        <time datetime="2018-05-18 00:00:00 +0800" class="post-list__meta--date date">
-          <img src="/images/calendar.png" width="20px" /> 
-          2018-05-18</time> 
+          2018-11-16</time> 
         <div class = "tag-img-icon">
           <img src="/images/tag-icon.svg" width="20px" /> 
         </div>
@@ -199,49 +178,406 @@
             <span class="post-list__meta--tags-right"></span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2018/05/18/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%A4%9A%E8%8A%82%E7%82%B9)/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2018/11/16/%E4%BB%A5%E5%A4%AA%E5%9D%8ARPC%E6%8E%A5%E5%8F%A3/>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2018/05/15/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%8D%95%E8%8A%82%E7%82%B9)/" title="访问 搭建以太坊私有链(单节点)">搭建以太坊私有链(单节点)</a></h2>
-      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代搭建以太坊私有链(单节点)以太坊是一个公有链系统，我们可以通过设置一些参数来运行自己的私有链节点，在自己的私有链上进行开发和测试不需要同步公有链数据，也不需要花钱来买以太币，节省存储空间和成本，而且很灵活很方便。本文介绍使用geth客户端搭建私有链的操作步骤，同时会解释在这个过程中用到的各个命令及选项的含义和作用，最后会介绍geth的Javascript Console中的一些常用功能。...&hellip;</p>
+      <h2 class="post-list__post-title post-title"><a href="/2018/10/17/EOS%E7%9A%84Scatter%E9%92%B1%E5%8C%85%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8/" title="访问 EOS的Scatter钱包介绍与使用">EOS的Scatter钱包介绍与使用</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代Scatter钱包介绍与使用一、Scatter 钱包介绍 Scatter钱包是—款安装在chorme浏览器上的插件EOS钱包，类似于以太坊的metamask。Scatter钱包得到过多个节点的推荐，比如EOSNewYork，generEOS。你可以向你信任的EOS节点社区咨询关于Scatter的安全性等间题。通过Scatter钱包，我们可以在PC端很方便的体验建立在EOS上的Dapp官网...&hellip;</p>
       <div class="post-list__meta">        
-        <time datetime="2018-05-15 00:00:00 +0800" class="post-list__meta--date date">
+        <time datetime="2018-10-17 00:00:00 +0800" class="post-list__meta--date date">
           <img src="/images/calendar.png" width="20px" /> 
-          2018-05-15</time> 
+          2018-10-17</time> 
         <div class = "tag-img-icon">
           <img src="/images/tag-icon.svg" width="20px" /> 
         </div>
         <a href="/tags">
           <div class = "post-list-icon-mate">
-            <span class="post-list__meta--tags-right">以太坊私有链搭建</span>
+            <span class="post-list__meta--tags-right"></span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2018/05/15/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%8D%95%E8%8A%82%E7%82%B9)/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2018/10/17/EOS%E7%9A%84Scatter%E9%92%B1%E5%8C%85%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8/>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
     </li>
     
     <li>
-      <h2 class="post-list__post-title post-title"><a href="/2018/05/10/buildblog-interview0/" title="访问 Mac下搭建个人博客">Mac下搭建个人博客</a></h2>
-      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代一. 前言最近听大牛指导，觉得非常必要拥有一个属于自己的个人博客。通过写博客，可以对学习进行归纳总结，对经验进行分享，以后是一笔不小的人生财富。回想自己工作多年，要写的东西实在太多，所以心血来潮，自己动手搭建个人博客，本来认为非常容易，花不了多少时间，但是中途还是碰到不少问题，网上资料很多很杂，都不是特别适合自己，而且过程不全面，经过自己不断摸索，不断重装，花了几天时间终于搭建起来了。下...&hellip;</p>
+      <h2 class="post-list__post-title post-title"><a href="/2018/10/16/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/" title="访问 智能合约项目开发(truffle框架使用)">智能合约项目开发(truffle框架使用)</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代一 开发前的准备solidity语言Ethereum上的智能合约需要使用solidity语言来撰写。solidity是一种类似Javascript的语言，而且围绕着solidity的各种开发工具链，都是使用属于Javascript生态系的npm来提供的开发框架truffleTruffle是一个世界级的开发环境，测试框架，以太坊的资源管理通道，致力于让以太坊上的开发变得简单，当前最活跃的智...&hellip;</p>
       <div class="post-list__meta">        
-        <time datetime="2018-05-10 00:00:00 +0800" class="post-list__meta--date date">
+        <time datetime="2018-10-16 00:00:00 +0800" class="post-list__meta--date date">
           <img src="/images/calendar.png" width="20px" /> 
-          2018-05-10</time> 
+          2018-10-16</time> 
         <div class = "tag-img-icon">
           <img src="/images/tag-icon.svg" width="20px" /> 
         </div>
         <a href="/tags">
           <div class = "post-list-icon-mate">
-            <span class="post-list__meta--tags-right">博客</span>
+            <span class="post-list__meta--tags-right"></span>
           </div>
           <div class = "post-list-small-mate">
-          <a class="btn-border-small" href=/2018/05/10/buildblog-interview0/>阅读全文 » </a>
+          <a class="btn-border-small" href=/2018/10/16/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/09/30/%E5%9C%A8metamask%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84token/" title="访问 在metamask中部署自己的token">在metamask中部署自己的token</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代在metamask中部署自己的token拷贝代币代码下面是官方提供的代码：https://ethereum.org/token部署这里需要使用一个Google浏览器插件metamask插件，需要翻墙才可以使用，需要代劳的评论区留言，（自搭服务器）可以使用的人直接在Google商量搜索metamask将其添加进去，第一次会为你创建一个账号，仔细看都看得明白，然后进去，选择网络，在test网...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-09-30 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-09-30</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/09/30/%E5%9C%A8metamask%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84token/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/09/29/Remix%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" title="访问 Remix的三种编译环境">Remix的三种编译环境</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代Remix的三种编译环境Remix has 3 different environment options that can be used to deploy/test Solidity contracts: JavaScript VM, Injected Web3, and Web3 Provider. This option can be changed under the Env...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-09-29 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-09-29</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/09/29/Remix%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/09/15/%E4%BB%A5%E5%A4%AA%E5%9D%8ADapp%E5%BC%80/" title="访问 以太坊Dapp开发">以太坊Dapp开发</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代以太坊Dapp开发一 安装truffleTruffle是目前最流行的以太坊开发框架，采用JavaScript编写，支持智能合约的编译、部署和测试。具体安装步骤网上资料很多二 创建工程如果想创建一个空工程，可以用下面的命令truffle Init需要使用代理代码结构如下：主要分为3个部分：●  contracts目录中包含Solidity合约代码，其中Migrations.sol是必须...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-09-15 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-09-15</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/09/15/%E4%BB%A5%E5%A4%AA%E5%9D%8ADapp%E5%BC%80/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/09/15/Solidity%E8%AF%AD%E6%B3%95/" title="访问 Solidity语法">Solidity语法</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代solidity编译npm install  solcsolc --bin  具体合约文件ABI 和字节码Remix拷贝ABI和字节码http://www.bejson.com/gasGas 可以认为是一个工作量单位，智能合约越复杂（计算步骤的数量、类型、占用的内存等等），所需的 Gas 就越多。Gas 的最小单位是 wei:solidity 类的多继承、重写solidity 类具有多继...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-09-15 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-09-15</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/09/15/Solidity%E8%AF%AD%E6%B3%95/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/09/12/UTXO%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B4%A6%E6%88%B7%E6%A8%A1%E5%9E%8B/" title="访问 UTXO与账户模型(转)">UTXO与账户模型(转)</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代UTXO与普通账户模型区块链网络中有两种记账模式，除了 UTXO 模型还有 Account Based 结构，也就是普通账户模型，也叫账户余额模型，前者在比特币系的数字货币中被广泛使用，后者更多是用在智能合约型的区块链上。普通账户模型我们先从传统的账户模型出发来聊聊是如何记账的，假设我们现在有一个支付系统，在这个支付系统中有村长和张三两个账户，村长账户里有 100 万，现在要转账给...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-09-12 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-09-12</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/09/12/UTXO%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B4%A6%E6%88%B7%E6%A8%A1%E5%9E%8B/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/08/27/%E5%88%9D%E8%AF%86Etcd%E5%92%8CZookeeper/" title="访问 初识Etcd和Zookeeper">初识Etcd和Zookeeper</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代这里简单做个介绍，具体请查阅其它资料。Etcd简介etcd是一个高可用的分布式键值(key-value)数据库。etcd内部采用raft协议作为一致性算法，etcd基于Go语言实现。etcd是一个服务发现系统，具备以下的特点：简单：安装配置简单，而且提供了HTTP API进行交互，使用也很简单安全：支持SSL证书验证快速：根据官方提供的benchmark数据，单实例支持每秒2k+读操作可...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-08-27 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-08-27</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/08/27/%E5%88%9D%E8%AF%86Etcd%E5%92%8CZookeeper/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/08/26/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E7%AE%97%E6%B3%95/" title="访问 数字签名算法">数字签名算法</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代数字签名算法数字签名算法(DSA)数字签名算法（DSA，Digital Signature Algorithm），是一种公开密钥算法，不能用于加密，只能用于数字签名。主要用作为接收者验证数字的完整性和数据发送者的身份，DSA算法的安全性基于解离散对数的困难性。package mainimport (    "crypto/dsa"    "crypto/rand"    "fmt")fu...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-08-26 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-08-26</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/08/26/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E7%AE%97%E6%B3%95/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/08/26/%E6%AF%94%E7%89%B9%E5%B8%81%E6%89%8B%E7%BB%AD%E8%B4%B9%E7%9A%84%E4%BC%B0%E7%AE%97/" title="访问 比特币手续费估算">比特币手续费估算</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代1.进入 Bitcoin Fees for Transactionshttps://bitcoinfees.earn.com2.最左面是单位，数字是手续费范围，1 - 10 代表 1聪到10聪/byte橙色条表示未确认的交易数，蓝色条表示确认的交易数。delay 代表可能延迟的块数 time 代表预估分钟数如果不够直观，我们可以把单位改成btc/byte我们可以看到从50聪（0.0000...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-08-26 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-08-26</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/08/26/%E6%AF%94%E7%89%B9%E5%B8%81%E6%89%8B%E7%BB%AD%E8%B4%B9%E7%9A%84%E4%BC%B0%E7%AE%97/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/08/23/Hash%E7%AE%97%E6%B3%95/" title="访问 Hash算法">Hash算法</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代Hash有哪些流行的算法目前流行的 Hash 算法包括 MD5、SHA-1 , SHA-2，SHA-3  MD4（RFC 1320）是 MIT 的 Ronald L. Rivest 在 1990 年设计的，MD 是 Message Digest 的缩写。其输出为 128 位。MD4 已证明不够安全。  MD5（RFC 1321）是 Rivest 于1991年对 MD4 的改进版本。它对输...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-08-23 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-08-23</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/08/23/Hash%E7%AE%97%E6%B3%95/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/08/10/%E7%B2%BE%E9%80%9A%E6%AF%94%E7%89%B9%E5%B8%81%E7%AC%94%E8%AE%B0/" title="访问 精通比特币笔记">精通比特币笔记</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代找零总的来讲，交易是将钱从交易输入移至输出。输入是指钱币的来源，通常是之前一笔交易的输出。交易输出将约定 金额发送到新的所有者的比特币地址，并将找零输出返回原来原来所有者。 一笔交易的输出可以被当做另一笔新交 易的输入，这样随着钱从一个地址被移动到另一个地址的同时形成了一条所有权链bitcoin 源码安装brew install automake berkeley-db4 libtool...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-08-10 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-08-10</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/08/10/%E7%B2%BE%E9%80%9A%E6%AF%94%E7%89%B9%E5%B8%81%E7%AC%94%E8%AE%B0/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/07/13/%E9%93%BE%E7%A0%812-%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/" title="访问 链码的概念与使用">链码的概念与使用</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代链码的概念与使用概念:Chaincode: 链上代码, 简称链码, 一般是指用户编写的应用代码链码被部署在Fabric网络节点上,​	Peer 节点​		– 背书节点​		– commit节点​		– Leader节点​		– 锚节点运行在隔离沙盒(当前为Docker容器)中,并通过gRPC协议与相应的Peer节点进行交互, 以操作分布式账本中的数据protobuf分类链码一般分为:  ...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-07-13 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-07-13</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/07/13/%E9%93%BE%E7%A0%812-%E6%A6%82%E5%BF%B5%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/07/13/3.Fabric-CA%E5%BA%94%E7%94%A8%E4%B8%8E%E9%85%8D%E7%BD%AE/" title="访问 Fabric CA 应用与配置">Fabric CA 应用与配置</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代Fabric CA 应用与配置简介Fabric CA项目是超级账本Fabric内的MemberService组件, 对网络内各个实体的身份证书的管理, 主要实现:  负责Fabric网络内所有实体(Identity)的身份管理, 包括身份的注册、注销等  负责证书管理, 包括ECerts(身份证书)、TCerts(交易证书)等的发放和注销  服务端支持基于客户端命令行的RESTful A...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-07-13 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-07-13</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/07/13/3.Fabric-CA%E5%BA%94%E7%94%A8%E4%B8%8E%E9%85%8D%E7%BD%AE/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/07/12/%E9%93%BE%E7%A0%813-%E9%93%BE%E7%A0%81%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/" title="访问 链码开发基础">链码开发基础</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代区块链应用开发简介数字货币曾是区块链技术的唯一应用场景对智能合约的支持突破了场景限制, 丰富了区块链应用的适用范围, 可以支持多行业、大规模的商业应用区块链应用区块链应用:  一般由若干部署在区块链网络中的智能合约, 以及调用这些智能合约的应用程序组成用户专注于与业务本身相关的应用程序智能合约则封装了与区块链账本直接交互的相关过程, 被应用程序调用智能合约开发智能合约本质上是为了对上层业...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-07-12 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-07-12</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/07/12/%E9%93%BE%E7%A0%813-%E9%93%BE%E7%A0%81%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/07/12/%E9%93%BE%E7%A0%811-%E6%B5%8B%E8%AF%95%E4%BD%93%E9%AA%8C%E9%93%BE%E7%A0%81/" title="访问 测试链码">测试链码</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代测试链码确定进入CLI容器中$ sudo docker exec -it cli bashPeer加入应用通道后, 可以执行链码相关操作,进行测试链码在调用之前, 必须先经过安装和实例化两个步骤, 部署到Peer节点上.检查环境变量是否正确设置echo $CHANNEL_NAME设置环境变量export CHANNEL_NAME=mychannel安装并实例化Chaincode安装:pe...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-07-12 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-07-12</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/07/12/%E9%93%BE%E7%A0%811-%E6%B5%8B%E8%AF%95%E4%BD%93%E9%AA%8C%E9%93%BE%E7%A0%81/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/07/12/4-Fabcar%E6%A1%88%E4%BE%8B%E6%B5%8B%E8%AF%95/" title="访问 Fabcar案例测试">Fabcar案例测试</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代node测试关闭网络$ sudo ./byfn.sh -m down进入到fabric-samples/fabcar目录中$ cd ../fabcar/$ ls  如果是完整的环境,目录中应该包含如下文件:  enrollAdmin.js    invoke.js    package.json     query.js     registerUser.js     startFabr...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-07-12 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-07-12</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/07/12/4-Fabcar%E6%A1%88%E4%BE%8B%E6%B5%8B%E8%AF%95/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/07/12/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/" title="访问 非对称加密">非对称加密</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代RSA加密RSA是一种公钥密码算法，它的名字是由它的三位开发者，即Ron Rivest、Adi Shamir 和 Leonard Adleman的姓氏的首字母组成的( Rivest-Shamir-Adleman )。RSA可以被用于公钥密码和数字签名RSA加密和解密的代码实现openssl生成私钥openssl genrsa -out rsa_private_key.pem 1024  ...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-07-12 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-07-12</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/07/12/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/>阅读全文 » </a>
+          </div>
+      </div>
+      <hr class="post-list__divider" />
+    </li>
+    
+    <li>
+      <h2 class="post-list__post-title post-title"><a href="/2018/07/12/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/" title="访问 对称加密算法">对称加密算法</a></h2>
+      <p class="excerpt">  作者：陈建辉  博客：www.chenjianhui.org  备注：如有错误，请指正，不断更新迭代对称加密DES加密-密钥长度必须8byteDES加密算法，为对称加密算法中的一种。70年代初由IBM研发，后1977年被美国国家标准局采纳为数据加密标准，即DES全称的由来：Data Encryption Standard。对称加密算法，是相对于非对称加密算法而言的。两者区别在于，对称加密在加密和解密时使用同一密钥，而非对称加密在加密和解密时使用不同的密钥，即公钥和私钥。常见的DES、3...&hellip;</p>
+      <div class="post-list__meta">        
+        <time datetime="2018-07-12 00:00:00 +0800" class="post-list__meta--date date">
+          <img src="/images/calendar.png" width="20px" /> 
+          2018-07-12</time> 
+        <div class = "tag-img-icon">
+          <img src="/images/tag-icon.svg" width="20px" /> 
+        </div>
+        <a href="/tags">
+          <div class = "post-list-icon-mate">
+            <span class="post-list__meta--tags-right"></span>
+          </div>
+          <div class = "post-list-small-mate">
+          <a class="btn-border-small" href=/2018/07/12/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/>阅读全文 » </a>
           </div>
       </div>
       <hr class="post-list__divider" />
@@ -258,7 +594,9 @@
 	</script>
 	
     
-    <span class="pagination__page-number">1 / 1</span>
+    <span class="pagination__page-number">1 / 2</span>
+    
+        <a class="older-posts pagination__older btn btn-small btn-tertiary" href="/page/2/#blog">更早 &rarr;</a>
     
 </nav>
 

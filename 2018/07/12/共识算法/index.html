@@ -6,21 +6,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <title>ethereum源码分析(一)</title>
-  <meta name="description" content="ethereum源码分析(一)">
+  <title>共识算法</title>
+  <meta name="description" content="">
   <meta name="author" content="陈建辉">
 
-  <meta name="keywords" content="go-ethereum,源码分析"
+  <meta name="keywords" content=""
   />
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="ethereum源码分析(一)">
-  <meta name="twitter:description" content="ethereum源码分析(一)">
+  <meta name="twitter:title" content="共识算法">
+  <meta name="twitter:description" content="">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="ethereum源码分析(一)">
-  <meta property="og:description" content="ethereum源码分析(一)">
-  <meta property="og:site_name" content="go-ethereum,源码分析e"
+  <meta property="og:title" content="共识算法">
+  <meta property="og:description" content="">
+  <meta property="og:site_name" content="e"
   />
 
 
@@ -31,7 +31,7 @@
   <link rel="stylesheet" href=" /css/main.css ">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-  <link rel="canonical" href="http://localhost:4000/2018/05/25/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%B3%BB%E5%88%97(%E4%B8%80)/">
+  <link rel="canonical" href="http://localhost:4000/2018/07/12/%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/">
   <link rel="alternate" type="application/rss+xml" title="陈建辉区块链博客" href="http://localhost:4000 /feed.xml
     ">
 
@@ -161,10 +161,10 @@
     <div class="content-wrapper__inner">
       <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title">ethereum源码分析(一)</h1>
+    <h1 class="post-title">共识算法</h1>
     <div class="post-meta">
       <img src="/images/calendar.png" width="20px"/>
-      <time datetime="2018-05-25 00:00:00 +0800" itemprop="datePublished" class="post-meta__date date">2018-05-25</time>
+      <time datetime="2018-07-12 00:00:00 +0800" itemprop="datePublished" class="post-meta__date date">2018-07-12</time>
 
       <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
     </p>
@@ -182,60 +182,76 @@
   <p>备注：如有错误，请指正，不断更新迭代</p>
 </blockquote>
 
-<h3 id="一-下载源码">一. 下载源码</h3>
+<h3 id="dbft授权拜占庭容错算法">dBFT(授权拜占庭容错算法)</h3>
 
-<p><code class="highlighter-rouge">git clone https://github.com/ethereum/go-ethereum</code></p>
+<p>dBFT又被称为“授权拜占庭容错”机制，是一种在NEO区块链内部实现的保证容错的共识算法，其主要目的在于解决拜占庭将军问题。
+dBFT共识机制是众多为了解决这一问题中的一种方案。在这个机制当中，存在两个参与者，一个是专业记账的“记账节点”，一个是系统当中的普通用户。普通用户基于持有权益的比例来投票决定记账节点，当需要通过一项共识时，在这些记账节点中随机推选出一名发言人拟定方案，然后由其他记账节点根据拜占庭容错算法，即少数服从多数的原则进行表态，如果超过66%的节点表示同意发言人方案，则共识达成；否则，重新推选发言人，重复投票过程。</p>
 
-<p>命令执行成功之后，代码就会下载到下面这个目录，%GOPATH%\src\github.com\ethereum\go-ethereum</p>
+<h3 id="pbftfabric使用的经典算法拜占庭容错">PBFT(Fabric使用的经典算法（拜占庭容错）)</h3>
 
-<h3 id="二-go-ethereum-目录大概介绍">二. go ethereum 目录大概介绍</h3>
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/PBFT.png" alt="" /></p>
 
-<p>go-ethereum项目的组织结构基本上是按照功能模块划分的目录，下面简单介绍一下各个目录的结构，每个目录在GO语言里面又被成为一个Package</p>
+<p>其中C为发送请求端，0123为服务端，3为宕机的服务端，具体步骤如下：</p>
+<ol>
+  <li>Request：请求端C发送请求到任意一节点，这里是0</li>
+  <li>Pre-Prepare：服务端0收到C的请求后进行广播，扩散至123</li>
+  <li>Prepare：123,收到后记录并再次广播，1-&gt;023，2-&gt;013，3因为宕机无法广播</li>
+  <li>Commit：0123节点在Prepare阶段，若收到超过一定数量的相同请求，则进入Commit阶段，广播Commit请求
+5.Reply：0123节点在Commit阶段，若收到超过一定数量的相同请求，则对C进行反馈</li>
+</ol>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>accounts  实现了一个高等级的以太坊账户管理
-bmt			二进制的默克尔树的实现
-build			主要是编译和构建的一些脚本和配置
-cmd			命令行工具，又分了很多的命令行工具，下面一个一个介绍
-	/abigen		Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages
-	/bootnode	启动一个仅仅实现网络发现的节点
-	/evm		以太坊虚拟机的开发工具， 用来提供一个可配置的，受隔离的代码调试环境
-	/faucet		
-	/geth		以太坊命令行客户端，最重要的一个工具
-	/p2psim		提供了一个工具来模拟http的API
-	/puppeth	创建一个新的以太坊网络的向导
-	/rlpdump 	提供了一个RLP数据的格式化输出
-	/swarm		swarm网络的接入点
-	/util		提供了一些公共的工具
-	/wnode		这是一个简单的Whisper节点。 它可以用作独立的引导节点。此外，可以用于不同的测试和诊断目的。
-common			提供了一些公共的工具类
-compression		Package rle implements the run-length encoding used for Ethereum data.
-consensus		提供了以太坊的一些共识算法，比如ethhash, clique(proof-of-authority)
-console			console类
-contracts
-core			以太坊的核心数据结构和算法(虚拟机，状态，区块链，布隆过滤器)
-crypto			加密和hash算法，
-eth			实现了以太坊的协议
-ethclient		提供了以太坊的RPC客户端
-ethdb			eth的数据库(包括实际使用的leveldb和供测试使用的内存数据库)
-ethstats		提供网络状态的报告
-event			处理实时的事件
-les			实现了以太坊的轻量级协议子集
-light			实现为以太坊轻量级客户端提供按需检索的功能
-log			提供对人机都友好的日志信息
-metrics			提供磁盘计数器
-miner			提供以太坊的区块创建和挖矿
-mobile			移动端使用的一些warpper
-node			以太坊的多种类型的节点
-p2p			以太坊p2p网络协议
-rlp			以太坊序列化处理
-rpc			远程方法调用
-swarm			swarm网络处理
-tests			测试
-trie			以太坊重要的数据结构Package trie implements Merkle Patricia Tries.
-whisper			提供了whisper节点的协议。
-</code></pre>
-</div>
-<p>接下去，我会选一些重点模块，比如p2p,rpc,创世区块，交易，创建账户，虚拟机miner等重点来学习，抓大放小，方便大家抓住核心，整体了解之后然后深入了解，循序渐进。</p>
+<p>根据上述流程，在 N ≥ 3F + 1 的情況下一致性是可能解決，N为总计算机数，F为有问题的计算机总数
+Í</p>
+
+<h3 id="raft">Raft</h3>
+
+<p>Raft是在非拜占庭故障下达成共识的强一致协议.在区块链系统中，使用Raft实现记账共识的过程可以描述如下：首先选举一个leader，接着赋予leader完全的权利管理记账。leader从客户端接收记账请求，完成记账操作，生成区块，并复制到其他记账节点。有了leader简化了记账操作的管理。如果leader失效或与其他节点失去联系，这时，系统就会选出新的leader。
+一个Raft集群通常包含5个服务器，允许系统有2个故障服务器。每个服务器处于3个状态之一：leader、follower或candidate。正常操作状态下，仅有一个leader，其他的服务器均为follower。follower是被动的，不会对自身发出的请求而是对来自leader和candidate的请求做出响应。leader处理所有的客户端请求（若客户端联系follower，则该follower将转发给leader)。candidate状态用来选举leader。</p>
+
+<p><strong>leader选举</strong>
+当follower在选举超时时间内未收到leader的心跳消息，则转换为candidate状态。为了避免选举冲突，这个超时时间是一个150~300ms之间的随机数。
+一般而言，在Raft系统中：
+1）任何一个服务器都可以成为一个候选者candidate，它向其他服务器follower发出要求选举自己的请求。
+2）其他服务器同意了，发出OK。如果在这个过程中，有一个follower宕机，没有收到请求选举的要求，此时候选者可以自己选自己，只要达到N/2+1的大多数票，候选人还是可以成为leader。
+3）这样这个候选者就成为了leader领导人，它可以向follower发出指令，比如进行记账。
+4）以后可以通过心跳进行记账的通知。
+5）一旦这个leader崩溃了，那么follower中有一个成为候选者，并发出邀票选举。
+6）follower同意后，其成为leader，继续承担记账等指导工作。</p>
+
+<p><strong>记账过程</strong>
+Raft的记账过程按以下步骤完成：
+1）假设leader领导人已经选出，这时客户端发出增加一个日志的要求；
+2）leader要求follower遵从他的指令，都将这个新的日志内容追加到他们各自日志中；
+3）大多数follower服务器将交易记录写入账本后，确认追加成功，发出确认成功消息；
+4）在下一个心跳中，leader会通知所有follower更新确认的项目。
+对于每个新的交易记录，重复上述过程</p>
+
+<h3 id="bft-dpos共识">BFT-DPOS共识</h3>
+
+<p>EOS为了改进传统的 DPoS 算法，我们可以借鉴 PBFT（Practical Byzantine Fault Tolerance，拜占庭容错算法）的机制。在传统 DPoS 共识机制中，我们让每个见证人在出块时向全网广播这个区块，但即使其他见证人收到了目前的新区块，也无法对新区块进行确认，需要等待轮到自己出块时，才能通过生产区块来确认之前的区块。</p>
+
+<p>在新的机制下，每个见证人出块时依然全网广播，其他见证人收到新区块后，立即对此区块进行验证，并将验证签名完成的区块立即返回出块见证人，不需等待其他见证人自己出块时再确认。从当前的出块见证人看来，他生产了一个区块，并全网广播，然后陆续收到了其他见证人对此区块的确认，在收到 2/3 见证人确认的瞬间，区块（包括其中的交易）就不可逆了。交易确认时间大大缩短，从 45 秒缩短至 3 秒左右（主要为等待生产区块的时间）。这种机制可以称为初级版的 BFT-DPoS 共识机制。</p>
+
+<p>为了挖掘 EOS 系统的性能，Daniel Larimer 在以上基础上又进行了修改。首先，他将出块速度由 3 秒 缩短至 0.5 秒，理论上这样可以极大提升系统性能，但带来了网络延迟问题：0.5 秒的确认时间会导致下一个出块者还没有收到上一个出块者的区块，就该生产下一个区块了，那么下一个出块者会忽略上一个区块，导致区块链分叉（相同区块高度有两个区块）。比如：中国见证人后面可能就是美国见证人，中美网络延迟有时高达 300ms，很有可能到时美国见证人没有收到中国见证人的区块时，就该出块了，那么中国见证人的区块就会被略过。</p>
+
+<p>为解决这个问题，Daniel Larimer 将原先的随机出块顺序改为由见证人商议后确定的出块顺序，这样网络连接延迟较低的见证人之间就可以相邻出块。比如：日本的见证人后面是中国的见证人，再后面是俄罗斯的见证人，再后面是英国的见证人，再后面是美国的见证人。这样可以大大降低见证人之间的网络延迟。使得 0.5 秒的出块速度有了理论上的可能。</p>
+
+<p>为了保证万无一失，不让任何一个见证人因为网络延迟的意外而被跳过，Daniel Larimer 让每个见证人连续生产 6 个区块，也就是每个见证人还是负责 3 秒的区块生产，但是由最初的只生产 1 个变成生产 6 个。最恶劣的情况下，6 个区块中，最后一个或两个有可能因为网络延迟或其他意外被下一个见证人略过，但 6 个区块中的前几个会有足够的时间传递给下一个见证人。</p>
+
+<p>再来讨论 BFT-DPoS 的交易确认时间问题：每个区块生产后立即进行全网广播，区块生产者一边等待 0.5 秒生产下一个区块，同时会接收其他见证人对于上一个区块的确认结果。新区块的生产和旧区块确认的接收同时进行。大部分的情况下，交易会在 1 秒之内确认（不可逆）。这其中包括了 0.5 秒的区块生产，和要求其他见证人确认的时间。</p>
+
+<p>EOS 系统规定，一旦区块达到不可逆状态（2/3见证人确认），就无法在此之前进行分叉，保证了交易的永久可信。另外，即使多数见证人想分叉区块链，也只能以相同的速度（0.5秒）与主链竞争，就算主链只剩下一个见证人，分叉链也永远不会追上主链，保证了系统的稳定。</p>
+
+<p>21个超级节点（主力见证人节点） + 100个备选见证人节点；
+0.5秒出块时间 + 1秒全网确认；
+每个主力见证人节点通过协商方式确定各自出块顺序，并且每轮产生6个区块以减少网络延时的影响，见证人间按顺序处理交易，可尽量减少地理影响；
+当21个主力见证人的15个确认交易后，交易即不可逆转；
+当达到不可逆转状态后，就无法分叉。</p>
+
+<p><strong>缺点</strong>
+1.不是完全去中心化，可能会有多个中心之间共同串通而损害整个社区利益的行为。
+2.依赖于投票机制
+投票制度其实有以下问题，首先有可能最后投票的参与度会很低，影响投票结果。其次也会可能有这种情况，例如用户把币都存在了交易所，交易所有可能会代替他们去投票，但是用户并不是很在意到底交易所会把票投向何处。也就是说有时候代币持有者的兴趣点和用户的是可能不完全一样的。</p>
 
   </section>
   <h2 style="color:red"><strong>版权声明：博客中的文章版权归博主所有，未经授权，禁止转载，转载请注明出处，合作请联系：chenjh07507(微信)</strong></h2>
@@ -305,13 +321,13 @@ whisper			提供了whisper节点的协议。
        <ul class="pager">
         
         <li class="previous">
-            <a href="/2018/05/18/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%A4%9A%E8%8A%82%E7%82%B9)/" data-toggle="tooltip" data-placement="top" title="搭建以太坊私有链(多节点)">上一篇：  <span>搭建以太坊私有链(多节点)</span>
+            <a href="/2018/06/02/%E6%9C%80%E6%96%B0GoogleV8%E5%BC%95%E6%93%8E%E7%BC%96%E8%AF%91/" data-toggle="tooltip" data-placement="top" title="新GoogleV8引擎编译">上一篇：  <span>新GoogleV8引擎编译</span>
             </a>
         </li>
         
         
         <li class="next">
-            <a href="/2018/05/25/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E5%92%8C%E5%8A%A0%E5%AF%86/" data-toggle="tooltip" data-placement="top" title="数字签名验证和加密解密">下一篇：  <span>数字签名验证和加密解密</span>
+            <a href="/2018/07/12/Filecoin%E5%8C%BA%E5%9D%97%E9%93%BE%E9%A1%B9%E7%9B%AE/" data-toggle="tooltip" data-placement="top" title="Filecoin区块链项目">下一篇：  <span>Filecoin区块链项目</span>
             </a>
         </li>
         
@@ -320,7 +336,7 @@ whisper			提供了whisper节点的协议。
 
 <section class="post-comments">
   <!--PC和WAP自适应版-->
-<div id="SOHUCS" sid=ethereum源码分析(一) ></div>
+<div id="SOHUCS" sid=共识算法 ></div>
 <script type="text/javascript">
 (function(){
 var appid = 'cytfSz8yx';

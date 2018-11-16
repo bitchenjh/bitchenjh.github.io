@@ -5,12 +5,12 @@
     <description>陈建辉，项目经理，高级软件工程师，早期区块链从业人员，拥有多年传统金融软件开发经验</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 02 Jun 2018 13:32:25 +0800</pubDate>
-    <lastBuildDate>Sat, 02 Jun 2018 13:32:25 +0800</lastBuildDate>
+    <pubDate>Fri, 16 Nov 2018 18:18:54 +0800</pubDate>
+    <lastBuildDate>Fri, 16 Nov 2018 18:18:54 +0800</lastBuildDate>
     <generator>Jekyll v3.5.1</generator>
     
       <item>
-        <title>ethereum源码分析(一)</title>
+        <title>以太坊RPC接口</title>
         <description>&lt;blockquote&gt;
   &lt;p&gt;作者：陈建辉&lt;/p&gt;
 
@@ -21,81 +21,224 @@
   &lt;p&gt;备注：如有错误，请指正，不断更新迭代&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&quot;一-下载源码&quot;&gt;一. 下载源码&lt;/h3&gt;
+&lt;h2 id=&quot;internal包简介&quot;&gt;Internal包简介&lt;/h2&gt;
+&lt;p&gt;Internal包主要是封装了js的命令行界面，并且包含了命令行所调用的api信息。&lt;/p&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/ethereum/go-ethereum&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;命令执行成功之后，代码就会下载到下面这个目录，%GOPATH%\src\github.com\ethereum\go-ethereum&lt;/p&gt;
-
-&lt;h3 id=&quot;二-go-ethereum-目录大概介绍&quot;&gt;二. go ethereum 目录大概介绍&lt;/h3&gt;
-
-&lt;p&gt;go-ethereum项目的组织结构基本上是按照功能模块划分的目录，下面简单介绍一下各个目录的结构，每个目录在GO语言里面又被成为一个Package&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;accounts  实现了一个高等级的以太坊账户管理
-bmt			二进制的默克尔树的实现
-build			主要是编译和构建的一些脚本和配置
-cmd			命令行工具，又分了很多的命令行工具，下面一个一个介绍
-	/abigen		Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages
-	/bootnode	启动一个仅仅实现网络发现的节点
-	/evm		以太坊虚拟机的开发工具， 用来提供一个可配置的，受隔离的代码调试环境
-	/faucet		
-	/geth		以太坊命令行客户端，最重要的一个工具
-	/p2psim		提供了一个工具来模拟http的API
-	/puppeth	创建一个新的以太坊网络的向导
-	/rlpdump 	提供了一个RLP数据的格式化输出
-	/swarm		swarm网络的接入点
-	/util		提供了一些公共的工具
-	/wnode		这是一个简单的Whisper节点。 它可以用作独立的引导节点。此外，可以用于不同的测试和诊断目的。
-common			提供了一些公共的工具类
-compression		Package rle implements the run-length encoding used for Ethereum data.
-consensus		提供了以太坊的一些共识算法，比如ethhash, clique(proof-of-authority)
-console			console类
-contracts
-core			以太坊的核心数据结构和算法(虚拟机，状态，区块链，布隆过滤器)
-crypto			加密和hash算法，
-eth			实现了以太坊的协议
-ethclient		提供了以太坊的RPC客户端
-ethdb			eth的数据库(包括实际使用的leveldb和供测试使用的内存数据库)
-ethstats		提供网络状态的报告
-event			处理实时的事件
-les			实现了以太坊的轻量级协议子集
-light			实现为以太坊轻量级客户端提供按需检索的功能
-log			提供对人机都友好的日志信息
-metrics			提供磁盘计数器
-miner			提供以太坊的区块创建和挖矿
-mobile			移动端使用的一些warpper
-node			以太坊的多种类型的节点
-p2p			以太坊p2p网络协议
-rlp			以太坊序列化处理
-rpc			远程方法调用
-swarm			swarm网络处理
-tests			测试
-trie			以太坊重要的数据结构Package trie implements Merkle Patricia Tries.
-whisper			提供了whisper节点的协议。
+&lt;h2 id=&quot;ethapiapi包分析&quot;&gt;ethapi/api包分析&lt;/h2&gt;
+&lt;p&gt;ethapi/api包主要是进入js的命令行界面后，输入的命令实现部分。
+js的命令实现在ethapi/api和node/api中。目前一共有三种api的命令。
+(1)第一种是admin相关的命令，这个是通过安全的RPC通道实现的。其结构体为PrivateAdminAPI&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// PrivateAdminAPI is the collection of administrative API methods exposed only
+// over a secure RPC channel.
+type PrivateAdminAPI struct {
+    node *Node // Node interfaced by this API
+}
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;p&gt;接下去，我会选一些重点模块，比如rpc,p2p,miner等重点来学习，抓大放小，方便大家抓住核心，整体了解之后然后深入了解，循序渐进。&lt;/p&gt;
+&lt;p&gt;(2)第二种是personal相关的命令，主要是负责账户管理相关命令，可以lock和unlock账户。其结构体为PrivateAccountAPI&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// PrivateAccountAPI provides an API to access accounts managed by this node.
+// It offers methods to create, (un)lock en list accounts. Some methods accept
+// passwords and are therefore considered private by default.
+type PrivateAccountAPI struct {
+    am        *accounts.Manager
+    nonceLock *AddrLocker
+    b         Backend
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;(3)第三种是eth相关的命令，主要是可以操作区块上的相关命令。其结构体为PublicBlockChainAPI&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// PublicBlockChainAPI provides an API to access the Ethereum blockchain.
+// It offers only methods that operate on public data that is freely available to anyone.
+type PublicBlockChainAPI struct {
+    b Backend
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;otto包&quot;&gt;otto包&lt;/h2&gt;
+&lt;p&gt;以太坊的命令是通过在js虚拟机上来实现命令的。而在go语言中，有第三方的otto包，可以直接在go语言中实现js命令。而以太坊代码则使用了otto包来实现搭建js命令。
+在otto包中，set方法是设置变量的值，get方法是获取变量的值。&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// Set the property of the given name to the given value.
+    func (self Object) Set(name string, value interface{})
+// Get the value of the property with the given name.
+    func (self Object) Get(name string) (Value, error)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Compile是根据输入的路径对js的代码进行编译，返回变量的值。&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// Compile will parse the given source and return a Script value or nil and
+// an error if there was a problem during compilation.
+    func (self *Otto) Compile(filename string, src interface{}) (*Script, error)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Run方法会运行相关的js代码，如果有返回值的话会返回。&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// Run will run the given source (parsing it first if necessary), returning the resulting value and error (if any)
+    func (self Otto) Run(src interface{}) (Value, error)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h2 id=&quot;如何编写自己的以太坊命令&quot;&gt;如何编写自己的以太坊命令&lt;/h2&gt;
+&lt;p&gt;接上篇ethapi.api-analysis分析，如果我们需要在相关模块添加相关命令，首先我们需要找到相关命令所对应的api结构体。
+各个命令对应的结构体，包的位置如下：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;     admin  PrivateAdminAPI,PublicAdminAPI  node/api
+     debug  PrivateDebugAPI eth/api
+     eth    PublicBlockChainAPI ethapi/api
+     miner  PrivateMinerAPI eth/api
+     net    PublicNetAPI    ethapi/api
+     personal   PrivateAccountAPI   ethapi/api
+     txpool PublicTxPoolAPI ethapi/api
+     rpc    所有可调用包集合
+     web3   所有命令集合
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;假设我们需要在personal包中添加一个命令，那么我们就在PrivateAccountAPI中添加一个方法：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    func (s *PrivateAccountAPI) TestMethod() {
+        fmt.Print(&quot;TestMethod-cjh&quot;)
+    }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;接下来到internal/web3ext/web3ext.go中，找到personal命令集合，然后添加一条自己的命令：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;const Personal_JS = `
+web3._extend(
+    methods: [
+            new web3._extend.Method({
+                name : 'testMethod',
+                call : 'personal_testMethod'    
+            }),                                 //our method
+...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;最后到internal/jsre/deps/web3.js中，找到personal方法的定义：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;function Personal(web3) {
+    this._requestManager = web3._requestManager;
+
+    var self = this;
+
+    methods().forEach(function(method) {
+        method.attachToObject(self);
+        method.setRequestManager(self._requestManager);
+    });
+
+    properties().forEach(function(p) {
+        p.attachToObject(self);
+        p.setRequestManager(self._requestManager);
+    });
+}
+var methods = function () {
+...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;然后再methods中添加你定义的方法名：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;var methods = function () {
+    var testMethod = new Method({
+        name : 'testMethod',
+        call : 'personal_testMethod'
+    });
+...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;并在最后的return中添加你的方法：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;return [
+        newAccount,
+        testMethod, //our method
+        importRawKey,
+        unlockAccount,
+        ecRecover,
+        sign,
+        sendTransaction,
+        lockAccount
+    ];
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这之后在启动命令行，我们就可以调用我们的方法了。结果如下：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &amp;gt; personal.testMethod()
+
+    TestMethodnull
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;eth包中添加一个命令案例&quot;&gt;eth包中添加一个命令案例&lt;/h3&gt;
+
+&lt;p&gt;ethclient/ethclient.go&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// Forking tool's client for the Ethereum RPC API
+func (ec *Client) ForkingAt(ctx context.Context, account common.Address, rate uint64)(uint64, error){
+	var result hexutil.Uint64
+	err := ec.c.CallContext(ctx, &amp;amp;result, &quot;eth_forking&quot;, account, rate)
+	return uint64(result), err
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;ethapi/api.go&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;var rateFlag uint64 = 1
+// Start forking command.
+// Rate is the fork coin's exchange rate.
+func (s *PublicBlockChainAPI) Forking(ctx context.Context, rate uint64) (uint64) {
+	// attempt: store the rate info in context.
+	// context.WithValue(ctx, &quot;rate&quot;, rate)
+	rateFlag = rate
+	rate = rate + 1
+	return rate
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;deps/web3.js&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;var forking = new Method({
+    name: 'forking',
+    call: 'eth_forking',
+    params: 1,
+    inputFormatter: [null],
+    outputFormatter: formatters.outputBigNumberFormatter
+});
+
+return [
+     .....
+    getWork,
+    forking
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;web3ext/web3ext.go&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;new web3._extend.Method({
+  name: 'getProof',
+  call: 'eth_getProof',
+  params: 3,
+  inputFormatter: [web3._extend.formatters.inputAddressFormatter, null, web3._extend.formatters.inputBlockNumberFormatter]
+}),
+new web3._extend.Method({
+  name: 'forking',
+  call: 'eth_forking',
+  params: 1,
+  inputFormatter: [null]
+}),
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;运行结果：
+Postman：
+&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/eth_forking.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;console：
+&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/rpc%20api.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;修改的文件对比：
+&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/rpcapi%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;参考文档
+https://www.cnblogs.com/Evsward/p/eth-rpc.html&lt;/p&gt;
 </description>
-        <pubDate>Fri, 25 May 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2018/05/25/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%B3%BB%E5%88%97(%E4%B8%80)/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/05/25/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%B3%BB%E5%88%97(%E4%B8%80)/</guid>
-        
-        <category>go-ethereum</category>
+        <pubDate>Fri, 16 Nov 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2018/11/16/%E4%BB%A5%E5%A4%AA%E5%9D%8ARPC%E6%8E%A5%E5%8F%A3/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/11/16/%E4%BB%A5%E5%A4%AA%E5%9D%8ARPC%E6%8E%A5%E5%8F%A3/</guid>
         
         
       </item>
     
       <item>
-        <title>搭建以太坊私有链(多节点)</title>
-        <description>&lt;p&gt;layout: post
-title: “搭建以太坊私有链(多节点)”
-date: 2018-05-18
-description: “搭建以太坊私有链(多节点)”
-tag: 以太坊多节点私有链搭建
-keywords: “go-ethereum,私有链，多节点，集群”
-—&lt;/p&gt;
-
-&lt;blockquote&gt;
+        <title>EOS的Scatter钱包介绍与使用</title>
+        <description>&lt;blockquote&gt;
   &lt;p&gt;作者：陈建辉&lt;/p&gt;
 
   &lt;p&gt;博客：www.chenjianhui.org&lt;/p&gt;
@@ -105,523 +248,667 @@ keywords: “go-ethereum,私有链，多节点，集群”
   &lt;p&gt;备注：如有错误，请指正，不断更新迭代&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h1 id=&quot;搭建以太坊私有链多节点&quot;&gt;搭建以太坊私有链(多节点)&lt;/h1&gt;
+&lt;h2 id=&quot;scatter钱包介绍与使用&quot;&gt;Scatter钱包介绍与使用&lt;/h2&gt;
 
-&lt;p&gt;上一篇博客我们了解了使用geth搭建以太坊私有网络,这一次则要在私有网络中建立多个node组成的集群,并互相发现,产生交易.&lt;/p&gt;
+&lt;h3 id=&quot;一scatter-钱包介绍&quot;&gt;一、Scatter 钱包介绍&lt;/h3&gt;
+&lt;p&gt; Scatter钱包是—款安装在chorme浏览器上的插件EOS钱包，类似于以太坊的metamask。Scatter钱包得到过多个节点的推荐，比如EOSNewYork，generEOS。你可以向你信任的EOS节点社区咨询关于Scatter的安全性等间题。通过Scatter钱包，我们可以在PC端很方便的体验建立在EOS上的Dapp
+官网 ：https://get-scatter.com/                                       
+Scatter钱包开源代码：https://github.com/EOSEssentials/Scatter&lt;/p&gt;
 
-&lt;p&gt;为了在本地网络运行多个以太坊节点的实例,必须确保一下几点:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;每个实例都有独立的数据目录(–datadir)&lt;/li&gt;
-  &lt;li&gt;每个实例运行都有独立的端口.(eth和rpc两者都是)(–port 和 –rpcprot)&lt;/li&gt;
-  &lt;li&gt;在集群的情况下, 实例之间都必须要知道彼此.&lt;/li&gt;
-  &lt;li&gt;唯一的ipc通信端点,或者禁用ipc.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;h3 id=&quot;二-eos帐户的概念&quot;&gt;二、 EOS帐户的概念&lt;/h3&gt;
+&lt;p&gt;帐户是存储在区块链中的人类可读名称。它可以由个人或一组个人拥有，具体取决于权限配置。需要一个帐户来将交易转移或推送到区块链。
+与BTC、ETH不同的是，在EOS上，一切的操作都是以帐户为基础的。EOS的账户可以自定义，有12位字符，字母和1-5阿拉伯数字自由组合（只能是12345abcdefghijklmnopqrstuvwxyz这里的字符）。小于12位的帐户，需要参加竞拍获得。每个账户可以是一个自然人，也或者是一个大公司，或者是一个智能合约。&lt;/p&gt;
 
-&lt;p&gt;通过上一篇博客，我们产生了一个节点，相关数据在data0中。今天为了演示，我们另外新建两个目录data1,data2,分别代表另外两个节点，本地的目录结构如下：&lt;/p&gt;
+&lt;p&gt;我们可以创建类似”iloveyouxuan”、”lovelovelove”这样的帐户，例如block one的EOS帐户是：b1，币安的充值EOS帐户是：binancecleos。当别人转账时，输入这些帐户地址就可以了。&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;|-- data0
-|   |-- geth
-|   |   |-- LOCK
-|   |   |-- chaindata
-|   |   |-- lightchaindata
-|   |   |-- nodekey
-|   |   |-- nodes
-|   |   `-- transactions.rlp
-|   |-- history
-|   `-- keystore
-|       |-- UTC--2018-05-30T08-06-12.333261000Z
-|       `-- UTC--2018-05-30T08-06-30.067324000Z
-|-- data1
-|   |-- geth
-|   |   |-- LOCK
-|   |   |-- chaindata
-|   |   |-- ethash
-|   |   |-- lightchaindata
-|   |   |-- nodekey
-|   |   |-- nodes
-|   |   `-- transactions.rlp
-|   `-- keystore
-|-- data2
-|   |-- geth
-|   |   |-- LOCK
-|   |   |-- chaindata
-|   |   |-- ethash
-|   |   |-- lightchaindata
-|   |   |-- nodekey
-|   |   |-- nodes
-|   |   `-- transactions.rlp
-|   `-- keystore
-`-- genesis.json
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;p&gt;注意：大多数人的EOS是放在交易所的，创建EOS帐户是需要收费的，大概需要0.6EOS的费用，交易所不可能为每个人都单独创建一个不同的帐户，交易所充值的帐户所有人都一样，是用memo来进行区分的，因此在转账时，memo一定要填写正确。公信宝转账与EOS一样，也是需要memo的。&lt;/p&gt;
 
-&lt;h2 id=&quot;启动第一个节点指定端口并禁用ipc&quot;&gt;启动第一个节点(指定端口,并禁用ipc)&lt;/h2&gt;
+&lt;p&gt;EOS的操作以人类可读的帐户为基础，就犹如支付宝和微信，在转账时，我们输入对方帐户就可以了。非常的方便。比起ETH和BTC，EOS的转帐更接近我们的实际生活应用（BTC和ETH的转账地址是一长串没有意义的字符串，我们脑子记不住的）。&lt;/p&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;geth --datadir data0 --networkid 314590 --ipcdisable --port 61910 --rpcport 8200 console&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&quot;eos帐户的创建过程&quot;&gt;EOS帐户的创建过程&lt;/h3&gt;
+&lt;p&gt;1、想好你要注册的名称，为12位字符长度，只能是1-5的数字和26个英文字母的组合。&lt;/p&gt;
 
-&lt;p&gt;控制台输出：&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;CjhMacPro:privatechain chenjh$ geth --datadir data0 --networkid 314590 --ipcdisable --port 61910 --rpcport 8200 console
+&lt;p&gt;用eospark.com，或者eosflar.io查询一下你想要的账户名有没有被注册过。&lt;/p&gt;
 
-INFO [05-30|17:41:52] Starting peer-to-peer node               instance=Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
+&lt;p&gt;2、准备好你的密钥对，即私钥和公钥，生成密钥对的方式有很多，TokenPocket钱包里边就有提供生成密钥对的功能。&lt;/p&gt;
 
-INFO [05-30|17:41:52] Allocated cache and file handles         database=/Users/chenjh/privatechain/data0/geth/chaindata cache=128 handles=1024
+&lt;p&gt;我们一定要保管好私钥，做好备份。&lt;/p&gt;
 
-INFO [05-30|17:41:52] Initialised chain configuration          config=&quot;{ChainID: 10 Homestead: 0 DAO: &amp;lt;nil&amp;gt; DAOSupport: false EIP150: &amp;lt;nil&amp;gt; EIP155: 0 EIP158: 0 Byzantium: &amp;lt;nil&amp;gt; Engine: unknown}&quot;
+&lt;p&gt;EOS 私钥是 51 位，EOS 公钥是 53 位（以 EOS 开头）&lt;/p&gt;
 
-INFO [05-30|17:41:52] Disk storage enabled for ethash caches   dir=/Users/chenjh/privatechain/data0/geth/ethash count=3
+&lt;p&gt;3、把你的公钥发给为你创建EOS帐户的人&lt;/p&gt;
 
-INFO [05-30|17:41:52] Disk storage enabled for ethash DAGs     dir=/Users/chenjh/.ethash                        count=2
+&lt;p&gt;EOS帐户的创建，需要已有的EOS帐户帮忙创建，最好发给自己的朋友来帮忙创建。&lt;/p&gt;
 
-INFO [05-30|17:41:52] Initialising Ethereum protocol           versions=&quot;[63 62]&quot; network=314590
+&lt;p&gt;尽量不要发给陌生人帮你创建，切记是发的公钥，不是私钥，如果别人给你创建钱包说需要私钥，那可能要骗你的EOS了。&lt;/p&gt;
 
-INFO [05-30|17:41:52] Loaded most recent local header          number=155 hash=1327ab…ddd9e2 td=21205924
+&lt;p&gt;4、你的朋友使用你的公钥为你创建帐户&lt;/p&gt;
 
-INFO [05-30|17:41:52] Loaded most recent local full block      number=155 hash=1327ab…ddd9e2 td=21205924
+&lt;p&gt;5、另一种方法是，通过meet.one或imtoken都可以申请账户，需要eos&lt;/p&gt;
 
-INFO [05-30|17:41:52] Loaded most recent local fast block      number=155 hash=1327ab…ddd9e2 td=21205924
+&lt;h3 id=&quot;eos帐户的权限&quot;&gt;EOS帐户的权限&lt;/h3&gt;
 
-INFO [05-30|17:41:52] Loaded local transaction journal         transactions=0 dropped=0
+&lt;p&gt;1、在EOS中，每个账户都有两个本地权限：Owner权限 和 Active权限；&lt;/p&gt;
 
-INFO [05-30|17:41:52] Regenerated local transaction journal    transactions=0 accounts=0
+&lt;p&gt;注意：每个权限可以对应一个公钥，这说明一个账户可以对应两个私钥（私钥和公钥成对出现），就是说一个账户可以被两个私钥控制。&lt;/p&gt;
 
-WARN [05-30|17:41:52] Blockchain not empty, fast sync disabled
+&lt;p&gt;当然，owner 和 active 可以使用同一个 公钥，这样就是被一个私钥控制。&lt;/p&gt;
 
-INFO [05-30|17:41:52] Starting P2P networking
+&lt;p&gt;Owner权限代表着对一个账户的所有权，是最高权限，只有少数交易会用到这种权限；&lt;/p&gt;
 
-INFO [05-30|17:41:52] UDP listener up                          self=enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910
+&lt;p&gt;EOS建议账户的拥有者把owner权限的密钥冷存储，且不要与任何人共享；&lt;/p&gt;
 
-INFO [05-30|17:41:52] RLPx listener up                         self=enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910
+&lt;p&gt;owner权限可以用来恢复已经被破坏的另一个权限。&lt;/p&gt;
 
-Welcome to the Geth JavaScript console!
+&lt;p&gt;Active权限可以用来转账、投票等；&lt;/p&gt;
 
-instance: Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
+&lt;p&gt;一般情况下使用active权限就够用了。&lt;/p&gt;
 
-INFO [05-30|17:41:52] Etherbase automatically configured       address=0x66035B6F180224CE2095ba162eBBD83173d6b574
+&lt;p&gt;2、账户还可拥有自定义权限，用于进一步扩展账户的管理；&lt;/p&gt;
 
-coinbase: 0x66035b6f180224ce2095ba162ebbd83173d6b574
+&lt;p&gt;3、权限可以分配给一个或多个公钥（public keys）。&lt;/p&gt;
 
-at block: 155 (Wed, 30 May 2018 16:22:40 CST)
+&lt;h3 id=&quot;eos帐户的查询&quot;&gt;EOS帐户的查询&lt;/h3&gt;
+&lt;p&gt;我们可以用eospark.com或eosflar.io来查询帐户，查询时，可以使用EOS帐户查询，也可以使用公钥查询，例如ok的EOS充值帐户查询结果如下：
+&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/eos%E8%B4%A6%E6%88%B7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
- datadir: /Users/chenjh/privatechain/data0
+&lt;h3 id=&quot;eos公钥私钥的作用&quot;&gt;EOS公钥、私钥的作用&lt;/h3&gt;
+&lt;p&gt;虽然转账用的是账号，但公私钥仍然非常重要。
+通过公钥可以查询到账号，也可以创建帐户，通过私钥签名可以对账号执行很多操作，例如导入钱包的时候，就需要用到私钥。私钥一定要备份、保管好。丢了私钥就等于丢了EOS资产。&lt;/p&gt;
 
- modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txpool:1.0 web3:1.0
+&lt;h3 id=&quot;在scatter中新增密钥对&quot;&gt;在scatter中新增密钥对&lt;/h3&gt;
+&lt;p&gt;账户申请好了之后，可以去scatter中新增密钥对，记得一定要先申请账户，再去新增。&lt;/p&gt;
 
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;h3 id=&quot;在scatter中设置身份&quot;&gt;在scatter中设置身份&lt;/h3&gt;
+&lt;p&gt;密钥对设置好了，可以去设置省份了&lt;/p&gt;
+</description>
+        <pubDate>Wed, 17 Oct 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2018/10/17/EOS%E7%9A%84Scatter%E9%92%B1%E5%8C%85%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/10/17/EOS%E7%9A%84Scatter%E9%92%B1%E5%8C%85%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>智能合约项目开发(truffle框架使用)</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;作者：陈建辉&lt;/p&gt;
 
-&lt;p&gt;上面的命令以命令行的(console)的方式启动了节点, 所以我们可以通过继续输入下面的命令获取节点实例的enode url&lt;/p&gt;
+  &lt;p&gt;博客：www.chenjianhui.org&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;admin.nodeInfo.enode&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;备注：如有错误，请指正，不断更新迭代&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;p&gt;控制台输出：&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; admin.nodeInfo.enode
-&quot;enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;h2 id=&quot;一-开发前的准备&quot;&gt;一 开发前的准备&lt;/h2&gt;
 
-&lt;p&gt;其他信息&lt;/p&gt;
+&lt;h3 id=&quot;solidity语言&quot;&gt;solidity语言&lt;/h3&gt;
+&lt;p&gt;Ethereum上的智能合约需要使用solidity语言来撰写。solidity是一种类似Javascript的语言，而且围绕着solidity的各种开发工具链，都是使用属于Javascript生态系的npm来提供的&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; eth.accounts
+&lt;h3 id=&quot;开发框架truffle&quot;&gt;开发框架truffle&lt;/h3&gt;
+&lt;p&gt;Truffle是一个世界级的开发环境，测试框架，以太坊的资源管理通道，致力于让以太坊上的开发变得简单，当前最活跃的智能合约开发框架，Truffle有以下：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;内置的智能合约编译，链接，部署和二进制文件的管理。&lt;/li&gt;
+  &lt;li&gt;快速开发下的自动合约测试。&lt;/li&gt;
+  &lt;li&gt;脚本化的，可扩展的部署与发布框架。&lt;/li&gt;
+  &lt;li&gt;部署到不管多少的公网或私网的网络环境管理功能&lt;/li&gt;
+  &lt;li&gt;使用EthPM&amp;amp;NPM提供的包管理，使用ERC190标准。&lt;/li&gt;
+  &lt;li&gt;与合约直接通信的直接交互控制台（写完合约就可以命令行里验证了）。&lt;/li&gt;
+  &lt;li&gt;可配的构建流程，支持紧密集成。&lt;/li&gt;
+  &lt;li&gt;在Truffle环境里支持执行外部的脚本。&lt;/li&gt;
+&lt;/ul&gt;
 
-[&quot;0x66035b6f180224ce2095ba162ebbd83173d6b574&quot;, &quot;0x04e34feefd824e65dd55e863b4ddda02a12fa505&quot;]
+&lt;h3 id=&quot;ethereumjs-testrpc客户端&quot;&gt;EthereumJS TestRPC客户端&lt;/h3&gt;
+&lt;p&gt;就像一般网站或App开发一样，在提供公开服务之前，开发者会在自己用于写程序的电脑（又称作本机）或透过测试网络来测试程序执行的效果，测试完成后，才会部署到公开的网络上提供服务。开发区块链智能合约的过程也是如此。特别是公开链上所有写入或读取计算结果的操作都需要虚拟代币，而且根据网络状况，每个公开链上的操作都需要要一小段反应时间。因此在开发的过程中，我们将用testrpc工具在电脑上模拟智能合约所需的以太坊内存块链测试环境。&lt;/p&gt;
 
-&amp;gt; admin.nodeInfo.enode
+&lt;p&gt;当开发基于Truffle的应用时，我们推荐使用EthereumJS TestRPC。它是一个完整的在内存中的区块链仅仅存在于你开发的设备上。它在执行交易时是实时返回，而不等待默认的出块时间，这样你可以快速验证你新写的代码，当出现错误时，也能即时反馈给你。它同时还是一个支持自动化测试的功能强大的客户端。Truffle充分利用它的特性，能将测试运行时间提速近90%&lt;/p&gt;
 
-&quot;enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910&quot;
+&lt;h3 id=&quot;atom-编辑器&quot;&gt;atom 编辑器&lt;/h3&gt;
+&lt;p&gt;此外，开发前还需准备一个合手的编辑器。我目前是使用Atom搭配solidity插件来开发。solidity插件除了支持语法高亮之外，也会透过Solium检查并提示基本的语法错误，相当方便。其他编辑器应该也有类似的插件可选择。&lt;/p&gt;
 
-&amp;gt; net.peerCount
+&lt;h2 id=&quot;二-开发所需的工具&quot;&gt;二 开发所需的工具&lt;/h2&gt;
 
-1
+&lt;p&gt;首先开发机上必须装好Node.js，再使用以下命令安装所需的工具：&lt;/p&gt;
 
-&amp;gt; admin.peers
-
-[]
-
-&amp;gt; personal.unlockAccount(eth.accounts[0])
-
-Unlock account 0x66035b6f180224ce2095ba162ebbd83173d6b574
-
-Passphrase:
-
-true
-
-&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
-
-649.999622
-
-&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
-
-125.000378
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cjhmacpro:helloworld chenjh$ npm install -g ethereumjs-testrpc truffle
+cjhmacpro:helloworld chenjh$ testrpc
 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;h2 id=&quot;启动第二个节点指定端口并禁用ipc&quot;&gt;启动第二个节点(指定端口,并禁用ipc)&lt;/h2&gt;
+&lt;h2 id=&quot;三-新建项目&quot;&gt;三 新建项目&lt;/h2&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;geth --datadir data1  init genesis.json&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;geth --datadir data1 --networkid 314590 --ipcdisable --port 61911 --rpcport 8101 --bootnodes &quot;enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910&quot; console&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;控制台输出：&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;CjhMacPro:privatechain chenjh$ geth --datadir data1  init genesis.json
-
-INFO [05-30|17:47:53] Allocated cache and file handles         database=/Users/chenjh/privatechain/data1/geth/chaindata cache=16 handles=16
-
-INFO [05-30|17:47:53] Successfully wrote genesis state         database=chaindata                                       hash=5e1fc7…d790e0
-
-INFO [05-30|17:47:53] Allocated cache and file handles         database=/Users/chenjh/privatechain/data1/geth/lightchaindata cache=16 handles=16
-
-INFO [05-30|17:47:53] Successfully wrote genesis state         database=lightchaindata                                       hash=5e1fc7…d790e0
-
-CjhMacPro:privatechain chenjh$ geth --datadir data1 --networkid 314590 --ipcdisable --port 61911 --rpcport 8101 --bootnodes &quot;enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910&quot; console
-
-INFO [05-30|17:48:07] Starting peer-to-peer node               instance=Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
-
-INFO [05-30|17:48:07] Allocated cache and file handles         database=/Users/chenjh/privatechain/data1/geth/chaindata cache=128 handles=1024
-
-INFO [05-30|17:48:07] Initialised chain configuration          config=&quot;{ChainID: 10 Homestead: 0 DAO: &amp;lt;nil&amp;gt; DAOSupport: false EIP150: &amp;lt;nil&amp;gt; EIP155: 0 EIP158: 0 Byzantium: &amp;lt;nil&amp;gt; Engine: unknown}&quot;
-
-INFO [05-30|17:48:07] Disk storage enabled for ethash caches   dir=/Users/chenjh/privatechain/data1/geth/ethash count=3
-
-INFO [05-30|17:48:07] Disk storage enabled for ethash DAGs     dir=/Users/chenjh/.ethash                        count=2
-
-INFO [05-30|17:48:07] Initialising Ethereum protocol           versions=&quot;[63 62]&quot; network=314590
-
-INFO [05-30|17:48:07] Loaded most recent local header          number=155 hash=1327ab…ddd9e2 td=21205924
-
-INFO [05-30|17:48:07] Loaded most recent local full block      number=155 hash=1327ab…ddd9e2 td=21205924
-
-INFO [05-30|17:48:07] Loaded most recent local fast block      number=155 hash=1327ab…ddd9e2 td=21205924
-
-INFO [05-30|17:48:07] Loaded local transaction journal         transactions=0 dropped=0
-
-INFO [05-30|17:48:07] Regenerated local transaction journal    transactions=0 accounts=0
-
-WARN [05-30|17:48:07] Blockchain not empty, fast sync disabled
-
-INFO [05-30|17:48:07] Starting P2P networking
-
-INFO [05-30|17:48:07] UDP listener up                          self=enode://eaa5ff26d4aa243d8bae4eb455d7da151bdd900ffd8652273f28e758032090b08058de01a832898a78922bf0f6cc4a86754abc62b4948682464324d89ae66c3a@10.0.154.153:61911
-
-INFO [05-30|17:48:07] RLPx listener up                         self=enode://eaa5ff26d4aa243d8bae4eb455d7da151bdd900ffd8652273f28e758032090b08058de01a832898a78922bf0f6cc4a86754abc62b4948682464324d89ae66c3a@10.0.154.153:61911
-
-Welcome to the Geth JavaScript console!
-
-instance: Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
-
- modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txpool:1.0 web3:1.0
-
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mkdir myproject
+$ truffle
+Truffle v4.1.14 - a development framework for Ethereum
+$ cd myproject
+$ truffle init  
+（如果truffle init报错，可以直接git clone以下模板，否则不需要执行）
+$ git clone
+https://github.com/trufflesuite/truffle-init-bare.git
+或者
+$ git clone
+https://github.com/truffle-box/metacoin-box.git
 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;其他信息&lt;/p&gt;
+&lt;p&gt;完成后，你将拥有如下目录：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; eth.accounts
+&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/truffle%20init%20%E7%BB%93%E6%9E%84.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-[]
+&lt;ul&gt;
+  &lt;li&gt;app/ - 你的应用文件运行的默认目录。这里面包括推荐的javascript文件和css样式文件目录，但你可以完全决定如何使用这些目录。&lt;/li&gt;
+  &lt;li&gt;contract/ - Truffle默认的合约文件存放地址。&lt;/li&gt;
+  &lt;li&gt;migrations/ - 存放发布脚本文件&lt;/li&gt;
+  &lt;li&gt;test/ - 用来测试应用和合约的测试文件&lt;/li&gt;
+  &lt;li&gt;truffle.js - Truffle的配置文件&lt;/li&gt;
+&lt;/ul&gt;
 
-&amp;gt; admin.nodeInfo
+&lt;p&gt;注意：truffle init可能会报错，报错信息如下，没有找到好的方法，直接clone.&lt;/p&gt;
 
-{
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Downloading...
+Error: Error making request to https://raw.githubusercontent.com/truffle-box/bare-box/master/truffle.js. Got error: tunneling socket could not be established, cause=connect EHOSTUNREACH 0.0.4.63:80 - Local (192.168.1.4:58993). Please check the format of the requested resource.
+    at Request._callback (/Users/chenjh/.nvm/versions/node/v8.12.0/lib/node_modules/truffle/build/webpack:/packages/truffle-box/lib/utils/unbox.js:45:1)
+    at self.callback (/Users/chenjh/.nvm/versions/node/v8.12.0/lib/node_modules/truffle/build/webpack:/~/request/request.js:185:1)
+    at emitOne (events.js:116:13)
+    at Request.emit (events.js:211:7)
+    at Request.onRequestError (/Users/chenjh/.nvm/versions/node/v8.12.0/lib/node_modules/truffle/build/webpack:/~/request/request.js:877:1)
+    at emitOne (events.js:116:13)
+    at ClientRequest.emit (events.js:211:7)
+    at ClientRequest.onError (/Users/chenjh/.nvm/versions/node/v8.12.0/lib/node_modules/truffle/build/webpack:/~/tunnel-agent/index.js:179:1)
+    at Object.onceWrapper (events.js:315:30)
+    at emitOne (events.js:116:13)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
-  enode: &quot;enode://eaa5ff26d4aa243d8bae4eb455d7da151bdd900ffd8652273f28e758032090b08058de01a832898a78922bf0f6cc4a86754abc62b4948682464324d89ae66c3a@10.0.154.153:61911&quot;,
+&lt;h2 id=&quot;四-编译项目&quot;&gt;四 编译项目&lt;/h2&gt;
 
-  id: &quot;eaa5ff26d4aa243d8bae4eb455d7da151bdd900ffd8652273f28e758032090b08058de01a832898a78922bf0f6cc4a86754abc62b4948682464324d89ae66c3a&quot;,
+&lt;h3 id=&quot;命令&quot;&gt;命令&lt;/h3&gt;
+&lt;p&gt;要编译您的合约，使用：&lt;/p&gt;
 
-  ip: &quot;10.0.154.153&quot;,
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;truffle compile&lt;/code&gt;&lt;/p&gt;
 
-  listenAddr: &quot;[::]:61911&quot;,
+&lt;p&gt;Truffle仅默认编译自上次编译后被修改过的文件，来减少不必要的编译。如果你想编译全部文件，可以使用–compile-all选项。&lt;/p&gt;
 
-  name: &quot;Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2&quot;,
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;truffle compile --compile-all&lt;/code&gt;&lt;/p&gt;
 
-  ports: {
+&lt;h3 id=&quot;约定&quot;&gt;约定&lt;/h3&gt;
 
-    discovery: 61911,
+&lt;p&gt;Truffle需要定义的合约名称和文件名准确匹配。举例来说，如果文件名为MyContract.sol，那么合约文件须为如下两者之一：&lt;/p&gt;
 
-    listener: 61911
+&lt;p&gt;contract MyContract {
+  …
+}
+// or
+library MyContract {
+  …
+}
+这种匹配是区分大小写的，也就是说大小写也要一致。推荐大写每一个开头字母，如上述代码定义。&lt;/p&gt;
 
-  },
+&lt;h3 id=&quot;依赖&quot;&gt;依赖&lt;/h3&gt;
 
-  protocols: {
+&lt;p&gt;你可以通过使用import来声明依赖。Truffle将会按正确顺序依次编译合约，并在需要的时候自动关联库。&lt;/p&gt;
 
-    eth: {
+&lt;h3 id=&quot;编译目录&quot;&gt;编译目录&lt;/h3&gt;
 
-      difficulty: 21205924,
+&lt;p&gt;编译的输出位于./build/contracts目录。如果目录不存在会自动创建。这些编译文件对于Truffle框架能否正常工作至关重要。你不应该在正常的编译或发布以外手动修改这些文件。&lt;/p&gt;
 
-      genesis: &quot;0x5e1fc79cb4ffa4739177b5408045cd5d51c6cf766133f23f7cd72ee1f8d790e0&quot;,
+&lt;h2 id=&quot;五-移植&quot;&gt;五 移植&lt;/h2&gt;
 
-      head: &quot;0x1327ab7c58e655cf0b80d769d697017976e190fe91e3a4c525081034a1ddd9e2&quot;,
+&lt;p&gt;是由一些Javascript文件组成来协助发布到以太坊网络。主要目的是用来缓存你的发布任务，它的存在基于你的发布需求会改变的前提。当你的工程发生了重要的改变，你将创建新的移植脚本来将这些变化带到区块链上。之前运行移植的历史记录通过一个特殊的Migrations合约来记录到链上，下面有详细说明。&lt;/p&gt;
 
-      network: 314590
+&lt;h3 id=&quot;命令-1&quot;&gt;命令&lt;/h3&gt;
 
-    }
+&lt;p&gt;执行移植，使用下述命令：&lt;/p&gt;
 
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;truffle migrate&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;这个命令会执行所有的位于migrations目录内的移植脚本。如果你之前的移植是成功执行的。truffle migrate仅会执行新创建的移植。如果没有新的移植脚本，这个命令不同执行任何操作。可以使用选项–reset来从头执行移植脚本。&lt;/p&gt;
+
+&lt;h3 id=&quot;移植脚本文件&quot;&gt;移植脚本文件&lt;/h3&gt;
+
+&lt;p&gt;一个样例文件如下：&lt;/p&gt;
+
+&lt;p&gt;文件名：4_example_migration.js&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module.exports = function(deployer) {
+  // deployment steps
+  deployer.deploy(MyContract);
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;需要注意的是文件名以数字开头，一个描述性的后缀结尾。数字前缀是必须的，用于记录移植是否成功。后缀仅是为了提高可读性，以方便理解。&lt;/p&gt;
+
+&lt;p&gt;移植js里的exports的函数接受一个deployer对象作为第一个参数。这个对象用于发布过程，提供了一个清晰的语法支持，同时提供一些通过的合约部署职责，比如保存发布的文件以备稍后使用。deployer对象是用来缓存(stage)发布任务的主要操作接口。API接口见后说明。&lt;/p&gt;
+
+&lt;p&gt;像所有其它在Truffle中的代码一样，Truffle为你提供了你自己代码的合约抽象层(contract abstractions)，并且进行了初始化，以方便你可以便利的与以太坊的网络交互。这些抽象接口是发布流程的一部分，稍后你将会看到。&lt;/p&gt;
+
+&lt;h3 id=&quot;初始移植&quot;&gt;初始移植&lt;/h3&gt;
+
+&lt;p&gt;Truffle需要一个移植合约来使用移植特性。这个合约内需要指定的接口，但你可以按你的意味修改合约。对大多数工程来说，这个合约会在第一次移植时进行的第一次部署，后续都不会再更新。通过truffle init创建一个全新工程时，你会获得一个默认的合约。&lt;/p&gt;
+
+&lt;p&gt;文件名:contracts/Migration.sol&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;contract Migrations {
+  address public owner;
+
+  // A function with the signature `last_completed_migration()`, returning a uint, is required.
+  uint public last_completed_migration;
+
+  modifier restricted() {
+    if (msg.sender == owner) _
   }
 
+  function Migrations() {
+    owner = msg.sender;
+  }
+
+  // A function with the signature `setCompleted(uint)` is required.
+  function setCompleted(uint completed) restricted {
+    last_completed_migration = completed;
+  }
+
+  function upgrade(address new_address) restricted {
+    Migrations upgraded = Migrations(new_address);
+    upgraded.setCompleted(last_completed_migration);
+  }
 }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
-&amp;gt; net.peerCount
+&lt;p&gt;如果你想使用移植特性，你必须在你第一次部署合约时，部署这个合约。可以使用如下方式来创建一次移植。&lt;/p&gt;
 
-2
+&lt;p&gt;文件名：migrations/1_initial_migrations.js&lt;/p&gt;
 
-&amp;gt; admin.peers
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module.exports = function(deployer) {
+  // Deploy the Migrations contract as our only task
+  deployer.deploy(Migrations);
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;由此，你可以接着创建递增的数字前缀来部署其它合约。&lt;/p&gt;
 
-[{
+&lt;h2 id=&quot;六-合约交互&quot;&gt;六 合约交互&lt;/h2&gt;
 
-    caps: [&quot;eth/62&quot;, &quot;eth/63&quot;],
+&lt;h3 id=&quot;背景&quot;&gt;背景&lt;/h3&gt;
 
-    id: &quot;d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e&quot;,
+&lt;p&gt;标准的与以太坊网络交互的方法是通过以太坊官方构建的&lt;a href=&quot;https://github.com/ethereum/web3.js&quot;&gt;Web3&lt;/a&gt;库。尽管这个库非常有用，但使用其提供接口与合约交互有些困难,特别是以太坊的新手。为降低学习曲线，Truffle使用&lt;a href=&quot;https://github.com/trufflesuite/truffle-artifactor&quot;&gt;Ether Pudding&lt;/a&gt;库，它也是基于Web3的基础之上，目的是为了让交互更简单。&lt;/p&gt;
 
-    name: &quot;Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2&quot;,
+&lt;h3 id=&quot;读写数据&quot;&gt;读写数据&lt;/h3&gt;
+&lt;p&gt;以太坊网络把在网络上读与写数据进行了区分，这个区分对于如何写程序影响很大。通常来说，写数据被称作&lt;strong&gt;交易(transaction)&lt;/strong&gt;，读数据被称作&lt;strong&gt;调用(call)&lt;/strong&gt;。对于交易与调用，他们分别有如下特性：&lt;/p&gt;
 
-    network: {
+&lt;h3 id=&quot;交易transaction&quot;&gt;交易(Transaction)&lt;/h3&gt;
 
-      localAddress: &quot;10.0.154.153:51063&quot;,
+&lt;p&gt;交易本质上改变了整个以太坊网络的数据状态。一个交易可以是向另一个帐户发送ether(以太坊网络代币)这样的简单行为，也可以是执行合约函数，添加一个新合约到以太坊网络这样的复杂行为。交易的典型特征是写入(或修改)数据。交易需要花费ether，也被称作gas，交易的执行需要时间。当你通过交易执行一个合约的函数时，你并不能立即得到执行结果，因为交易并不是立即执行的。大多娄情况下，通过执行交易不会返回值；它会返回一个交易的ID.总的来说，交易具有如下特征：&lt;/p&gt;
 
-      remoteAddress: &quot;10.0.154.153:61910&quot;
+&lt;ul&gt;
+  &lt;li&gt;需要gas（Ether）&lt;/li&gt;
+  &lt;li&gt;改变网络的状态&lt;/li&gt;
+  &lt;li&gt;不会立即执行&lt;/li&gt;
+  &lt;li&gt;不会暴露返回结果(仅有交易ID)&lt;/li&gt;
+&lt;/ul&gt;
 
-    },
+&lt;h3 id=&quot;调用&quot;&gt;调用&lt;/h3&gt;
 
-    protocols: {
+&lt;p&gt;调用，则与上述的交易非常不同。调用可以在网络上执行代码，但没有数据会被改变(也许仅仅是些临时变量被改变)。调用的执行是免费的，典型的行为就是读取数据。通过调用执行一个合约函数，你会立即得到结果。总的来说，调用具有如下特征：&lt;/p&gt;
 
-      eth: {
+&lt;ul&gt;
+  &lt;li&gt;免费（不花费gas）&lt;/li&gt;
+  &lt;li&gt;不改变网络状态&lt;/li&gt;
+  &lt;li&gt;立即执行&lt;/li&gt;
+  &lt;li&gt;有返回结果。
+如果选择，取决于你想干什么，或者说想写数据，还是读数据。&lt;/li&gt;
+&lt;/ul&gt;
 
-        difficulty: 21205924,
+&lt;h3 id=&quot;接口abstract&quot;&gt;接口(abstract)&lt;/h3&gt;
 
-        head: &quot;0x1327ab7c58e655cf0b80d769d697017976e190fe91e3a4c525081034a1ddd9e2&quot;,
+&lt;p&gt;为了来体验一下合约接口的作用，我们使用框架自带的默认metacoin的合约例子。&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import &quot;ConvertLib.sol&quot;;
 
-        version: 63
+contract MetaCoin {
+  mapping (address =&amp;gt; uint) balances;
 
-      }
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
+    function MetaCoin() {
+        balances[tx.origin] = 10000;
     }
 
-}]
+    function sendCoin(address receiver, uint amount) returns(bool sufficient) {
+        if (balances[msg.sender] &amp;lt; amount) return false;
+        balances[msg.sender] -= amount;
+        balances[receiver] += amount;
+        Transfer(msg.sender, receiver, amount);
+        return true;
+    }
+    function getBalanceInEth(address addr) returns(uint){
+        return ConvertLib.convert(getBalance(addr),2);
+    }
+    function getBalance(address addr) returns(uint) {
+        return balances[addr];
+    }
+}
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+&lt;p&gt;合约有三个方法和一个构造方法。所有三个方法可以被执行为交易或调用。&lt;/p&gt;
 
-&lt;h2 id=&quot;启动第三个节点指定端口并禁用ipc&quot;&gt;启动第三个节点(指定端口,并禁用ipc)&lt;/h2&gt;
+&lt;p&gt;现在我们来看看Truffle和Ether Pudding为我们提供的叫MetaCoin的Javascript对象，可以在前端中使用：&lt;/p&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;geth --datadir data2  init genesis.json&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// Print the deployed version of MetaCoin
+console.log(MetaCoin.deployed());
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;geth --datadir data2 --networkid 314590 --ipcdisable --port 61912 --rpcport 8122 --bootnodes &quot;enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910&quot; console&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;控制台输出：&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;CjhMacPro:privatechain chenjh$ geth --datadir data2  init genesis.json
-
-INFO [05-30|17:51:26] Allocated cache and file handles         database=/Users/chenjh/privatechain/data2/geth/chaindata cache=16 handles=16
-
-INFO [05-30|17:51:26] Successfully wrote genesis state         database=chaindata                                       hash=5e1fc7…d790e0
-
-INFO [05-30|17:51:26] Allocated cache and file handles         database=/Users/chenjh/privatechain/data2/geth/lightchaindata cache=16 handles=16
-
-INFO [05-30|17:51:26] Successfully wrote genesis state         database=lightchaindata                                       hash=5e1fc7…d790e0
-
-CjhMacPro:privatechain chenjh$ geth --datadir data2 --networkid 314590 --ipcdisable --port 61912 --rpcport 8122 --bootnodes &quot;enode://d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e@10.0.154.153:61910&quot; console
-
-INFO [05-30|17:51:40] Starting peer-to-peer node               instance=Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
-
-INFO [05-30|17:51:40] Allocated cache and file handles         database=/Users/chenjh/privatechain/data2/geth/chaindata cache=128 handles=1024
-
-INFO [05-30|17:51:40] Initialised chain configuration          config=&quot;{ChainID: 10 Homestead: 0 DAO: &amp;lt;nil&amp;gt; DAOSupport: false EIP150: &amp;lt;nil&amp;gt; EIP155: 0 EIP158: 0 Byzantium: &amp;lt;nil&amp;gt; Engine: unknown}&quot;
-
-INFO [05-30|17:51:40] Disk storage enabled for ethash caches   dir=/Users/chenjh/privatechain/data2/geth/ethash count=3
-
-INFO [05-30|17:51:40] Disk storage enabled for ethash DAGs     dir=/Users/chenjh/.ethash                        count=2
-
-INFO [05-30|17:51:40] Initialising Ethereum protocol           versions=&quot;[63 62]&quot; network=314590
-
-INFO [05-30|17:51:40] Loaded most recent local header          number=155 hash=1327ab…ddd9e2 td=21205924
-
-INFO [05-30|17:51:40] Loaded most recent local full block      number=155 hash=1327ab…ddd9e2 td=21205924
-
-INFO [05-30|17:51:40] Loaded most recent local fast block      number=155 hash=1327ab…ddd9e2 td=21205924
-
-INFO [05-30|17:51:40] Loaded local transaction journal         transactions=0 dropped=0
-
-INFO [05-30|17:51:40] Regenerated local transaction journal    transactions=0 accounts=0
-
-WARN [05-30|17:51:40] Blockchain not empty, fast sync disabled
-
-INFO [05-30|17:51:40] Starting P2P networking
-
-INFO [05-30|17:51:40] UDP listener up                          self=enode://78cf9ddf0c8923818130417fd60bd7e325e1419d5c0f0f27102e352fecc6d118b98203a8abf0ce2204c1da541385325bab74d76e01e318f4af494679d7f2db1d@10.0.154.153:61912
-
-INFO [05-30|17:51:40] RLPx listener up                         self=enode://78cf9ddf0c8923818130417fd60bd7e325e1419d5c0f0f27102e352fecc6d118b98203a8abf0ce2204c1da541385325bab74d76e01e318f4af494679d7f2db1d@10.0.154.153:61912
-
-Welcome to the Geth JavaScript console!
-
-instance: Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2
-
- modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txpool:1.0 web3:1.0
+// outputs:
+//
+// Contract
+// - address: &quot;0xa9f441a487754e6b27ba044a5a8eb2eec77f6b92&quot;
+// - allEvents: ()
+// - getBalance: ()
+// - getBalanceInEth: ()
+// - sendCoin: ()
 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+&lt;p&gt;接口层提供了合约中以应的函数名。它还包含一个地址，指向到MetaCoin合约的部署版本。&lt;/p&gt;
 
-&lt;p&gt;其它查询信息：&lt;/p&gt;
+&lt;h3 id=&quot;执行合约函数&quot;&gt;执行合约函数&lt;/h3&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; eth.accounts
+&lt;p&gt;通过这套框架为我们提供的接口，我们可以简单的在以太坊网络上执行合约函数。&lt;/p&gt;
 
-[]
+&lt;h3 id=&quot;执行交易&quot;&gt;执行交易&lt;/h3&gt;
 
-&amp;gt; net.peerCount
+&lt;p&gt;在上述例子MetaCoin合约中，我们有三个可以执行的函数。如果你对这三个函数稍加分析就会发现，只有sendCoin会对网络造成更改。sendCoin函数的目标将Meta Coin从一个帐户发送到另一些帐户，这些更改需要被永久存下来。&lt;/p&gt;
 
-1
+&lt;p&gt;当调用sendCoin，我们将把他们作为一个交易来执行。下面的例子我们来演示下把10个币，从一个帐户发到另一个帐户，改变要永久的保存在网络上：&lt;/p&gt;
 
-&amp;gt; admin.p
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;var account_one = &quot;0x1234...&quot;; // an address
+var account_two = &quot;0xabcd...&quot;; // another address
 
-admin.peers admin.propertyIsEnumerable
+var meta = MetaCoin.deployed();
+meta.sendCoin(account_two, 10, {from: account_one}).then(function(tx_id) {
+  // If this callback is called, the transaction was successfully processed.
+  // Note that Ether Pudding takes care of watching the network and triggering
+  // this callback.
+  alert(&quot;Transaction successful!&quot;)
+}).catch(function(e) {
+  // There was an error! Handle it.
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;上述代码有一些有趣点，我们来了解一下：&lt;/p&gt;
 
-&amp;gt; admin.peers
+&lt;p&gt;我们直接调用接口的sendCoin函数。最终是默认以交易的方式来执行的。
+交易被成功执行时，回调函数会直到交易被执行时才真正被触发。这样带来的一个好处是你不用一直去检查交易的状态。
+我们对sendCoin函数传递了第三个参数，需要注意的是原始合约函数的定义中并没有第三个参数。这里你看到的是一个特殊的对象，用于编辑一些交易中的指定细节，它可以总是做为第三个参数传进。这里，我们设置from的地址为account_one.&lt;/p&gt;
 
-[{
+&lt;h3 id=&quot;执行调用&quot;&gt;执行调用&lt;/h3&gt;
 
-    caps: [&quot;eth/62&quot;, &quot;eth/63&quot;],
+&lt;p&gt;继续用MetaCoin的例子。其中的getBalance函数就是一个很好的从网络中读取数据的例子。它压根不需要进行任何数据上的变更，它只是返回传入的地址的帐户余额，我们来简单看一下：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;var account_one = &quot;0x1234...&quot;; // an address
 
-    id: &quot;d8ea1509b8852c7d0e23099fca469551ccdc109e2e4509dd2f741fc480171e25b77f0f6047765743aaafaea71c0a637ed2f117c1977313906f8c436f4bf97a8e&quot;,
+var meta = MetaCoin.deployed();
+meta.getBalance.call(account_one, {from: account_one}).then(function(balance) {
+  // If this callback is called, the call was successfully executed.
+  // Note that this returns immediately without any waiting.
+  // Let's print the return value.
+  console.log(balance.toNumber());
+}).catch(function(e) {
+  // There was an error! Handle it.
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;一些有意思的地方如下：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;我们必须通过.call()来显示的向以太坊网络表明，我们并不会持久化一些数据变化。&lt;/li&gt;
+  &lt;li&gt;我们得到了返回结果，而不是一个交易ID。这里有个需要注意的是，以太坊网网络可以处理非常大的数字，我们被返回了一个BigNumber对象，框架再将这个对象转化了一个number类型。&lt;/li&gt;
+&lt;/ul&gt;
 
-    name: &quot;Geth/v1.8.0-unstable-7138de7b/darwin-amd64/go1.9.2&quot;,
+&lt;p&gt;警告：我们在上述的例子中将返回值转成了一个number类型，是因为例子中的返回值比较小，如果将一个BigNumber转换为比javascript支持的number最大整数都大，你将会出现错误或不可预期的行为。&lt;/p&gt;
 
-    network: {
+&lt;h3 id=&quot;捕捉事件catching-events&quot;&gt;捕捉事件(Catching Events)&lt;/h3&gt;
+&lt;p&gt;你的合约可以触发事件，你可以进行捕捉以进行更多的控制。事件API与Web3一样。可以参考Web3 documentation来了解更多。&lt;/p&gt;
 
-      localAddress: &quot;10.0.154.153:52250&quot;,
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;var meta = MetaCoin.deployed();
+var transfers = meta.Transfer({fromBlock: &quot;latest&quot;});
+transfers.watch(function(error, result) {
+  // This will catch all Transfer events, regardless of how they originated.
+  if (error == null) {
+    console.log(result.args);
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
-      remoteAddress: &quot;10.0.154.153:61910&quot;
+&lt;h3 id=&quot;methoddeployed&quot;&gt;METHOD:DEPLOYED()&lt;/h3&gt;
+&lt;p&gt;每一个抽象出来的合约接口都有一个deployed()方法，上述例子中，你已经见到过。调用这个函数返回一个实例，这个实例代表的是之前部署到网络的合约所对应的抽象接口的实例。&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;var meta = MetaCoin.deployed();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;警告：这仅对使用truffle deploy部署的合约，且一定是在project configuration中配置发布的才有效。如果不是这样，这个函数执行时会抛出异常。&lt;/p&gt;
 
+&lt;h3 id=&quot;methodat&quot;&gt;METHOD:AT()&lt;/h3&gt;
+
+&lt;p&gt;类似于deployed()，你可以通过一个地址来得到一个代表合约的抽象接口实例。当然这个地址一定是这个合约的部署地址。&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;var meta = MetaCoin.at(&quot;0x1234...&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;警告：当你的地址不正确，或地址对应的合约不正确时，这个函数并不会抛出异常。但调用接口时会报错。请保证在使用at()时输入正确的地址。&lt;/p&gt;
+
+&lt;h3 id=&quot;methodnew&quot;&gt;METHOD:NEW()&lt;/h3&gt;
+&lt;p&gt;你可以通过这个方法来部署一个完全全新的合约到网络中。&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;MetaCoin.new().then(function(instance) {
+  // `instance` is a new instance of the abstraction.
+  // If this callback is called, the deployment was successful.
+  console.log(instance.address);
+}).catch(function(e) {
+  // There was an error! Handle it.
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;需要注意的是这是一个交易，会改变网络的状态。&lt;/p&gt;
+
+&lt;h2 id=&quot;七-合约测试&quot;&gt;七 合约测试&lt;/h2&gt;
+
+&lt;h3 id=&quot;框架&quot;&gt;框架&lt;/h3&gt;
+
+&lt;p&gt;Truffle使用Mocha测试框架来做自动化测试，使用Chai来做断言。这两个库的结合可能让人耳目一新，我们基于这两者之上，提供一种方式来编译简单和可管理的合约自动化测试用例。&lt;/p&gt;
+
+&lt;h3 id=&quot;位置&quot;&gt;位置&lt;/h3&gt;
+
+&lt;p&gt;测试文件应置于./tests目录。Truffle只会运行以.js，.es，.es6和.jsx结尾的测试文件，其它的都会被忽略。&lt;/p&gt;
+
+&lt;h3 id=&quot;命令-2&quot;&gt;命令&lt;/h3&gt;
+
+&lt;p&gt;要执行测试，执行下面的命令：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;truffle test
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;你也可以对单个文件执行测试：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;truffle test ./path/to/test/file.js
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;注意事项&quot;&gt;注意事项&lt;/h3&gt;
+
+&lt;p&gt;EthereumJS TestRPC在进行自动化测试时相比其它客户端会快非常多。而且，TestRPC包含了一些，Truffle可以用来加速测试的特性。作为一个能用流程，我们建议你在开发和测试环节使用TestRPC。当你筹备好要发布到现上时，才使用Geth或其它官方以太坊客户端来进行一次测试。&lt;/p&gt;
+
+&lt;h2 id=&quot;八-控制台&quot;&gt;八 控制台&lt;/h2&gt;
+
+&lt;h3 id=&quot;背景-1&quot;&gt;背景&lt;/h3&gt;
+
+&lt;p&gt;有时在进行测试和debug时，或手动执行交易时与合约进行直接交互是需要的。Truffle提供了一种更加简单的方式，通过交互式控制台来与你的那些准备好的合约进行交互。&lt;/p&gt;
+
+&lt;h3 id=&quot;命令-3&quot;&gt;命令&lt;/h3&gt;
+
+&lt;p&gt;启动控制台，使用：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;truffle console
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;这会使用默认网络来调起一个控制台，会自动连接到一个运行中的以太坊客户端。你可以使用选项–network来修改这个特性，&lt;/p&gt;
+
+&lt;p&gt;当你加载了控制台，你会看到下面的输出：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ truffle console
+truffle(default)&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;default的意思是说，你当前连接到的是默认网络。&lt;/p&gt;
+
+&lt;h3 id=&quot;特性&quot;&gt;特性&lt;/h3&gt;
+
+&lt;p&gt;控制台支持Truffle命令行支持的命令，比如，你可以在控制台中执行migrate –reset，其效果与在命令行中执行truffle migrate –reset的效果一致。Truffle的控制台额外增加如下特性：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;所有已经编译的合约都可用。就像在开发测试，前端代码中，或者移植代码中那样使用。&lt;/li&gt;
+  &lt;li&gt;在每个命令后，你的合约会被重新加载。如使用migrate –reset命令后，你可以立即使用新分配的地址和二进制。&lt;/li&gt;
+  &lt;li&gt;web3库也可以使用，且也连到你了的以太坊客户端。&lt;/li&gt;
+  &lt;li&gt;所有命令返回的promise，会自动解析，直接打印出结果，你可以不用输入then()，简化了命令。如下：
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;truffle(default)&amp;gt; MyContract.deployed().getValue.call(); //
+5
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;九-外部脚本&quot;&gt;九 外部脚本&lt;/h2&gt;
+
+&lt;h3 id=&quot;命令-4&quot;&gt;命令&lt;/h3&gt;
+
+&lt;p&gt;要执行外部(external)脚本，执行下述命令：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ truffle exec &amp;lt;path/to/file.js&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;h3 id=&quot;文件结构&quot;&gt;文件结构&lt;/h3&gt;
+
+&lt;p&gt;为了外部脚本能正常执行，Truffle需要它们能通过Javascript的模块的方式导出一个函数，且有一个回调函数作为参数：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module.exports = function(callback) {
+  // perform actions
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;脚本内，你可以执行你想要做的任何事，这个回调在脚本执行结束后被调用。回调函数只有一个参数，这个参数传的是错误状态。如果出现错误，整个执行会中止，并返回一个非0的退出码(exit code)。&lt;/p&gt;
+
+&lt;h2 id=&quot;十-工作流&quot;&gt;十 工作流&lt;/h2&gt;
+
+&lt;h3 id=&quot;truffle-watch&quot;&gt;Truffle watch&lt;/h3&gt;
+
+&lt;p&gt;监控文件系统的文件变化，重编译，重部署你的合约。在被修改后需要的时候，会重构建前端代码。&lt;/p&gt;
+
+&lt;h3 id=&quot;truffle-serve&quot;&gt;Truffle serve&lt;/h3&gt;
+
+&lt;p&gt;监控文件系统的变化，重编译，部署，构建，并在http://localhost:8080/提供服务。&lt;/p&gt;
+
+&lt;h2 id=&quot;配置文件&quot;&gt;配置文件&lt;/h2&gt;
+
+&lt;h3 id=&quot;build&quot;&gt;BUILD&lt;/h3&gt;
+
+&lt;p&gt;这个是前端的构建配置。默认调用默认构建器，在上述构建章节，有所说明。但你也可以自定的构建流程，查看高级构建流程章节来了解更多。&lt;/p&gt;
+
+&lt;p&gt;例子：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;build: {
+  &quot;index.html&quot;: &quot;index.html&quot;,
+  &quot;app.js&quot;: [
+    &quot;javascripts/app.js&quot;
+  ],
+  &quot;app.css&quot;: [
+    &quot;stylesheets/app.css&quot;
+  ],
+  &quot;images/&quot;: &quot;images/&quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;networks&quot;&gt;NETWORKS&lt;/h3&gt;
+
+&lt;p&gt;指定在移植(Migration)时使用哪个网络。当在某个特定的网络上编译或运行移植时，合约会缓存起来方便后续使用。当你的合约抽象层检查到你连到某个网络上时，它会使用这个这个网络上原有的缓存合约来简化部署流程。网络通过以太坊的RPC调用中的net_version来进行标识。&lt;/p&gt;
+
+&lt;p&gt;下述的networks对象，通过一个网络名做为配置的键，值对应定义了其网络参数。networks的对应选项不是必须的，但如果一旦指定，每个网络必须定义一个对应的network_id。如果你想指定一个默认网络，你可以通过将netword_id的值标记为default来实现，当没有匹配到其它的网络时，就会使用默认网络。需要注意的是整个配置中，应该有且仅有一个default的网络。一般来说，默认网络主要用于开发，配置，合约等数据没有长期保存的需要，网络ID也会因TestRPC的重启而频繁改变时。&lt;/p&gt;
+
+&lt;p&gt;网络名称用于用户接口调用时使用，在移植中的使用方式如下：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ truffle migrate --network live
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;你还可以选择性的指定rpc的配置信息。下面是一个truffle.js示例：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module.exports = {
+  networks: {
+    development: {
+      host: &quot;localhost&quot;,
+      port: 8545,
+      network_id: &quot;*&quot; // match any network
+    },
+    ganache: {
+      host: &quot;localhost&quot;, // Random IP for example purposes (do not use)
+      port: 7545,
+      network_id: &quot;*&quot;, // Ethereum public networ
     },
 
-    protocols: {
-
-      eth: {
-
-        difficulty: 21205924,
-
-        head: &quot;0x1327ab7c58e655cf0b80d769d697017976e190fe91e3a4c525081034a1ddd9e2&quot;,
-
-        version: 63
-
-      }
-
+    &quot;live&quot;: {
+      network_id: 1, // Ethereum public network
+      // optional config values
+      // host - defaults to &quot;localhost&quot;
+      // port - defaults to 8545
+      // gas
+      // gasPrice
+      // from - default address to use for any transaction Truffle makes during migrations
+    },
+    &quot;morden&quot;: {
+      network_id: 2, // Official Ethereum test network
+      host: &quot;178.25.19.88&quot;, // Random IP for example purposes (do not use)
+      port: 80
     }
-
-}]
-
-&amp;gt; eth.blockNumber
-
-155
+  }
+};
 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+&lt;p&gt;Truffle 2.0升级3.0升级变化点如下：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;默认网络配置项rpc被移除了。取而代之的是在networks配置项下的一个专门的名为development的网络配置项。development中会指定的ip和port，和配置的网络类型1，默认是任意*。&lt;/li&gt;
+  &lt;li&gt;如果没有指定网络，在执行migrate等命令时默认使用名为development的网络。&lt;/li&gt;
+  &lt;li&gt;为了避免出现部署到错误网络的情况，你也可以完全移除配置项development。如果已经移除development的网络配置，但在truffle migrate等命令时不指定网络会有下述错误发生：&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;h2 id=&quot;钱包之间交易转账&quot;&gt;钱包之间交易转账&lt;/h2&gt;
+&lt;h3 id=&quot;rpc&quot;&gt;RPC&lt;/h3&gt;
 
-&lt;p&gt;在第一个节点命令行中,执行下面的操作:&lt;/p&gt;
+&lt;p&gt;关于如何连接到以太坊客户端的一些细节。host和port是需要，另外还需要一些其它的。&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; personal.unlockAccount(eth.accounts[0])
+&lt;ul&gt;
+  &lt;li&gt;host：指向以太坊客户端的地址。本机开发时，一般为localhost&lt;/li&gt;
+  &lt;li&gt;port:以太坊客户端接收请求的端口，默认是8545&lt;/li&gt;
+  &lt;li&gt;gas:部署时的Gas限制，默认是4712388&lt;/li&gt;
+  &lt;li&gt;gasPrice:部署时的Gas价格。默认是100000000000(100 Shannon)&lt;/li&gt;
+  &lt;li&gt;from:移植时使用的源地址。如果没有指定，默认是你的以太坊客户端第一个可用帐户。&lt;/li&gt;
+&lt;/ul&gt;
 
-Unlock account 0x66035b6f180224ce2095ba162ebbd83173d6b574
-
-Passphrase:
-
-true
-
-&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
-
-649.999622
-
-&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
-
-125.000378
-
-&amp;gt; eth.sendTransaction({from: &quot;0x66035b6f180224ce2095ba162ebbd83173d6b574&quot;, to: &quot;0x04e34feefd824e65dd55e863b4ddda02a12fa505&quot;, gas:31000, 'gasPrice': web3.toWei(20, 'gwei'), &quot;value&quot;: &quot;1&quot;})
-
-INFO [05-30|17:59:38] Submitted transaction                    fullhash=0xae61ea9623cf06efedc2a40e61af089550f29cc251a9a6665797f145419241bd recipient=0x04E34fEefD824E65Dd55E863b4ddDA02a12FA505
-
-&quot;0xae61ea9623cf06efedc2a40e61af089550f29cc251a9a6665797f145419241bd&quot;
-
-&amp;gt; txpool.status
-
-{
-
-  pending: 1,
-
-  queued: 0
-
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;rpc: {
+  host: &quot;localhost&quot;,
+  port: 8545
 }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
-&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
+&lt;h3 id=&quot;mocha&quot;&gt;MOCHA&lt;/h3&gt;
 
-649.999622
+&lt;p&gt;MochaJS测试框架的配置选项，详细参考documentation。&lt;/p&gt;
 
-&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
-
-125.000378
-
-&amp;gt; miner.start()
-
-INFO [05-30|18:01:12] Updated mining threads                   threads=0
-
-INFO [05-30|18:01:12] Transaction pool price threshold updated price=18000000000
-
-INFO [05-30|18:01:12] Starting mining operation
-
-INFO [05-30|18:02:01] Commit new mining work                   number=206 txs=0 uncles=0 elapsed=407.553µs
-
-INFO [05-30|18:02:02] Successfully sealed new block            number=206 hash=69f31d…bfd898
-
-INFO [05-30|18:02:02] 🔗 block reached canonical chain          number=201 hash=d576ee…8398a4
-
-INFO [05-30|18:02:02] 🔨 mined potential block                  number=206 hash=69f31d…bfd898
-
-INFO [05-30|18:02:02] Commit new mining work                   number=207 txs=0 uncles=0 elapsed=189.102µs
-
-INFO [05-30|18:02:02] Successfully sealed new block            number=207 hash=8bd575…473072
-
-INFO [05-30|18:02:02] 🔗 block reached canonical chain          number=202 hash=ee475f…bc0189
-
-INFO [05-30|18:02:02] 🔨 mined potential block                  number=207 hash=8bd575…473072
-
-INFO [05-30|18:02:02] Mining too far in the future             wait=2s
-
-&amp;gt; miner.stop()
-
-INFO [05-30|18:02:04] Commit new mining work                   number=208 txs=0 uncles=0 elapsed=2.001s
-
-true
-
-&amp;gt; txpool.status
-
-{
-
-  pending: 0,
-
-  queued: 0
-
+&lt;p&gt;示例：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mocha: {
+  useColors: true
 }
-
-&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
-
-125.000378000000000001
-
-&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
-
-909.999621999999999999
-
-&amp;gt;
-
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 </description>
-        <pubDate>Fri, 18 May 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2018/05/18/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%A4%9A%E8%8A%82%E7%82%B9)/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/05/18/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%A4%9A%E8%8A%82%E7%82%B9)/</guid>
+        <pubDate>Tue, 16 Oct 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2018/10/16/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/10/16/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/</guid>
         
         
       </item>
     
       <item>
-        <title>搭建以太坊私有链(单节点)</title>
+        <title>在metamask中部署自己的token</title>
         <description>&lt;blockquote&gt;
   &lt;p&gt;作者：陈建辉&lt;/p&gt;
 
@@ -632,452 +919,42 @@ true
   &lt;p&gt;备注：如有错误，请指正，不断更新迭代&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h1 id=&quot;搭建以太坊私有链单节点&quot;&gt;搭建以太坊私有链(单节点)&lt;/h1&gt;
+&lt;h2 id=&quot;在metamask中部署自己的token&quot;&gt;在metamask中部署自己的token&lt;/h2&gt;
 
-&lt;p&gt;以太坊是一个公有链系统，我们可以通过设置一些参数来运行自己的私有链节点，在自己的私有链上进行开发和测试不需要同步公有链数据，也不需要花钱来买以太币，节省存储空间和成本，而且很灵活很方便。本文介绍使用geth客户端搭建私有链的操作步骤，同时会解释在这个过程中用到的各个命令及选项的含义和作用，最后会介绍geth的Javascript Console中的一些常用功能。&lt;/p&gt;
+&lt;h3 id=&quot;拷贝代币代码&quot;&gt;拷贝代币代码&lt;/h3&gt;
 
-&lt;h2 id=&quot;源码下载&quot;&gt;源码下载&lt;/h2&gt;
+&lt;p&gt;下面是官方提供的代码：
+https://ethereum.org/token&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git clone https://github.com/ethereum/go-ethereum.git
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;h3 id=&quot;部署&quot;&gt;部署&lt;/h3&gt;
 
-&lt;h2 id=&quot;编译&quot;&gt;编译&lt;/h2&gt;
+&lt;p&gt;这里需要使用一个Google浏览器插件metamask插件，需要翻墙才可以使用，需要代劳的评论区留言，（自搭服务器）&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ cd go-ethereum
-$ make geth
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;p&gt;可以使用的人直接在Google商量搜索metamask将其添加进去，第一次会为你创建一个账号，仔细看都看得明白，然后进去，选择网络，在test网络中，不要在主网络中，要是你有足够的以太币也没有关系，虽然是部署在测试网络，可是，也是真正的部署在以太坊网络中中。你可以在token里面看到，你部署的合约，安装好插件后，下面就一步一步的教大家部署合约&lt;/p&gt;
 
-&lt;p&gt;将 &lt;code class=&quot;highlighter-rouge&quot;&gt;geth&lt;/code&gt; 添加到环境变量中 &lt;code class=&quot;highlighter-rouge&quot;&gt;vi ~/.bashrc&lt;/code&gt;
-Mac下也可以是&lt;code class=&quot;highlighter-rouge&quot;&gt;vi ~/.bash_profile&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;在remix的run一栏的environment一栏选择injected web3,会自动和你的metamask关联，查看自己的账号，&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;export GETH=&quot;$GOPATH/src/github.com/ethereum/go-ethereum/build&quot;
-export PATH=&quot;$PATH:$GETH/bin&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;p&gt;在部署一栏输入token名称
+	 
+在弹出一个界面的选择comfirm //注意：如果出现点击不了的，是因为你账号没有足够的以太币，部署合约要花费一定的gas
+	 
+然后在你的metamask界面就可以看见一个部署合约的事件了&lt;/p&gt;
 
-&lt;p&gt;然后执行 &lt;code class=&quot;highlighter-rouge&quot;&gt;source ~/.bashrc&lt;/code&gt;，使配置生效。&lt;/p&gt;
+&lt;p&gt;好了，现在你就真正就自己的合约部署到以太坊网络中了，你也可以讲自己的合约代码放在以太坊上，进行验证 &lt;/p&gt;
 
-&lt;p&gt;检查是否安装成功&lt;/p&gt;
+&lt;p&gt;如下图：&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;geth --help
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;如果输出一些帮助提示命令，则说明安装成功。&lt;/p&gt;
-
-&lt;h2 id=&quot;搭建私有链&quot;&gt;搭建私有链&lt;/h2&gt;
-
-&lt;h3 id=&quot;配置初始状态&quot;&gt;配置初始状态&lt;/h3&gt;
-
-&lt;p&gt;要运行以太坊私有链，需要定义自己的创世区块，创世区块信息写在一个 JSON 格式的配置文件中。首先将下面的内容保存到一个 JSON 文件中，例如 &lt;code class=&quot;highlighter-rouge&quot;&gt;genesis.json&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mkdir ~/privatechain
-$ cd privatechain
-$ mkdir data0
-$ vi genesis.json
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;strong&gt;genesis.json 的代码&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;config&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;chainId&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;314590&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;homesteadBlock&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;eip155Block&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;eip158Block&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;alloc&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;coinbase&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;   &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0x0000000000000000000000000000000000000000&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;difficulty&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0x20000&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;extraData&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;gasLimit&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;   &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0x2fefd8&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;nonce&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0x0000000000000042&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;mixhash&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;parentHash&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;timestamp&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0x00&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;其中，chainID 指定了独立的区块链网络 ID。网络 ID 在连接到其他节点的时候会用到，以太坊公网的网络 ID 是 1，为了不与公有链网络冲突，运行私有链节点的时候要指定自己的网络 ID。不同 ID 网络的节点无法相互连接。配置文件还对当前挖矿难度 difficulty、区块 Gas 消耗限制 gasLimit 等参数进行了设置。&lt;/p&gt;
-
-&lt;p&gt;其它参数介绍：
-mixhash：与nonce配合用于挖矿，由上一个区块的一部分生成的hash。注意他和nonce的设置需要满足以太坊的Yellow paper, 4.3.4. Block Header Validity,
-nonce：	nonce就是一个64位随机数，用于挖矿，注意他和mixhash的设置需要满足以太坊的Yellow paper, 4.3.4. Block Header Validity,
-difficulty：	设置当前区块的难度，如果难度过大，cpu挖矿就很难，这里设置较小难度
-alloc	：用来预置账号以及账号的以太币数量，因为私有链挖矿比较容易，所以我们不需要预置有币的账号，需要的时候自己创建即可以。
-coinbase：	矿工的账号，随便填
-timestamp：设置创世块的时间戳
-parentHash：	上一个区块的hash值，因为是创世块，所以这个值是0
-extraData	：附加信息，随便填，可以填你的个性信息
-gasLimit：	该值设置对GAS的消耗总量限制，用来限制区块能包含的交易信息总和，因为我们是私有链，所以填最大。&lt;/p&gt;
-
-&lt;h3 id=&quot;初始化写入创世区块&quot;&gt;初始化：写入创世区块&lt;/h3&gt;
-
-&lt;p&gt;准备好创世区块配置文件后，需要初始化区块链，将上面的创世区块信息写入到区块链中。首先要新建一个目录用来存放区块链数据，假设新建的数据目录为 ~/privatechain/data0，genesis.json 保存在 ~/privatechain 中，此时目录结构应该是这样的：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;privatechain
-├── data0
-└── genesis.json
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;执行初始化命令：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;geth --datadir data0 init genesis.json
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;上面的命令的主体是 &lt;code class=&quot;highlighter-rouge&quot;&gt;geth init&lt;/code&gt;，表示初始化区块链，命令可以带有选项和参数，其中 &lt;code class=&quot;highlighter-rouge&quot;&gt;--datadir&lt;/code&gt; 选项后面跟一个目录名，这里为 &lt;code class=&quot;highlighter-rouge&quot;&gt;data0&lt;/code&gt;，表示指定数据存放目录为 &lt;code class=&quot;highlighter-rouge&quot;&gt;data0&lt;/code&gt;，&lt;code class=&quot;highlighter-rouge&quot;&gt;genesis.json&lt;/code&gt; 是 &lt;code class=&quot;highlighter-rouge&quot;&gt;init&lt;/code&gt; 命令的参数。&lt;/p&gt;
-
-&lt;p&gt;运行上面的命令，会读取 &lt;code class=&quot;highlighter-rouge&quot;&gt;genesis.json&lt;/code&gt; 文件，根据其中的内容，将创世区块写入到区块链中。如果看到以下的输出内容，说明初始化成功了。&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;INFO [01-29|21:21:13] Maximum peer count                       ETH=25 LES=0 total=25
-INFO [01-29|21:21:13] Allocated cache and file handles         database=/Users/fujinliang/privatechain/data0/geth/chaindata cache=16 handles=16
-INFO [01-29|21:21:13] Writing custom genesis block
-INFO [01-29|21:21:13] Persisted trie from memory database      nodes=0 size=0.00B time=358.89µs gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=0.00B
-INFO [01-29|21:21:13] Successfully wrote genesis state         database=chaindata                                           hash=5e1fc7…d790e0
-INFO [01-29|21:21:13] Allocated cache and file handles         database=/Users/fujinliang/privatechain/data0/geth/lightchaindata cache=16 handles=16
-INFO [01-29|21:21:13] Writing custom genesis block
-INFO [01-29|21:21:13] Persisted trie from memory database      nodes=0 size=0.00B time=2.633µs  gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=0.00B
-INFO [01-29|21:21:13] Successfully wrote genesis state         database=lightchaindata                                           hash=5e1fc7…d790e0
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;初始化成功后，会在数据目录 data0 中生成 geth 和 keystore 两个文件夹，此时目录结构如下：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;privatechain
-├── data0
-│   ├── geth
-│   │   ├── chaindata
-│   │   │   ├── 000001.log
-│   │   │   ├── CURRENT
-│   │   │   ├── LOCK
-│   │   │   ├── LOG
-│   │   │   MANIFEST-000000
-│   │   └── lightchaindata
-│   │       ├── 000001.log
-│   │       ├── CURRENT
-│   │       ├── LOCK
-│   │       ├── LOG
-│   │       └── MANIFEST-000000
-│   └── keystore
-└── genesis.json
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;其中 &lt;code class=&quot;highlighter-rouge&quot;&gt;geth/chaindata&lt;/code&gt; 中存放的是区块数据，&lt;code class=&quot;highlighter-rouge&quot;&gt;keystore&lt;/code&gt; 中存放的是账户数据。&lt;/p&gt;
-
-&lt;h3 id=&quot;启动私有链节点&quot;&gt;启动私有链节点&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;geth --datadir data0 --networkid 314590 console
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;上面命令的主体是 &lt;code class=&quot;highlighter-rouge&quot;&gt;geth console&lt;/code&gt;，表示启动节点并进入交互式控制台，–datadir选项指定使用data0作为数据目录，&lt;code class=&quot;highlighter-rouge&quot;&gt;--networkid&lt;/code&gt; 选项后面跟一个数字，这里是110，表示指定这个私有链的网络id为110。网络id在连接到其他节点的时候会用到，以太坊公网的网络id是1，为了不与公有链网络冲突，运行私有链节点的时候要指定自己的网络id。&lt;/p&gt;
-
-&lt;p&gt;运行上面的命令后，就启动了区块链节点并进入了该节点的控制台：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;...
-Welcome to the Geth JavaScript console!
-
-instance: Geth/v1.8.10-unstable-ccc0debb/darwin-amd64/go1.10.2
- modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txpool:1.0 web3:1.0
-
-&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;这是一个交互式的 JavaScript 执行环境，在这里面可以执行 JavaScript 代码，其中 &amp;gt; 是命令提示符。在这个环境里也内置了一些用来操作以太坊的 JavaScript 对象，可以直接使用这些对象。这些对象主要包括：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;eth：包含一些跟操作区块链相关的方法；&lt;/li&gt;
-  &lt;li&gt;net：包含一些查看p2p网络状态的方法；&lt;/li&gt;
-  &lt;li&gt;admin：包含一些与管理节点相关的方法；&lt;/li&gt;
-  &lt;li&gt;miner：包含启动&amp;amp;停止挖矿的一些方法；&lt;/li&gt;
-  &lt;li&gt;personal：主要包含一些管理账户的方法；&lt;/li&gt;
-  &lt;li&gt;txpool：包含一些查看交易内存池的方法；&lt;/li&gt;
-  &lt;li&gt;web3：包含了以上对象，还包含一些单位换算的方法。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;控制台操作&quot;&gt;控制台操作&lt;/h2&gt;
-
-&lt;p&gt;进入以太坊 Javascript Console 后，就可以使用里面的内置对象做一些操作，这些内置对象提供的功能很丰富，比如查看区块和交易、创建账户、挖矿、发送交易、部署智能合约等。&lt;/p&gt;
-
-&lt;p&gt;常用命令有：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;personal.newAccount()：创建账户；&lt;/li&gt;
-  &lt;li&gt;personal.unlockAccount()：解锁账户；&lt;/li&gt;
-  &lt;li&gt;eth.accounts：枚举系统中的账户；&lt;/li&gt;
-  &lt;li&gt;eth.getBalance()：查看账户余额，返回值的单位是 Wei（Wei 是以太坊中最小货币面额单位，类似比特币中的聪，1 ether = 10^18 Wei）；&lt;/li&gt;
-  &lt;li&gt;eth.blockNumber：列出区块总数；&lt;/li&gt;
-  &lt;li&gt;eth.getTransaction()：获取交易；&lt;/li&gt;
-  &lt;li&gt;eth.getBlock()：获取区块；&lt;/li&gt;
-  &lt;li&gt;miner.start()：开始挖矿；&lt;/li&gt;
-  &lt;li&gt;miner.stop()：停止挖矿；&lt;/li&gt;
-  &lt;li&gt;eth.coinbase：挖矿奖励的账户&lt;/li&gt;
-  &lt;li&gt;web3.fromWei()：Wei 换算成以太币；&lt;/li&gt;
-  &lt;li&gt;web3.toWei()：以太币换算成 Wei；&lt;/li&gt;
-  &lt;li&gt;txpool.status：交易池中的状态；&lt;/li&gt;
-  &lt;li&gt;admin.addPeer()：连接到其他节点；&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;创建账户&quot;&gt;创建账户&lt;/h3&gt;
-
-&lt;p&gt;输入 &lt;code class=&quot;highlighter-rouge&quot;&gt;eth.accounts&lt;/code&gt; 查询系统中的账户：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; eth.accounts
-[]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;显示为 &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt;，表示没有账户，接下来使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;personal.newAccount()&lt;/code&gt; 来创建一个账户：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; personal.newAccount()
-Passphrase:
-Repeat passphrase:
-&quot;0xfb9cc019fc650a1699d05b7fb564b83c3a72b64d&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Passphrase&lt;/code&gt; 表示输入密码，&lt;code class=&quot;highlighter-rouge&quot;&gt;Repeat passphrase&lt;/code&gt; 表示输入确认密码&lt;/p&gt;
-
-&lt;p&gt;再次创建一个账户&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; personal.newAccount()
-Passphrase:
-Repeat passphrase:
-&quot;0xc6b5702b15a3794374e28f41f36e1e8dbdd564df&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;查看刚刚创建的用户：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; eth.accounts
-[&quot;0x66035b6f180224ce2095ba162ebbd83173d6b574&quot;, &quot;0x04e34feefd824e65dd55e863b4ddda02a12fa505&quot;]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;账户默认会保存在数据目录的 &lt;code class=&quot;highlighter-rouge&quot;&gt;data0/keystore&lt;/code&gt; 文件夹中。可以查看其中的文件&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;address&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0x66035b6f180224ce2095ba162ebbd83173d6b574&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;crypto&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;cipher&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;aes-128-ctr&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;ciphertext&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0efae4f94134172b785f1f635be8e70342bf31e1e0ecad21d672594f09ccf572&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;cipherparams&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-            &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;iv&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;37f4f3fa2cf070b70e3eb668fad6f46f&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;kdf&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;scrypt&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;kdfparams&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-            &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;dklen&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-            &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;n&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;262144&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-            &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;p&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-            &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;r&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-            &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;salt&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;1cdd1cf97fb882c3d3e734223668b47c888170e795346e11d0f521a71fe3aa2a&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;mac&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;902a29db25a3a35a2568b04b30a8194201f07ab37c96ed1fe9af932fc1d38be0&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;ecd5beb2-8261-4207-8eff-2fa34678d064&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&quot;version&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;h3 id=&quot;查看账户余额&quot;&gt;查看账户余额&lt;/h3&gt;
-
-&lt;p&gt;通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;eth.getBalance()&lt;/code&gt; 可以查看账户余额&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; eth.getBalance(eth.accounts[0])
-0
-&amp;gt; eth.getBalance(eth.accounts[1])
-0
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;目前两个账户的以太币余额都是0，要使账户有余额，可以从其他账户转账过来，或者通过挖矿来获得以太币奖励。&lt;/p&gt;
-
-&lt;h3 id=&quot;启动停止挖矿&quot;&gt;启动&amp;amp;停止挖矿&lt;/h3&gt;
-
-&lt;p&gt;通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;miner.start()&lt;/code&gt; 启动挖矿&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; miner.start(3)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;其中 start 的参数表示挖矿使用的线程数。第一次启动挖矿会先生成挖矿所需的 DAG 文件，这个过程有点慢，等进度达到 100% 后，就会开始挖矿，此时屏幕会被挖矿信息刷屏。&lt;/p&gt;
-
-&lt;p&gt;停止挖矿，在 console 中输入：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;miner.stop()
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;挖到一个区块会奖励5个以太币，挖矿所得的奖励会进入矿工的账户，这个账户叫做coinbase，默认情况下coinbase是本地账户中的第一个账户：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; eth.coinbase
-&quot;0xfb9cc019fc650a1699d05b7fb564b83c3a72b64d&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;可以通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;miner.setEtherbase()&lt;/code&gt; 将其他账户设置成 &lt;code class=&quot;highlighter-rouge&quot;&gt;coinbase&lt;/code&gt; 即可&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; miner.setEtherbase(eth.accounts[1])
-true
-&amp;gt; eth.coinbase
-&quot;0xc6b5702b15a3794374e28f41f36e1e8dbdd564df&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;重新启动挖矿，查看 &lt;code class=&quot;highlighter-rouge&quot;&gt;eth.accounts[1]&lt;/code&gt; 是否可以获得以太币&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; miner.start(3)
-
-//等待几秒后
-&amp;gt; miner.stop()
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;查询账户余额：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; eth.getBalance(eth.accounts[0])
-280000000000000000000
-&amp;gt; eth.getBalance(eth.accounts[1])
-210000000000000000000
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;发现账户0 和 账号1 都有以太币，说明 &lt;code class=&quot;highlighter-rouge&quot;&gt;miner.setEtherbase()&lt;/code&gt; 设置成功。&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;getBalance()&lt;/code&gt; 返回值的单位是wei，wei是以太币的最小单位，1个以太币=10的18次方个wei。要查看有多少个以太币，可以用web3.fromWei()将返回值换算成以太币：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
-280
-
-&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
-210
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;h3 id=&quot;发送交易&quot;&gt;发送交易&lt;/h3&gt;
-
-&lt;p&gt;我们从账户0转移10个以太币到账户1,首先要解锁账户 0，才能发起交易：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; personal.unlockAccount(eth.accounts[0])
-Unlock account 0xfb9cc019fc650a1699d05b7fb564b83c3a72b64d
-Passphrase:
-true
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;发起交易&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; amount = web3.toWei(10,'ether')
-&quot;10000000000000000000&quot;
-&amp;gt; eth.sendTransaction({from:eth.accounts[0],to:eth.accounts[1],value:amount})
-INFO [05-29|22:37:32] Submitted transaction                    fullhash=0x493e8aa2bcb6b2a362bdbd86b2c454279e14beea43b444aeb45c7f667bf572e2 recipient=0xc6b5702B15a3794374e28f41F36e1E8dBDd564DF
-&quot;0x493e8aa2bcb6b2a362bdbd86b2c454279e14beea43b444aeb45c7f667bf572e2&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;查询 账户1 的余额：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
-210
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;发现账户余额没有发生改变，此时交易已经提交到区块链，但还未被处理，这可以通过用 &lt;code class=&quot;highlighter-rouge&quot;&gt;txpool.status&lt;/code&gt; 命令可以看到本地交易池中有一个待确认的交易：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; txpool.status
-{
-  pending: 1,
-  queued: 0
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;其中有一条pending的交易，pending表示已提交但还未被处理的交易。&lt;/p&gt;
-
-&lt;p&gt;要使交易被处理，必须要挖矿。这里我们启动挖矿，然后等待挖到一个区块之后就停止挖矿：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;miner.start(1);admin.sleepBlocks(1);miner.stop()
-&amp;gt; web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')
-225.000378
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;发现账户收到了账户的钱，还多了5个以太币。其实多出的5个以太币是挖矿奖励。&lt;/p&gt;
-
-&lt;h3 id=&quot;查看交易和区块&quot;&gt;查看交易和区块&lt;/h3&gt;
-
-&lt;p&gt;查看当前区块总数：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; eth.blockNumber
-99
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;通过区块号查看区块：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt; eth.getBlock(6)
-{
-  difficulty: 131328,
-  extraData: &quot;0xd98301080a846765746888676f312e31302e328664617277696e&quot;,
-  gasLimit: 3160033,
-  gasUsed: 0,
-  hash: &quot;0x9679d0dc01045c3d15cbf29241ae1cd6de2e5661d3387c0980f6397e3fd9ed2c&quot;,
-  logsBloom: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
-  miner: &quot;0xfb9cc019fc650a1699d05b7fb564b83c3a72b64d&quot;,
-  mixHash: &quot;0x05c369134eac2cb6227860b4ed11527b11825af3541712c5704914576c37c0a0&quot;,
-  nonce: &quot;0x00168a9831624417&quot;,
-  number: 6,
-  parentHash: &quot;0xad68f0a581cf2144b8a05190b6310c7a9d945d9c338fd16b4708651b8813ad8b&quot;,
-  receiptsRoot: &quot;0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421&quot;,
-  sha3Uncles: &quot;0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347&quot;,
-  size: 537,
-  stateRoot: &quot;0xfaa0a4ffe160a2937b967f9780ae0de51a465bcce6a3f6f3aa24b903df3d44a0&quot;,
-  timestamp: 1527602736,
-  totalDifficulty: 918144,
-  transactions: [],
-  transactionsRoot: &quot;0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421&quot;,
-  uncles: []
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;通过交易hash（hash 值包含在上面交易返回值中）查看交易：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;eth.getTransaction(&quot;0x493e8aa2bcb6b2a362bdbd86b2c454279e14beea43b444aeb45c7f667bf572e2&quot;)
-{
-  blockHash: &quot;0xbe60f7ccddcb7cab39a7b932c0d89d37ac13ae14521cfdcb8ac359a5b6773655&quot;,
-  blockNumber: 99,
-  from: &quot;0xfb9cc019fc650a1699d05b7fb564b83c3a72b64d&quot;,
-  gas: 90000,
-  gasPrice: 18000000000,
-  hash: &quot;0x493e8aa2bcb6b2a362bdbd86b2c454279e14beea43b444aeb45c7f667bf572e2&quot;,
-  input: &quot;0x&quot;,
-  nonce: 0,
-  r: &quot;0x8da41e865d399fc4d8f813a39116e486db7658a04ea1f89ca0b7f44c02dd3c57&quot;,
-  s: &quot;0x15edd22404460cfc5e86c9735774a02aad024bc8c369ec531e4485f1012cbcf6&quot;,
-  to: &quot;0xc6b5702b15a3794374e28f41f36e1e8dbdd564df&quot;,
-  transactionIndex: 0,
-  v: &quot;0x37&quot;,
-  value: 10000000000000000000
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/METAMASK%E4%BB%A3%E5%B8%81%E9%83%A8%E7%BD%B2%E6%88%AA%E5%9B%BE.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 </description>
-        <pubDate>Tue, 15 May 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2018/05/15/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%8D%95%E8%8A%82%E7%82%B9)/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/05/15/%E6%90%AD%E5%BB%BA%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%A7%81%E6%9C%89%E9%93%BE(%E5%8D%95%E8%8A%82%E7%82%B9)/</guid>
-        
-        <category>以太坊私有链搭建</category>
+        <pubDate>Sun, 30 Sep 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2018/09/30/%E5%9C%A8metamask%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84token/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/09/30/%E5%9C%A8metamask%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84token/</guid>
         
         
       </item>
     
       <item>
-        <title>Mac下搭建个人博客</title>
+        <title>Remix的三种编译环境</title>
         <description>&lt;blockquote&gt;
   &lt;p&gt;作者：陈建辉&lt;/p&gt;
 
@@ -1088,170 +965,1229 @@ INFO [05-29|22:37:32] Submitted transaction                    fullhash=0x493e8a
   &lt;p&gt;备注：如有错误，请指正，不断更新迭代&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&quot;一-前言&quot;&gt;一. 前言&lt;/h3&gt;
-&lt;p&gt;最近听大牛指导，觉得非常必要拥有一个属于自己的个人博客。通过写博客，可以对学习进行归纳总结，对经验进行分享，以后是一笔不小的人生财富。回想自己工作多年，要写的东西实在太多，所以心血来潮，自己动手搭建个人博客，本来认为非常容易，花不了多少时间，但是中途还是碰到不少问题，网上资料很多很杂，都不是特别适合自己，而且过程不全面，经过自己不断摸索，不断重装，花了几天时间终于搭建起来了。下面我把自己在Mac上的搭建过程及问题跟大家分享下，希望大家也尽量开启自己的博客之旅。&lt;/p&gt;
+&lt;h2 id=&quot;remix的三种编译环境&quot;&gt;Remix的三种编译环境&lt;/h2&gt;
 
-&lt;h3 id=&quot;二-架构选型&quot;&gt;二. 架构选型&lt;/h3&gt;
+&lt;p&gt;Remix has 3 different environment options that can be used to deploy/test Solidity contracts: JavaScript VM, Injected Web3, and Web3 Provider. This option can be changed under the Environment drop down under the Run tab&lt;/p&gt;
 
-&lt;p&gt;目前所了解到的，受欢迎的博客搭建架构如下：&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Git+Github+Markdown+jekyll （免费）&lt;/li&gt;
-  &lt;li&gt;Git+Github+Markdown+hexo （免费）&lt;/li&gt;
-  &lt;li&gt;虚拟主机＋插件＋Wordpress （付费）&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;JavaScript VM:
+This is Remix’s own internal sandbox. It does not connect to MainNet, TestNet, or any private network. It’s an in-memory blockchain that can be used for simple testing and quick mining.&lt;/p&gt;
 
-&lt;p&gt;第1，2免费，第3付费
-如果决定花钱，那么选3，省心省力。不过我个人还是介意自己去搭建一个博客，而且作为一个合格程序员，熟悉github网站的使用还是非常必要的。
-1，2的话看个人喜好，各有各的优缺点，看你注重哪个，具体的话自己网上了解，资料一堆。
-我选择架构1，虽然jekyll麻烦点，但是github默认支持jekyll，可以直接在github网页版上编辑和发布博客，所以也就选他了。&lt;/p&gt;
+&lt;p&gt;Injected Web3:
+This is the option to use for the browser plugin (MetaMask). Here, you are telling Remix to defer all control of the blockchain integration to the MetaMask plugin. At this point, MetaMask controls which network you are connecting to.&lt;/p&gt;
 
-&lt;h3 id=&quot;三-博客搭建&quot;&gt;三. 博客搭建&lt;/h3&gt;
+&lt;p&gt;In the plugin, you can connect to MainNet, Ropsten, Rinkeby, etc through Infura’s node network. In this case, you’re not running a node locally. MetaMask also has a localhost option where you can run your own node locally and MetaMask will send all transactions to it (this local network can be a private network using any node client or you can use a test blockchain like TestRPC).&lt;/p&gt;
 
-&lt;h4 id=&quot;1-启动本地博客命令&quot;&gt;1. 启动本地博客命令&lt;/h4&gt;
+&lt;p&gt;Web3 Provider:
+This allows you to enter a URL in Remix to connect to the blockchain. The most common setup here is to be running a local node and connecting to it through it’s IP/port.&lt;/p&gt;
 
-&lt;p&gt;我们直接运行启动本地博客命令，看看自己环境到底缺啥，直接根据问题去找原因，这样搭建也不会无厘头。&lt;/p&gt;
+&lt;p&gt;This is pretty much the same as using MetaMask’s localhost option, but you’re just cutting the plugin out of being the middleman. Just like option #2, the network your connected to depends on how you’ve configured your local node (it can be main, test, private, etc.).&lt;/p&gt;
+</description>
+        <pubDate>Sat, 29 Sep 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2018/09/29/Remix%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/09/29/Remix%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>以太坊Dapp开发</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;作者：陈建辉&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-angular2html&quot;&gt;bunddle exec jekyll server
+  &lt;p&gt;博客：www.chenjianhui.org&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;备注：如有错误，请指正，不断更新迭代&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;以太坊dapp开发&quot;&gt;以太坊Dapp开发&lt;/h2&gt;
+
+&lt;h3 id=&quot;一-安装truffle&quot;&gt;一 安装truffle&lt;/h3&gt;
+
+&lt;p&gt;Truffle是目前最流行的以太坊开发框架，采用JavaScript编写，支持智能合约的编译、部署和测试。&lt;/p&gt;
+
+&lt;p&gt;具体安装步骤网上资料很多&lt;/p&gt;
+
+&lt;h3 id=&quot;二-创建工程&quot;&gt;二 创建工程&lt;/h3&gt;
+
+&lt;p&gt;如果想创建一个空工程，可以用下面的命令&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;truffle Init
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;理论上输出：
-&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%91%BD%E4%BB%A4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;需要使用代理&lt;/p&gt;
 
-&lt;p&gt;安装过程中可能每个人的环境不同，终端提示问题不同，然后根据提示选择性安装ruby,gem,jekyll,bundler等包，缺什么安装什么，终端都有提示。
-参考如下命令：&lt;/p&gt;
+&lt;p&gt;代码结构如下：
+&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/truffle.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-angular2html&quot;&gt;ruby:brew install ruby
+&lt;p&gt;主要分为3个部分：&lt;/p&gt;
 
-gem:sudo gem install --system
+&lt;p&gt;●  contracts目录中包含Solidity合约代码，其中Migrations.sol是必须的，其他就是你自己写的合约代码了。&lt;/p&gt;
 
-jekyll:sudo gem install jekyll
+&lt;p&gt;●  migrations目录中包含合约部署脚本，其中1_initial_migration.js就是用来部署Migrations.sol的，其他的脚本会按照顺序依次执行。&lt;/p&gt;
 
-bundler:sudo gem install bundler
+&lt;p&gt;●  test目录中就是测试代码了。&lt;/p&gt;
+
+&lt;h3 id=&quot;三-安装以太坊客户端&quot;&gt;三 安装以太坊客户端&lt;/h3&gt;
+
+&lt;p&gt;智能合约必须要部署到链上进行测试。可以选择部署到一些公共的测试链比如Rinkeby或者Ropsten上，缺点是部署和测试时间比较长，而且需要花费一定的时间赚取假代币防止out of gas。
+还有一种方式就是部署到私链上，Truffle官方推荐使用以下两种客户端：&lt;/p&gt;
+
+&lt;p&gt;●  Ganache(这是使用ganache提供的测试链)&lt;/p&gt;
+
+&lt;p&gt;●  truffle develop&lt;/p&gt;
+
+&lt;p&gt;下载地址
+https://truffleframework.com/ganache&lt;/p&gt;
+
+&lt;p&gt;Ganache 客户端打开如下：
+&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/ganache.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;四-编译和部署合约&quot;&gt;四 编译和部署合约&lt;/h3&gt;
+
+&lt;p&gt;Ganache默认运行在7545端口，可以在界面右上方的“设置”里进行更改。运行后默认创建10个账号，每个账号里有100ETH的余额。
+要部署到链上，需要把IP、端口、网络ID告诉truffle。修改truffle.js：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module.exports = {
+    networks: {
+        development: {
+            host: 'localhost',
+            port: '7545',
+            network_id: '*' // Match any network id
+        }
+    }
+};
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
-&lt;h4 id=&quot;2-部署github&quot;&gt;2. 部署github&lt;/h4&gt;
-
-&lt;p&gt;如果没有github的赶紧注册自己的账号，注册之后按照username.github.io创建一个仓库。
-这里重点需要讲一下部署keys,方便文件从仓库上传和下载。
-settings-&amp;gt;Deploys keys-&amp;gt;add Deploys key&lt;/p&gt;
-
-&lt;p&gt;本地操作&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;获取key&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ssh-keygen -t rsa -C &quot;xxx@163.com&quot;&lt;/code&gt;  &lt;!--替换自己注册邮箱--&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cat /Users/chenjh/.ssh/id_rsa.pub &lt;/code&gt; &lt;!--直接把输出的key拷贝到github上--&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;clone博客代码文件夹&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone https://github.com/bitchenjh/bitchenjh.github.io.git&lt;/code&gt;  &lt;!--替换成自己的github code 路径--&gt;&lt;/p&gt;
-
-&lt;p&gt;执行之后，本地就出现一个bitchenjh.github.io的文件夹。&lt;/p&gt;
-
-&lt;h4 id=&quot;3-编写博客并且上传github仓库&quot;&gt;3. 编写博客并且上传github仓库&lt;/h4&gt;
-
-&lt;p&gt;本地博客结构如下图：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E6%9C%AC%E5%9C%B0%E5%8D%9A%E5%AE%A2%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;_posts:存放博客的目录，注意博客命名需要严格按照一定格式：xxxx-xx-xx-xxxx-xxxx.md&lt;/p&gt;
-
-&lt;p&gt;_site:该目录是jekyll编译出来的博客运行文件，修改之后可以直接删除，然后重新编译生成该文件夹。编译完成之后只需要直接将该文件内容
-       直接更新到github&lt;/p&gt;
-
-&lt;p&gt;更新博客过程：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;将_site删除&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;更新博客&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;编译：bundle exec jekyll serve build&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;重新生成_sites,将里面的内容全部拷贝到clone的文件夹：&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;执行如下命令：&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-angular2html&quot;&gt;cd  bitchenjh.github.io    &amp;lt;!--替换自己的clone目录--&amp;gt;
-
-git add *
-
-git status
-
-git commit -m &quot;init&quot;
-
-git push -u origin master
+&lt;p&gt;然用下面两条命令编译和部署&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;truffle compile
+truffle migrate
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 
-&lt;h4 id=&quot;4-登入个人博客&quot;&gt;4. 登入个人博客&lt;/h4&gt;
+&lt;h3 id=&quot;五-测试合约&quot;&gt;五 测试合约&lt;/h3&gt;
 
-&lt;p&gt;上面操作完成之后，这个时候在浏览器上输入: username.github.io，就可以看见博客了。&lt;/p&gt;
+&lt;p&gt;示例代码里已经把测试代码写好了，直接用下面的命令运行就可以了：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;truffle test
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;去Ganache上看一下运行结果：&lt;/p&gt;
 
-&lt;h3 id=&quot;四-其他&quot;&gt;四. 其他&lt;/h3&gt;
+&lt;p&gt;●  Accounts标签：第一个账户里ETH略有减少，因为交易消耗了gas&lt;/p&gt;
 
-&lt;p&gt;以下内容为扩展，如果让你的博客显得高大尚，可以部署自己的独立域名。同时也可以借助一个平台将博客进行云存储。&lt;/p&gt;
+&lt;p&gt;●  Blocks标签：Ganache是自动挖矿，生成了6个新区块，每个区块里有一个交易&lt;/p&gt;
 
-&lt;h4 id=&quot;1-阿里云域名绑定&quot;&gt;1. 阿里云域名绑定&lt;/h4&gt;
+&lt;p&gt;●  Transactions标签：有6笔新交易，可以点开看交易详情&lt;/p&gt;
 
-&lt;p&gt;a. 进入阿里云&lt;a href=&quot;https://www.aliyun.com/&quot;&gt;https://www.aliyun.com/&lt;/a&gt;够买个人域名，比如我的：www.chenjianhui.org&lt;/p&gt;
+&lt;p&gt;●  Logs标签：显示交易和挖矿日志&lt;/p&gt;
 
-&lt;p&gt;b. 对域名进行DNS解析。&lt;/p&gt;
+&lt;h3 id=&quot;六-创建用户接口和智能合约交互&quot;&gt;六 创建用户接口和智能合约交互&lt;/h3&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E9%98%BF%E9%87%8C%E4%BA%91%E5%9F%9F%E5%90%8D.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;我们已经编写和部署及测试好了我们的合约，接下我们为合约编写UI，让合约真正可以用起来,修改src/js/app.js;&lt;/p&gt;
 
-&lt;p&gt;c. 进入个人github-&amp;gt;Settings&lt;/p&gt;
+&lt;h3 id=&quot;七-安装-metamask&quot;&gt;七 安装 MetaMask&lt;/h3&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/github%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;与Dapp互动的最容易的方式是通过 MetaMask&lt;/p&gt;
 
-&lt;h4 id=&quot;2-云存储托管博客图片&quot;&gt;2. 云存储托管博客图片&lt;/h4&gt;
+&lt;p&gt;（地址：https://metamask.io/）&lt;/p&gt;
 
-&lt;p&gt;在非自己搭的博客如csdn中，如果想在文章中插入一张图片，其实是非常简单的，只要从你本机进行图片选择，然后选择上传，图片就会上传到CSDN的服务器，
-到时候在文章显示的时候就会读取该图片。但是如果是在自己的搭建的网站中要进行图片的显示就会遇到问题，因为图片无法从你本机读取，除非你的
-本机是一台服务器。所以我们要选择一个专门存储图片的服务商，同时存储的图片还能进行外链，即获得图片的URL地址，到时候就可以通过该URL访问并
-显示这张图片。我这边使用的图片存储商是七牛云存储，这是一个免费的存储空间。&lt;/p&gt;
+&lt;p&gt;1、在浏览器内安装MetaMask&lt;/p&gt;
 
-&lt;p&gt;简要描述下步骤：&lt;/p&gt;
+&lt;p&gt;2、装好后，以Chrome浏览器插件形式存在&lt;/p&gt;
 
-&lt;p&gt;a. 进入七牛云存储官网&lt;a href=&quot;https://www.qiniu.com]&quot;&gt;https://www.qiniu.com&lt;/a&gt;登陆注册。新建一个空间。&lt;/p&gt;
+&lt;p&gt;3、同意，接受条款&lt;/p&gt;
 
-&lt;p&gt;b. 然后在内容管理中上传一张图片，点击该图片，即可获得该图片的外链地址。然后复制即可。&lt;/p&gt;
+&lt;p&gt;4、点击”Import Existing DEN”&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E4%B8%83%E7%89%9B%E4%BA%91.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;5、返回 ganache 的主界面，在 Accounts 下有一行12个单词的助记词，如下图&lt;/p&gt;
 
-&lt;p&gt;c. 然后在新建的博客中进行访问，由于博客使用markdown语法进行编辑的，所以要使用以下语法访问这张图片的URL地址。
-我在Markdown中的格式：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E5%8A%A9%E8%AE%B0%E8%AF%8D.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E5%BC%95%E7%94%A8%E5%9B%BE%E7%89%87%E5%A4%96%E9%93%BE.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;6、复制助记词，粘贴到 MetaMask 界面中的 Wallet Seed 文本框中&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;最后注意事项&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;7、设置一个密码，点击 OK&lt;/p&gt;
+
+&lt;p&gt;8、点击 MetaMask 左上角的 Main Network ，点击 Custom RPC&lt;/p&gt;
+
+&lt;p&gt;9、在 New RPC URL 中输入 “http://127.0.0.1:7545”&lt;/p&gt;
+
+&lt;p&gt;10、返回 MetaMask 主界面，可以看到账户信息
+&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/metamask%E6%88%AA%E5%9B%BE.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sat, 15 Sep 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2018/09/15/%E4%BB%A5%E5%A4%AA%E5%9D%8ADapp%E5%BC%80/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/09/15/%E4%BB%A5%E5%A4%AA%E5%9D%8ADapp%E5%BC%80/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>Solidity语法</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;作者：陈建辉&lt;/p&gt;
+
+  &lt;p&gt;博客：www.chenjianhui.org&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;备注：如有错误，请指正，不断更新迭代&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;solidity&quot;&gt;solidity&lt;/h2&gt;
+
+&lt;h3 id=&quot;编译&quot;&gt;编译&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;npm install  solc&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;solc --bin  具体合约文件&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;abi-和字节码&quot;&gt;ABI 和字节码&lt;/h3&gt;
+
+&lt;p&gt;Remix拷贝ABI和字节码
+http://www.bejson.com/&lt;/p&gt;
+
+&lt;h3 id=&quot;gas&quot;&gt;gas&lt;/h3&gt;
+
+&lt;p&gt;Gas 可以认为是一个工作量单位，智能合约越复杂（计算步骤的数量、类型、占用的内存等等），所需的 Gas 就越多。Gas 的最小单位是 wei:&lt;/p&gt;
+
+&lt;h3 id=&quot;solidity-类的多继承重写&quot;&gt;solidity 类的多继承、重写&lt;/h3&gt;
+
+&lt;p&gt;solidity 类具有多继承的特性&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pragma solidity ^0.4.19
+
+contract Animal1 {  
+    uint age;
+}
+
+contract Animal2 {  
+    string weight;
+}
+
+contract Dog is Animal1, Animal2 {  
+    // Dog 会继承 Animal1 及 Animal2 两个类
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;重写 与其他语言相通，即子类的同名函数会覆盖从父类继承的方法：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pragma solidity ^ 0.4 .19;
+
+contract Animal {  
+    function testFunc() public pure returns(string) {
+        return &quot;Animal testFunc&quot;;
+    }
+}
+
+// 子类重写了从父类继承过来的方法，会以子类的方法为基准
+contract Dog is Animal {  
+    function testFunc() public pure returns(string) {
+        return &quot;Dog testFunc&quot;;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;构造函数-constructor&quot;&gt;构造函数-constructor&lt;/h3&gt;
+
+&lt;p&gt;构造函数在智能合约中非常的常见，但是在mist上部署时，大家却会发现很多官方给的案例编译不能通过。&lt;br /&gt;
+痛苦的是，出现这个报错后，智能合约是不能够部署的。
+其实这个报错的信息还是很简单易懂，它要求函数名和合约名不能相同，如果使用构造函数需要使用：constructor（…）{…}的形式。
+在4.22版本中，就已经更新了构造函数的写法。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;contract owned {
+    address public owner;
+
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
+
+    function transferOwnership(address newOwner) onlyOwner public {
+        owner = newOwner;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;solidity-函数的访问权限&quot;&gt;solidity 函数的访问权限&lt;/h3&gt;
+&lt;p&gt;solidity 函数分为四种访问权限：&lt;/p&gt;
+
+&lt;p&gt;private : 私有函数。内部正常访问，外部无法访问，子类无法继承。
+internal : 内部函数。内部正常访问，外部无法访问，子类可继承。
+public : 公共函数。内部正常访问，外部正常访问，子类可继承。
+external : 外部函数。内部不能访问，外部正常访问，子类可继承。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pragma solidity ^0.4.19;
+
+contract Animal {  
+    // public  公有：外部、内部、子类都可使用
+    function testPublic() public pure returns (string) {
+        return &quot;public&quot;;
+    }
+    // private 私有：合约内部可以正常访问
+    function testPrivate() private pure returns (string) {
+        return &quot;private&quot;;
+    }
+    // internal 内部：合约内部可以正常访问
+    function testInternal() internal pure returns (string) {
+        return &quot;internal&quot;;
+    }
+    // external 外部：只能供外部访问
+    function testExternal() external pure returns (string) {
+        return &quot;external&quot;;
+    }
+    // 未做任何修改时，使用pure
+    function f() public pure {
+        testPublic();
+        testInternal();
+        testPrivate();
+        //testExternal(); // 报错，只能供外部访问
+    }
+}
+
+contract Dog is Animal {  
+    // 继承 public、internal、external 类型的函数
+}
+
+// Dog.testPublic() 继承，可用
+// Dog.testInternal() 继承，不可用（internal函数外部无法访问）
+// Dog.testExternal() 继承，可用
+// Dog.f() 继承，可用
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;solidity-函数中-pure--view--constant-的区别&quot;&gt;solidity 函数中 pure 、 view 、 constant 的区别&lt;/h3&gt;
+
+&lt;p&gt;solidity 函数的完整声明格式为：&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;function 函数名(参数)  public|private|internal|external  pure|
+view|constant  无返回值|returns (返回值类型)
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;contract Animal {  
+    string homeAddress = &quot;北京市&quot;;
+    uint weight;
+
+    // pure
+    function getAge() public pure returns (uint) {
+        return 30;
+    }
+
+    // view
+    function getCurrentAddress() public view returns (address) {
+        return msg.sender;
+    }
+
+    // view
+    function getHomeAddress() public view returns (string) {
+        return homeAddress;
+    }
+
+    function setWeight(uint w) public {
+        weight = w;
+    }
+
+    // constant/view都行
+    function getWeight() public constant returns (uint) {
+        weight = 200;
+        return weight;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;结论：&lt;/p&gt;
+
+&lt;p&gt;只有当函数有返回值的情况下，才需要使用 pure 、 view 、 constant
+pure : 当函数返回值为自变量而非变量时，使用 pure
+view : 当函数返回值为全局变量或属性时，使用 view
+constant : 可以理解为 view 的旧版本，与 view 是等价的
+如果一个函数有返回值，函数中正常来讲需要有 pure 、 view 或 constant 关键字，如果没有，在调用函数的过程中，需要主动去调用底层的call方法。&lt;/p&gt;
+
+&lt;p&gt;注： 如果一个函数中带了关键字 view 或 constant ，就不能修改状态变量的值。但凡是是带了这两个关键字，区块链就默认只是向区块链读取数据，读取数据不需要花gas，但是不花gas就不可能修改状态变量的值。写入数据或者是修改状态变量的值都需要花费gas。&lt;/p&gt;
+
+&lt;h3 id=&quot;基本值类型引用类型memory-storage&quot;&gt;基本值类型、引用类型(memory storage)&lt;/h3&gt;
+
+&lt;p&gt;uint 为值类型，只能深拷贝 string 为引用类型，既可以深拷贝，也可以浅拷贝&lt;/p&gt;
+
+&lt;p&gt;uint 及 string 深拷贝（默认的声明方式即为深拷贝）:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;string a = &quot;100&quot;;  
+uint b = 100;
+
+// 浅拷贝
+// string aa 等同于 string memory aa
+function m(string aa) private {  
+    aa = &quot;1000&quot;;
+}
+function n(uint bb) private {  
+    bb = 1000;
+}
+
+function f() public {  
+    m(a)
+    n(b)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;string 类型浅拷贝（加 storage 关键字）:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;string a = &quot;100&quot;;  
+function f() public {  
+    m(a)
+}
+
+// 深拷贝
+// memory（深拷贝）、 storage（浅拷贝）
+// 当函数参数为 storage 类型时，函数类型只能为 private 或 internal，否则报错
+function m(string storage aa) private {  
+    //aa = &quot;1000&quot;; // string不能直接修改，需要转换为可变的字节数组
+    bytes(aa)[0] = '6';
+}
+
+function getA() public view returns (string) {  
+    return a;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;this-是查询当前合约地址&quot;&gt;this 是查询当前合约地址&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pragma solidity ^0.4.4;
+ contract addressBalance{
+    function getBalance(address addr) constant returns (uint){ return addr.balance;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;单位&quot;&gt;单位&lt;/h3&gt;
+&lt;p&gt;1 ether = 10的18次方Wei
+99999999999996890347 wei == 99.999999999996890347 ether&lt;/p&gt;
+
+&lt;h3 id=&quot;tranfer和send接收的意思&quot;&gt;tranfer和send（接收的意思）&lt;/h3&gt;
+&lt;p&gt;tranfer:从合约地址向某个地址转账，会抛出异常&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;function deposit() payable{
+    address Account2 = 0x14723a09acff6d2a60dcdf7aa4aff308fddc160c;
+    Account2.transfer(msg.value);//给Account2转账，msg.value 是转账合约地址的币值
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;send：也是，不过较底层,不会抛出异常&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;function deposit() payable returns (bool){
+    address Account2 = 0x14723a09acff6d2a60dcdf7aa4aff308fddc160c;
+    return Account2.send(msg.value);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;字节数组&quot;&gt;字节数组&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ragma solidity ^0.4.4;
+contract C {
+// 0x6c697975656368756e
+//                  bytes public name = new bytes(2);
+//          
+function setNameLength(uint len) {
+        name.length = len;
+    }
+//          
+function nameLength() constant returns (uint) {
+return name.length; }
+//            function pushAByte(byte b) {
+        name.push(b);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;如果我们知道存储的大小，可以通过byte1 ,byte2 ，byte3&lt;/p&gt;
+
+&lt;h3 id=&quot;枚举enum&quot;&gt;枚举enum&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pragma solidity ^0.4.4;
+contract test {
+  enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill } ActionChoices _choice;
+  ActionChoices constant defaultChoice = ActionChoices.GoStraight;
+  function setGoStraight(ActionChoices choice) public {
+     _choice = choice;
+  }
+  function getChoice() constant public returns (ActionChoices) {
+    return _choice;
+  }
+  function getDefaultChoice() pure public returns (uint) {
+    return uint(defaultChoice);
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;结构体&quot;&gt;结构体&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pragma solidity ^0.4.4;
+contract Students {
+  struct Person {
+     uint age;
+     uint stuID;
+     string name;       
+   }
+   Person _person = Person(18,101,&quot;liyuechun&quot;);
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;mapping-字典映射&quot;&gt;Mapping 字典/映射&lt;/h3&gt;
+
+&lt;p&gt;语法:
+&lt;code class=&quot;highlighter-rouge&quot;&gt;mapping(_KeyType =&amp;gt; _ValueType&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;contract MappingExample {
+//     
+// 0xca35b7d915458ef540ade6068dfe2f44e8fa733c
+// 0x14723a09acff6d2a60dcdf7aa4aff308fddc160c
+// 0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db
+    mapping(address=&amp;gt;uint)   balances;           
+    function update(address a,uint newBalance) public {
+        balances[a] = newBalance;
+    }
+
+    function searchBalance(address a) constant public returns (uint) {
+      return balances[a];
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;官网提供的代币代码案例&quot;&gt;官网提供的代币代码案例&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pragma solidity ^0.4.18;
+
+contract owned {
+    address public owner;
+
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
+
+    function transferOwnership(address newOwner) onlyOwner public {
+        owner = newOwner;
+    }
+}
+
+interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) external; }
+
+contract TokenERC20 {
+    // Public variables of the token
+    string public name;
+    string public symbol;
+    uint8 public decimals = 18;
+    // 18 decimals is the strongly suggested default, avoid changing it
+    uint256 public totalSupply;
+
+    // This creates an array with all balances
+    mapping (address =&amp;gt; uint256) public balanceOf;
+    mapping (address =&amp;gt; mapping (address =&amp;gt; uint256)) public allowance;
+
+    // This generates a public event on the blockchain that will notify clients
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    // This generates a public event on the blockchain that will notify clients
+    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+
+    // This notifies clients about the amount burnt
+    event Burn(address indexed from, uint256 value);
+
+    /**
+     * Constrctor function
+     *
+     * Initializes contract with initial supply tokens to the creator of the contract
+     */
+     constructor (
+        uint256 initialSupply,
+        string tokenName,
+        string tokenSymbol
+    ) public {
+        totalSupply = initialSupply * 10 ** uint256(decimals);  // Update total supply with the decimal amount
+        balanceOf[msg.sender] = totalSupply;                // Give the creator all initial tokens
+        name = tokenName;                                   // Set the name for display purposes
+        symbol = tokenSymbol;                               // Set the symbol for display purposes
+    }
+
+    /**
+     * Internal transfer, only can be called by this contract
+     */
+    function _transfer(address _from, address _to, uint _value) internal {
+        // Prevent transfer to 0x0 address. Use burn() instead
+        require(_to != 0x0);
+        // Check if the sender has enough
+        require(balanceOf[_from] &amp;gt;= _value);
+        // Check for overflows
+        require(balanceOf[_to] + _value &amp;gt; balanceOf[_to]);
+        // Save this for an assertion in the future
+        uint previousBalances = balanceOf[_from] + balanceOf[_to];
+        // Subtract from the sender
+        balanceOf[_from] -= _value;
+        // Add the same to the recipient
+        balanceOf[_to] += _value;
+        emit Transfer(_from, _to, _value);
+        // Asserts are used to use static analysis to find bugs in your code. They should never fail
+        assert(balanceOf[_from] + balanceOf[_to] == previousBalances);
+    }
+
+    /**
+     * Transfer tokens
+     *
+     * Send `_value` tokens to `_to` from your account
+     *
+     * @param _to The address of the recipient
+     * @param _value the amount to send
+     */
+    function transfer(address _to, uint256 _value) public returns (bool success) {
+        _transfer(msg.sender, _to, _value);
+        return true;
+    }
+
+    /**
+     * Transfer tokens from other address
+     *
+     * Send `_value` tokens to `_to` in behalf of `_from`
+     *
+     * @param _from The address of the sender
+     * @param _to The address of the recipient
+     * @param _value the amount to send
+     */
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
+        require(_value &amp;lt;= allowance[_from][msg.sender]);     // Check allowance
+        allowance[_from][msg.sender] -= _value;
+        _transfer(_from, _to, _value);
+        return true;
+    }
+
+    /**
+     * Set allowance for other address
+     *
+     * Allows `_spender` to spend no more than `_value` tokens in your behalf
+     *
+     * @param _spender The address authorized to spend
+     * @param _value the max amount they can spend
+     */
+    function approve(address _spender, uint256 _value) public
+        returns (bool success) {
+        allowance[msg.sender][_spender] = _value;
+        emit Approval(msg.sender, _spender, _value);
+        return true;
+    }
+
+    /**
+     * Set allowance for other address and notify
+     *
+     * Allows `_spender` to spend no more than `_value` tokens in your behalf, and then ping the contract about it
+     *
+     * @param _spender The address authorized to spend
+     * @param _value the max amount they can spend
+     * @param _extraData some extra information to send to the approved contract
+     */
+    function approveAndCall(address _spender, uint256 _value, bytes _extraData)
+        public
+        returns (bool success) {
+        tokenRecipient spender = tokenRecipient(_spender);
+        if (approve(_spender, _value)) {
+            spender.receiveApproval(msg.sender, _value, this, _extraData);
+            return true;
+        }
+    }
+
+    /**
+     * Destroy tokens
+     *
+     * Remove `_value` tokens from the system irreversibly
+     *
+     * @param _value the amount of money to burn
+     */
+    function burn(uint256 _value) public returns (bool success) {
+        require(balanceOf[msg.sender] &amp;gt;= _value);   // Check if the sender has enough
+        balanceOf[msg.sender] -= _value;            // Subtract from the sender
+        totalSupply -= _value;                      // Updates totalSupply
+        emit Burn(msg.sender, _value);
+        return true;
+    }
+
+    /**
+     * Destroy tokens from other account
+     *
+     * Remove `_value` tokens from the system irreversibly on behalf of `_from`.
+     *
+     * @param _from the address of the sender
+     * @param _value the amount of money to burn
+     */
+    function burnFrom(address _from, uint256 _value) public returns (bool success) {
+        require(balanceOf[_from] &amp;gt;= _value);                // Check if the targeted balance is enough
+        require(_value &amp;lt;= allowance[_from][msg.sender]);    // Check allowance
+        balanceOf[_from] -= _value;                         // Subtract from the targeted balance
+        allowance[_from][msg.sender] -= _value;             // Subtract from the sender's allowance
+        totalSupply -= _value;                              // Update totalSupply
+        emit Burn(_from, _value);
+        return true;
+    }
+}
+
+/******************************************/
+/*       ADVANCED TOKEN STARTS HERE       */
+/******************************************/
+
+contract MyAdvancedToken is owned, TokenERC20 {
+
+    uint256 public sellPrice;
+    uint256 public buyPrice;
+
+    mapping (address =&amp;gt; bool) public frozenAccount;
+
+    /* This generates a public event on the blockchain that will notify clients */
+    event FrozenFunds(address target, bool frozen);
+
+    /* Initializes contract with initial supply tokens to the creator of the contract */
+    constructor(
+        uint256 initialSupply,
+        string tokenName,
+        string tokenSymbol
+    ) TokenERC20 (initialSupply, tokenName, tokenSymbol) public {}
+
+    /* Internal transfer, only can be called by this contract */
+    function _transfer(address _from, address _to, uint _value) internal {
+        require (_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
+        require (balanceOf[_from] &amp;gt;= _value);               // Check if the sender has enough
+        require (balanceOf[_to] + _value &amp;gt;= balanceOf[_to]); // Check for overflows
+        require(!frozenAccount[_from]);                     // Check if sender is frozen
+        require(!frozenAccount[_to]);                       // Check if recipient is frozen
+        balanceOf[_from] -= _value;                         // Subtract from the sender
+        balanceOf[_to] += _value;                           // Add the same to the recipient
+        emit Transfer(_from, _to, _value);
+    }
+
+    /// @notice Create `mintedAmount` tokens and send it to `target`
+    /// @param target Address to receive the tokens
+    /// @param mintedAmount the amount of tokens it will receive
+    function mintToken(address target, uint256 mintedAmount) onlyOwner public {
+        balanceOf[target] += mintedAmount;
+        totalSupply += mintedAmount;
+        emit Transfer(0, this, mintedAmount);
+        emit Transfer(this, target, mintedAmount);
+    }
+
+    /// @notice `freeze? Prevent | Allow` `target` from sending &amp;amp; receiving tokens
+    /// @param target Address to be frozen
+    /// @param freeze either to freeze it or not
+    function freezeAccount(address target, bool freeze) onlyOwner public {
+        frozenAccount[target] = freeze;
+        emit FrozenFunds(target, freeze);
+    }
+
+    /// @notice Allow users to buy tokens for `newBuyPrice` eth and sell tokens for `newSellPrice` eth
+    /// @param newSellPrice Price the users can sell to the contract
+    /// @param newBuyPrice Price users can buy from the contract
+    function setPrices(uint256 newSellPrice, uint256 newBuyPrice) onlyOwner public {
+        sellPrice = newSellPrice;
+        buyPrice = newBuyPrice;
+    }
+
+    /// @notice Buy tokens from contract by sending ether
+    function buy() payable public {
+        uint amount = msg.value / buyPrice;               // calculates the amount
+        _transfer(this, msg.sender, amount);              // makes the transfers
+    }
+
+    /// @notice Sell `amount` tokens to contract
+    /// @param amount amount of tokens to be sold
+    function sell(uint256 amount) public {
+        address myAddress = this;
+        require(myAddress.balance &amp;gt;= amount * sellPrice);      // checks if the contract has enough ether to buy
+        _transfer(msg.sender, this, amount);              // makes the transfers
+        msg.sender.transfer(amount * sellPrice);          // sends ether to the seller. It's important to do this last to avoid recursion attacks
+    }
+}
+
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+        <pubDate>Sat, 15 Sep 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2018/09/15/Solidity%E8%AF%AD%E6%B3%95/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/09/15/Solidity%E8%AF%AD%E6%B3%95/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>UTXO与账户模型(转)</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;作者：陈建辉&lt;/p&gt;
+
+  &lt;p&gt;博客：www.chenjianhui.org&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;备注：如有错误，请指正，不断更新迭代&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;utxo与普通账户模型&quot;&gt;UTXO与普通账户模型&lt;/h2&gt;
+
+&lt;p&gt;区块链网络中有两种记账模式，除了 UTXO 模型还有 Account Based 结构，也就是普通账户模型，也叫账户余额模型，前者在比特币系的数字货币中被广泛使用，后者更多是用在智能合约型的区块链上。&lt;/p&gt;
+
+&lt;h3 id=&quot;普通账户模型&quot;&gt;普通账户模型&lt;/h3&gt;
+&lt;p&gt;我们先从传统的账户模型出发来聊聊是如何记账的，假设我们现在有一个支付系统，在这个支付系统中有村长和张三两个账户，村长账户里有 100 万，现在要转账给张三 10 万，这其中涉及的操作是这样的：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.	检查村长的账户余额是否大于 10 万；
+2.	把村长的账户扣除 10 万变成 90 万，然后发送一笔转账消息给张三的账户；
+3.	张三的账户接受到转账消息，将张三的账户余额加 10 万。 我们可以发现，无论是村长还是张三，都具有一个余额作为状态，即当前余额是记录在某个地方的，只需要读出来即可，这种设计我们叫做账户余额模型。 如果以上三个步骤是在一个中心化系统中，甚至在同一个数据库中，那将非常简单，会直接退化成一个事务，我们见到的银行账户、信用卡系统、证券交易系统、各种电商类应用，理财类应用基本都是一个中心化系统中的，最多也就是跨表跨数据库。 想必这类场景下的设计，各位工程师对此应该是了如指掌的。 如果以上的步骤中，村长和张三的账户分属两个不同的系统，例如从 A 银行到 B 银行，就需要经过人民银行支付系统，即可信任的中心化第三方来做中介。 你可能发现了，在跨行转账的这种情况下，是没有办法做事务的，所以 1 和 3 是不同步的，如果 3 操作失败，还需要从 2 倒退到 1 的状态，这个情况叫做冲正交易。 普通账户模型具有自定义数据类型的优点，但是却需要自己设计事务机制，就是上述所说的冲正交易。而接下来所讲的 UTXO 模型则恰恰相反。
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;utxo-模型&quot;&gt;UTXO 模型&lt;/h3&gt;
+&lt;p&gt;UTXO 全称是：“Unspent Transaction Output”，这指的是：未花费的交易输出。这里面三个单词分别表示 “未花费的”“交易”“输出”，接下来我来详细讲解一下 UTXO 的含义。
+UTXO 的核心设计思路是无状态，它记录的是交易事件，而不记录最终状态，也就是说只记录变更事件，用户需要根据历史记录自行计算余额。
+有点像MySQL 中的 Binlog，主从模式的情况下，按照 Binlog 来更新数据，Redis 的 AOF 模式备份模式也是如此，UTXO 也是类似的思路。
+下面我们按照按照普通账户中的例子来重新讲解一遍。
+如果要记录交易本身，那么我们可以构造一笔交易，这笔交易中村长转账 10 万给张三的同时，90 万转给自己。
+如下所示：
+　村长　100 万 –&amp;gt; 张三　10 万 　 　　　　　　　 –&amp;gt; 村长　90 万
+这里其实有三条子记录，左边一条，右边两条，左边叫做输入，右边叫做输出。
+输入和输出组成了交易，输入和输入需要满足一些约束条件：
+	1.	任意一个交易必须至少一个输入、一个输出；
+	2.	输入必须全部移动，不能只使用部分，所以才产生了第二个输出指向村长自己；
+	3.	输入金额 = 输出金额之和 + 交易手续费，这里必须是等式。
+对于村长来说，首先构造交易的输入输出，满足上述条件，然后广播到全网，接收方自行判断交易是否属于自己。这里满足约束条件构成的交易模型，也就是村长记录的三条转账事件就是 UTXO 模型。&lt;/p&gt;
+
+&lt;h3 id=&quot;账户余额模型与-utxo-的比较&quot;&gt;账户余额模型与 UTXO 的比较&lt;/h3&gt;
+&lt;p&gt;我们可以归纳出 UTXO 与普通账户模型的一些区别。
+	1.	存储空间，UTXO 占用空间比账户模型高，因为账户模型只记录最终状态。 
+	2.	易用性，UTXO 比较难处理，账户模型简单容易理解。例如 UTXO 在使用上，还需要配合高效的 UTXO 组装算法，这个算法要求尽可能降低输入输出的个数，还要让“零钱“归整，算法的复杂度相比账户余额无疑要高。 
+	3.	安全性，UTXO 比账户模型要高，UTXO本身具备 ACID 的记账机制，而账户模型需要自行处理，例如重放攻击。 
+普通账户模型具有较高的自由度，可以让智能合约有更好的发挥空间，并且它避免了 UTXO 的复杂组装逻辑，精度控制上也更为得心应手。
+UTXO 似乎天然是为数字货币设计的，具有较高频次跨账户转移场景都使用 UTXO 会比较好，考虑到智能合约的普适性，UTXO 与智能合约并不能很好地兼容，但是这也对开发者的自身水平提出了更高的要求。&lt;/p&gt;
+
+&lt;h3 id=&quot;区块链中的-utxo-模型&quot;&gt;区块链中的 UTXO 模型&lt;/h3&gt;
+&lt;p&gt;我们借用比特币开发者文档中 UTXO 模型的图示，来看看 UTXO 实际的构造形式。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/UTXO%E4%B8%8E%E8%B4%A6%E6%88%B7%E6%A8%A1%E5%9E%8B.png&quot; alt=&quot;&quot; /&gt;
+￼
+上图中，所有的交易都可以找到前向交易，例如 TX5 的前向交易是 TX2，TX2 中的 Output1 作为 TX5 中的 Input0。
+意思就是 TX2 中的付款人使用了 Output1 中指向的比特币转移给 TX5 中的收款人，接着 TX5 中的人又把收到的比特币转移给了 TX6 中的收款人，成为了 TX6 中 Output0。
+我们也可以发现，TX6 中的收款人还没有产生 TX7 交易，也就是说 Output0 还没有被花费，
+这时候我们终于得到了 UTXO 的真正语义：Unspent Transaction Output，未花费的交易输出。
+我们这时候可以发现 UTXO 也同样能表示余额，不过是重演计算的方式，它用不同的方式表达了余额，我们把一个地址上所有的 UTXO 全部找出来，就是这个地址总的余额了。
+我们还可以发现，无论是 TX5 还是 TX2，都已经成为历史交易，它们都忠实客观地记录了两笔交易，这两笔交易代表的是事件，而不是余额状态转移，这是我们看到的最直观的区别。
+我们再来看看一个真实的交易例子。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E4%BA%A4%E6%98%93%E8%AE%B0%E5%BD%95.png&quot; alt=&quot;&quot; /&gt;
+￼
+这是区块链上一笔真实交易的例子，它记录了一笔 450ETP 的转账记录。
+左边是输入，右边是两笔输出，其中第二个输出是给自己的账户，这和我们村长转账给张三的例子是一样的。
+下图是交易解码为 JSON 格式的样子，可以看到 Previous_output 是放到 Inputs 数组里的，意思就是前向输出作为本次的输入。
+{
+“hash” : “89e80e14db07c4904a57e2c1efb689bccbbf43942103c1a92166d5c0f27ea3d2”,
+“height” : 1093399,
+“inputs” :
+[
+    {
+        “address” : “MLWtmjwCtmK44FMwJMSfAkHaEvnnb2N6HX”,
+        “previous_output” :
+        {
+            “hash” : “770a72f35d3e3a78bd468949bad649f03b241cf7e2a84cc2d6fdabacdcc47f06”,
+            “index” : 0
+        },
+        “script” : “[ 304402202b21d7a79276985dc99777b70fd5095796dad58f35e29a019d2cb6cca5df481802205ffab088a6047f5b6382ba02a0eed4e78ab7950fe264d3774e8b0b357a7593d101 ] [ 03ea3462dc01e7b5569e89737211887035f8f1e99e1fe4332181d83daccaa6d917 ]”,
+        “sequence” : 4294967295
+    }
+],
+“lock_time” : “0”,
+“outputs” :
+[
+    {
+        “address” : “MGz9yjLLn4AqyraRjSpiP2GmTWKnT3yfiL”,
+        “attachment” :
+        {
+            “type” : “etp”
+        },
+        “index” : 0,
+        “locked_height_range” : 0,
+        “script” : “dup hash160 [ 63ab0013d183f2592e4b46a358df01e88a09c0b8 ] equalverify checksig”,
+        “value” : 45000000000
+    },
+    {
+        “address” : “MLWtmjwCtmK44FMwJMSfAkHaEvnnb2N6HX”,
+        “attachment” :
+        {
+            “type” : “etp”
+        },
+        “index” : 1,
+        “locked_height_range” : 0,
+        “script” : “dup hash160 [ 8a63941b392771c40f1c15e4374808f6bb464cba ] equalverify checksig”,
+        “value” : 118082150283
+    }
+],
+“version” : “2”
+}
+我们再看看比特币上的例子：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/%E6%AF%94%E7%89%B9%E5%B8%81%E4%B8%8A%E7%9A%84%E4%B8%80%E7%AC%94%E4%BA%A4%E6%98%93.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这一笔比特币交易包含 6 个输入，几十个输出，交易一共 3.5kb，交易的输入输出会影响交易大小，比特币的交易费是根据字节收费的，交易尺寸越大越贵，而交易尺寸主要和输入输出的个数有关，也就是说，算法上并不规定输入输出的个数，而只有区块尺寸限制。
+在比特币中将小于 100kb 的交易称为标准交易，超过 100kb 的称为非标准交易。它的前向 input 以及生成一个 out 约占用 161~250 bytes 。所以在比特币中，大约的 inputs/ouputs 的最大数目限制为 100KB/161B ~= 600 个。&lt;/p&gt;
+
+&lt;h3 id=&quot;utxo-的特性及缺点&quot;&gt;UTXO 的特性及缺点&lt;/h3&gt;
+&lt;p&gt;从计算的角度来说，UTXO 具有非常好的并行支付能力，也就是我们上文中所说的如果没有尺寸限制，一笔交易可以包含任意笔输入输出，同时也没有次序要求，在一笔交易中哪一个 UTXO 在前，哪个在后面不影响最终结果。
+从存储的角度来说，UTXO 具有较好的可裁剪特性，可裁剪性指的是 UTXO 类型的交易，如果从最老的那一笔 UTXO 开始截断数据库，那么之前的数据可以删除掉了。
+如果想进一步压缩数据尺寸，可以在任意位置截断，记录 UTXO 对应的交易哈希即可，然后从其他节点获取并校验 UTXO，这也是 SPV 轻钱包工作的基础之一。
+以太坊中并没有使用比特币的这种 UTXO 设计，这与以太坊的宗旨有关，以太坊的目标是构建通用计算，而比特币是数字货币，需求不同导致设计的不同。
+V 神指出了 UTXO 的缺陷，一共有三类。&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;可表达的状态少 。
+UTXO 只能是已花费或者未花费状态，这就没有给需要任何其它内部状态的多阶段合约或者脚本留出生存空间，这也意味着 UTXO 只能用于建立简单的、一次性的合约，UTXO 更像是一种二进制控制位。&lt;/li&gt;
+  &lt;li&gt;区块链盲点（Blockchain-blindness）。
+UTXO 的脚本只能看到自己这条历史轨迹，无法看到区块链的数据的全貌，这导致了功能性扩展受到了限制，我们在花费比特币的过程中需要小心翼翼的组合 UTXO，这也导致了系统状态逻辑复杂，不适合设计成智能合约的基础结构。&lt;/li&gt;
+  &lt;li&gt;价值盲点（Value-blindness）。
+UTXO 脚本不能提供非常精细的金额控制，基于账户模型的余额在花费过程中，可以任意的按值存取，它仅取决于程序能表示的最小精度。
+而 UTXO 要求必须全部移动，如果要满足一个目标值金额，对组合 UTXO 算法的要求会比较高，采用许多有不同面值的 UTXO，一方面要求尽可能地精确，另一方面又要求输入输出的数量尽可能的小。
+UTXO 是比特币上的原生设计，在区块链以前是没有这种逻辑数据结构，UTXO 的出现给了人们看待数据转移的不同视角，但 UTXO 不是所有区块链所必需的，公链开发过程中的是否选用 UTXO 模型可以根据业务场景进行判断。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;总结&quot;&gt;总结&lt;/h3&gt;
+&lt;p&gt;好了，今天我们分别介绍了普通账户模型和 UTXO 模型，并从不同角度比较了二者的优劣。
+从技术选择上来看，比特币选择 UTXO 是为了满足支付的安全性，以太坊选择普通账户模型是为了智能合约的自由度。&lt;/p&gt;
+
+&lt;p&gt;￼&lt;/p&gt;
+</description>
+        <pubDate>Wed, 12 Sep 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2018/09/12/UTXO%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B4%A6%E6%88%B7%E6%A8%A1%E5%9E%8B/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/09/12/UTXO%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B4%A6%E6%88%B7%E6%A8%A1%E5%9E%8B/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>初识Etcd和Zookeeper</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;作者：陈建辉&lt;/p&gt;
+
+  &lt;p&gt;博客：www.chenjianhui.org&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;备注：如有错误，请指正，不断更新迭代&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;这里简单做个介绍，具体请查阅其它资料。&lt;/p&gt;
+
+&lt;h3 id=&quot;etcd简介&quot;&gt;Etcd简介&lt;/h3&gt;
+
+&lt;p&gt;etcd是一个高可用的分布式键值(key-value)数据库。etcd内部采用raft协议作为一致性算法，etcd基于Go语言实现。
+etcd是一个服务发现系统，具备以下的特点：
+简单：安装配置简单，而且提供了HTTP API进行交互，使用也很简单
+安全：支持SSL证书验证
+快速：根据官方提供的benchmark数据，单实例支持每秒2k+读操作
+可靠：采用raft算法，实现分布式系统数据的可用性和一致性&lt;/p&gt;
+
+&lt;h3 id=&quot;zookeeper简介&quot;&gt;Zookeeper简介&lt;/h3&gt;
+
+&lt;p&gt;是为分布式应用程序提供高性能协调服务的工具集合，也是Google的Chubby一个开源的实现，是Hadoop 的分布式协调服务。它包含一个简单的原语集，分布式应用程序可以基于它实现配置维护、命名服务、分布式同步、组服务等。Zookeeper可以用来保证数据在ZK集群之间的数据的事务性一致。其中ZooKeeper提供通用的分布式锁服务，用以协调分布式应用。&lt;/p&gt;
+
+&lt;p&gt;Zookeeper作为Hadoop项目中的一个子项目,是 Hadoop集群管理的一个必不可少的模块,它主要用来解决分布式应用中经常遇到的数据管理问题，如集群管理、统一命名服务、分布式配置管理、分布式消息队列、分布式锁、分布式协调等。在Hadoop中，它管理Hadoop集群中的NameNode，还有在Hbase中Master Election、Server 之间状态同状步等。Zoopkeeper 提供了一套很好的分布式集群管理的机制，就是它这种基于层次型的目录树的数据结构，并对树中的节点进行有效管理，从而可以设计出多种多样的分布式的数据管理模型。&lt;/p&gt;
+
+&lt;p&gt;Zookeeper是Apache Hadoop的一个子项目，主要是用来解决分布式应用中经常遇到的一些数据管理问题。&lt;/p&gt;
+
+&lt;h3 id=&quot;两者对比&quot;&gt;两者对比&lt;/h3&gt;
+
+&lt;p&gt;1、两个应用实现的目的不同。etcd的目的是一个高可用的 Key/Value 存储系统，主要用于分享配置和服务发现；zookeeper的目的是高有效和可靠的协同工作系统。&lt;/p&gt;
+
+&lt;p&gt;2、接口调用方式不同。etcd是基于HTTP+JSON的API，直接使用curl就可以轻松使用，方便集群中每一个主机访问；zookeeper基于TCP，需要专门的客户端支持。&lt;/p&gt;
+
+&lt;p&gt;3、功能就比较相似了。etcd和zookeeper都是提供了key，value存储服务，集群队列同步服务，观察一个key的数值变化。&lt;/p&gt;
+
+&lt;p&gt;4、部署方式也是差不多：采用集群的方式，可以达到上千节点。只是etcd是go写的，直接编译好二进制文件部署安装即可；zookeeper是java写的，需要依赖于jdk，需要先部署jdk。&lt;/p&gt;
+
+&lt;p&gt;5、实现语言： go 拥有几乎不输于C的效率，特别是go语言本身就是面向多线程，进程通信的语言。在小规模集群中性能非常突出；java，实现代码量要多于go，在小规模集群中性能一般，但是在大规模情况下，使用对多线程的优化后，也和go相差不大。&lt;/p&gt;
+
+&lt;p&gt;总结&lt;/p&gt;
+
+&lt;p&gt;1、在原生接口和提供服务方式方面，etcd更适合作为集群配置服务器，用来存储集群中的大量数据，基于HTTP+JSON的API可以让集群中的任意一个节点在使用key/value服务时获取方便；&lt;/p&gt;
+
+&lt;p&gt;2、zookeeper则更加的适合于提供分布式协调服务，在实现分布式锁模型方面较etcd要简单的多。&lt;/p&gt;
+
+&lt;p&gt;实际使用中应该根据自身使用情况来选择相应的服务。&lt;/p&gt;
+</description>
+        <pubDate>Mon, 27 Aug 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2018/08/27/%E5%88%9D%E8%AF%86Etcd%E5%92%8CZookeeper/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/08/27/%E5%88%9D%E8%AF%86Etcd%E5%92%8CZookeeper/</guid>
+        
+        
+      </item>
+    
+      <item>
+        <title>数字签名算法</title>
+        <description>&lt;blockquote&gt;
+  &lt;p&gt;作者：陈建辉&lt;/p&gt;
+
+  &lt;p&gt;博客：www.chenjianhui.org&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;备注：如有错误，请指正，不断更新迭代&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&quot;数字签名算法&quot;&gt;数字签名算法&lt;/h1&gt;
+
+&lt;h2 id=&quot;数字签名算法dsa&quot;&gt;数字签名算法(DSA)&lt;/h2&gt;
+
+&lt;p&gt;数字签名算法（DSA，Digital Signature Algorithm），是一种公开密钥算法，不能用于加密，只能用于数字签名。主要用作为接收者验证数字的完整性和数据发送者的身份，DSA算法的安全性基于解离散对数的困难性。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;package main
+
+import (
+    &quot;crypto/dsa&quot;
+    &quot;crypto/rand&quot;
+    &quot;fmt&quot;
+)
+
+func main() {
+    var params dsa.Parameters
+
+    //生成参数
+    if e := dsa.GenerateParameters(&amp;amp;params, rand.Reader, dsa.L1024N160); e != nil {
+        fmt.Println(e)
+    }
+
+    //生成私钥
+    var priv dsa.PrivateKey
+
+    priv.Parameters = params
+    if e := dsa.GenerateKey(&amp;amp;priv, rand.Reader); e != nil {
+        fmt.Println(e)
+    }
+
+    //根据私钥生成公钥
+    pub := priv.PublicKey
+
+    //消息
+    message := []byte(&quot;hello world&quot;)
+
+    //使用私钥进行签名，产生整数对(r,s)
+    r, s, e := dsa.Sign(rand.Reader, &amp;amp;priv, message)
+    if e != nil {
+        fmt.Println(e)
+    }
+
+    //认证
+    fmt.Printf(&quot;认证 %q (r:%s,s:%s)\n&quot;, message, r, s)
+    if dsa.Verify(&amp;amp;pub, message, r, s) {
+        fmt.Println(&quot;认证正确！&quot;)
+    } else {
+        fmt.Println(&quot;认证失败！&quot;)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;公钥加密算法rsa&quot;&gt;公钥加密算法(RSA)&lt;/h2&gt;
+
+&lt;p&gt;公钥加密算法于1987年首次公开，RSA是提出这个算法的三人姓氏开头字母组成，可用于加密，也可以用于数字签名。RSA的安全性基于大数分解的困难性。&lt;/p&gt;
+
+&lt;p&gt;加密算法：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;最优非对称加密填充（OAEP，Optimal Asymmetric Encryption Padding），在随机预言模型下，用来处理非对称加密前的明文；&lt;/li&gt;
+  &lt;li&gt;公钥密码学标准（PKCS，The Public-Key Cryptography Standards），是由美国RSA数据安全公司及其合作伙伴制定的一组公钥密码学标准，其中包括证书申请、证书更新、证书作废表发布、扩展证书内容以及数字签名、数字信封的格式等方面的一系列相关协议。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;签名认证：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;公钥密码学标准（PKCS）；&lt;/li&gt;
+  &lt;li&gt;概率签名方案（PSS，Probabilistic Signature Scheme），与PKCS不同的是，它支持添加盐（Salt）。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;package main
+
+import (
+    &quot;crypto&quot;
+    &quot;crypto/md5&quot;
+    &quot;crypto/rand&quot;
+    &quot;crypto/rsa&quot;
+    &quot;fmt&quot;
+)
+
+func main() {
+    //生成私钥
+    priv, e := rsa.GenerateKey(rand.Reader, 1024)
+    if e != nil {
+        fmt.Println(e)
+    }
+
+    //根据私钥产生公钥
+    pub := &amp;amp;priv.PublicKey
+
+    //明文
+    plaintext := []byte(&quot;Hello world&quot;)
+
+    //加密生成密文
+    fmt.Printf(&quot;%q\n加密:\n&quot;, plaintext)
+    ciphertext, e := rsa.EncryptOAEP(md5.New(), rand.Reader, pub, plaintext, nil)
+    if e != nil {
+        fmt.Println(e)
+    }
+    fmt.Printf(&quot;\t%x\n&quot;, ciphertext)
+
+    //解密得到明文
+    fmt.Printf(&quot;解密:\n&quot;)
+    plaintext, e = rsa.DecryptOAEP(md5.New(), rand.Reader, priv, ciphertext, nil)
+    if e != nil {
+        fmt.Println(e)
+    }
+    fmt.Printf(&quot;\t%q\n&quot;, plaintext)
+
+    //消息先进行Hash处理
+    h := md5.New()
+    h.Write(plaintext)
+    hashed := h.Sum(nil)
+    fmt.Printf(&quot;%q MD5 Hashed:\n\t%x\n&quot;, plaintext, hashed)
+
+    //签名
+    opts := &amp;amp;rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthAuto, Hash: crypto.MD5}
+    sig, e := rsa.SignPSS(rand.Reader, priv, crypto.MD5, hashed, opts)
+    if e != nil {
+        fmt.Println(e)
+    }
+    fmt.Printf(&quot;签名:\n\t%x\n&quot;, sig)
+
+    //认证
+    fmt.Printf(&quot;验证结果:&quot;)
+    if e := rsa.VerifyPSS(pub, crypto.MD5, hashed, sig, opts); e != nil {
+        fmt.Println(&quot;失败:&quot;, e)
+    } else {
+        fmt.Println(&quot;成功.&quot;)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;椭圆曲线加密算法&quot;&gt;椭圆曲线加密算法&lt;/h2&gt;
+
+&lt;p&gt;ECDSA的全名是Elliptic Curve DSA，即椭圆曲线DSA。它是Digital Signature Algorithm (DSA)应用了椭圆曲线加密算法的变种。椭圆曲线算法的原理很复杂，但是具有很好的公开密钥算法特性，通过公钥无法逆向获得私钥。&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;
-    &lt;p&gt;git只允许每个人有一个以用户名.github.io命名的仓库，例如，我的用户是bitchenjh, 那么我的唯一对应主页应该是
-  bitchenjh.github.io, 仓库名也必须命名为bitchenjh.github.io。&lt;/p&gt;
+    &lt;p&gt;签名过程&lt;/p&gt;
+
+    &lt;p&gt;假设要签名的消息是一个字符串：“Hello World!”。DSA签名的第一个步骤是对待签名的消息生成一个消息摘要。不同的签名算法使用不同的消息摘要算法。而ECDSA256使用SHA256生成256比特的摘要。
+摘要生成结束后，应用签名算法对摘要进行签名：
+产生一个随机数k
+利用随机数k，计算出两个大数r和s。将r和s拼在一起就构成了对消息摘要的签名。
+这里需要注意的是，因为随机数k的存在，对于同一条消息，使用同一个算法，产生的签名是不一样的。从函数的角度来理解，签名函数对同样的输入会产生不同的输出。因为函数内部会将随机值混入签名的过程。&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;p&gt;Domain’s DNS record could not be retrieved问题，说明你的域名云解析有问题，你去阿里云上仔细核对你的独立域名，
-最好设置同时添加’www’及’@’记录，这样访问博客更加方便。&lt;/p&gt;
+    &lt;p&gt;验证过程
+关于验证过程，这里不讨论它的算法细节。从宏观上看，消息的接收方从签名中分离出r和s，然后利用公开的密钥信息和s计算出r。如果计算出的r和接收到的r值相同，则表示验证成功。否则，表示验证失败。&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ol&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;package main
+
+import (
+	&quot;fmt&quot;
+	&quot;crypto/ecdsa&quot;
+	&quot;crypto/elliptic&quot;
+	&quot;crypto/rand&quot;
+	&quot;crypto/sha256&quot;
+	&quot;math/big&quot;
+)
+
+func main() {
+	//明文
+	message := []byte(&quot;Hello world&quot;)
+
+	key, err := NewSigningKey()
+	if err != nil {
+		return
+	}
+
+	signature, err := Sign(message, key)
+
+	fmt.Printf(&quot;签名后：%x\n&quot;, signature)
+	if err != nil {
+		return
+	}
+
+	if !Verify(message, signature, &amp;amp;key.PublicKey) {
+		fmt.Println(&quot;验证失败！&quot;)
+		return
+	}else{
+		fmt.Println(&quot;验证成功！&quot;)
+	}
+}
+
+func NewSigningKey() (*ecdsa.PrivateKey, error) {
+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	return key, err
+}
+
+// Sign signs arbitrary data using ECDSA.
+func Sign(data []byte, privkey *ecdsa.PrivateKey) ([]byte, error) {
+	// hash message
+	digest := sha256.Sum256(data)
+
+	// sign the hash
+	r, s, err := ecdsa.Sign(rand.Reader, privkey, digest[:])
+	if err != nil {
+		return nil, err
+	}
+
+	// encode the signature {R, S}
+	// big.Int.Bytes() will need padding in the case of leading zero bytes
+	params := privkey.Curve.Params()
+	curveOrderByteSize := params.P.BitLen() / 8
+	rBytes, sBytes := r.Bytes(), s.Bytes()
+	signature := make([]byte, curveOrderByteSize*2)
+	copy(signature[curveOrderByteSize-len(rBytes):], rBytes)
+	copy(signature[curveOrderByteSize*2-len(sBytes):], sBytes)
+
+	return signature, nil
+}
+
+// Verify checks a raw ECDSA signature.
+// Returns true if it's valid and false if not.
+func Verify(data, signature []byte, pubkey *ecdsa.PublicKey) bool {
+	// hash message
+	digest := sha256.Sum256(data)
+
+	curveOrderByteSize := pubkey.Curve.Params().P.BitLen() / 8
+
+	r, s := new(big.Int), new(big.Int)
+	r.SetBytes(signature[:curveOrderByteSize])
+	s.SetBytes(signature[curveOrderByteSize:])
+
+	return ecdsa.Verify(pubkey, digest[:], r, s)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 </description>
-        <pubDate>Thu, 10 May 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2018/05/10/buildblog-interview0/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/05/10/buildblog-interview0/</guid>
-        
-        <category>博客</category>
+        <pubDate>Sun, 26 Aug 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/2018/08/26/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E7%AE%97%E6%B3%95/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/08/26/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E7%AE%97%E6%B3%95/</guid>
         
         
       </item>

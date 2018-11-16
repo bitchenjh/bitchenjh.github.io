@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>智能合约项目开发(truffle框架使用)</title>
+  <meta name="description" content="">
+  <meta name="author" content="陈建辉">
+
+  <meta name="keywords" content=""
+  />
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="智能合约项目开发(truffle框架使用)">
+  <meta name="twitter:description" content="">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="智能合约项目开发(truffle框架使用)">
+  <meta property="og:description" content="">
+  <meta property="og:site_name" content="e"
+  />
+
+
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
+
+
+  <link rel="stylesheet" href=" /css/main.css ">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="canonical" href="http://localhost:4000/2018/10/16/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/">
+  <link rel="alternate" type="application/rss+xml" title="陈建辉区块链博客" href="http://localhost:4000 /feed.xml
+    ">
+
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+
+  <!-- 站点统计 -->
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+
+<!--注释掉51客服系统，这是个插件-->
+  <!--<script>(function() {var _53code = document.createElement("script");_53code.src = "https://tb.53kf.com/code/code/10174862/1";var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(_53code, s);})();</script>-->
+
+  <!-- 百度统计 -->
+  
+
+  <!-- google 统计 -->
+  
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+</head>
+
+
+<body>
+
+  <span class="mobile btn-mobile-menu">        
+      <div class="nav_container">
+         <nav class="nav-menu-item" style = "float:right">
+            <i class="nav-menu-item">
+              <a href="/#blog" title="" class="blog-button">  博客主页
+              </a>
+            </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/archive" title="archive" class="btn-mobile-menu__icon">
+                      所有文章
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/tags" title="tags" class="btn-mobile-menu__icon">
+                      分类
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/about" title="about" class="btn-mobile-menu__icon">
+                      关于我
+                  </a>
+                </i>
+            
+          </nav>
+          
+      </div>
+    </span> <header class="panel-cover panel-cover--collapsed" style="background-image: url('/images/background-cover.jpg')">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+      <div class="panel-main__content">
+        <!-- 头像效果-start -->
+        <div class="ih-item circle effect right_to_left">
+          <a href="/#blog" title="前往 陈建辉区块链博客 的主页" class="blog-button">
+            <div class="img"><img src="/images/avatar.jpg" alt="img"></div>
+            <div class="info">
+              <div class="info-back">
+                <h2 style="font-size: 14px">
+                   微信:chenjh07507 
+                </h2>´
+                <p style="font-size: 6px">
+                   区块链从业人员 
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- 头像效果-end -->
+        <h1 class="panel-cover__title panel-title"><a href="/#blog" title="link to homepage for 陈建辉区块链博客" class="blog-button">陈建辉区块链博客</a></h1>
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">陈建辉，项目经理，高级软件工程师，早期区块链从业人员，拥有多年传统金融软件开发经验</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" /> 
+
+
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">博客主页</a></li>
+                
+                <li class="navigation__item"><a href="/archive" title="archive">所有文章</a></li>
+                
+                <li class="navigation__item"><a href="/tags" title="tags">分类</a></li>
+                
+                <li class="navigation__item"><a href="/about" title="about">关于我</a></li>
+                
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="panel-cover--overlay cover-clear"></div>
+  
+
+  </div>
+</header>
+
+
+  <div class="content-wrapper">
+    <div class="content-wrapper__inner">
+      <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title">智能合约项目开发(truffle框架使用)</h1>
+    <div class="post-meta">
+      <img src="/images/calendar.png" width="20px"/>
+      <time datetime="2018-10-16 00:00:00 +0800" itemprop="datePublished" class="post-meta__date date">2018-10-16</time>
+
+      <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
+    </p>
+    </div>
+  </header>
+
+  <section class="post">
+    <blockquote>
+  <p>作者：陈建辉</p>
+
+  <p>博客：www.chenjianhui.org</p>
+</blockquote>
+
+<blockquote>
+  <p>备注：如有错误，请指正，不断更新迭代</p>
+</blockquote>
+
+<h2 id="一-开发前的准备">一 开发前的准备</h2>
+
+<h3 id="solidity语言">solidity语言</h3>
+<p>Ethereum上的智能合约需要使用solidity语言来撰写。solidity是一种类似Javascript的语言，而且围绕着solidity的各种开发工具链，都是使用属于Javascript生态系的npm来提供的</p>
+
+<h3 id="开发框架truffle">开发框架truffle</h3>
+<p>Truffle是一个世界级的开发环境，测试框架，以太坊的资源管理通道，致力于让以太坊上的开发变得简单，当前最活跃的智能合约开发框架，Truffle有以下：</p>
+<ul>
+  <li>内置的智能合约编译，链接，部署和二进制文件的管理。</li>
+  <li>快速开发下的自动合约测试。</li>
+  <li>脚本化的，可扩展的部署与发布框架。</li>
+  <li>部署到不管多少的公网或私网的网络环境管理功能</li>
+  <li>使用EthPM&amp;NPM提供的包管理，使用ERC190标准。</li>
+  <li>与合约直接通信的直接交互控制台（写完合约就可以命令行里验证了）。</li>
+  <li>可配的构建流程，支持紧密集成。</li>
+  <li>在Truffle环境里支持执行外部的脚本。</li>
+</ul>
+
+<h3 id="ethereumjs-testrpc客户端">EthereumJS TestRPC客户端</h3>
+<p>就像一般网站或App开发一样，在提供公开服务之前，开发者会在自己用于写程序的电脑（又称作本机）或透过测试网络来测试程序执行的效果，测试完成后，才会部署到公开的网络上提供服务。开发区块链智能合约的过程也是如此。特别是公开链上所有写入或读取计算结果的操作都需要虚拟代币，而且根据网络状况，每个公开链上的操作都需要要一小段反应时间。因此在开发的过程中，我们将用testrpc工具在电脑上模拟智能合约所需的以太坊内存块链测试环境。</p>
+
+<p>当开发基于Truffle的应用时，我们推荐使用EthereumJS TestRPC。它是一个完整的在内存中的区块链仅仅存在于你开发的设备上。它在执行交易时是实时返回，而不等待默认的出块时间，这样你可以快速验证你新写的代码，当出现错误时，也能即时反馈给你。它同时还是一个支持自动化测试的功能强大的客户端。Truffle充分利用它的特性，能将测试运行时间提速近90%</p>
+
+<h3 id="atom-编辑器">atom 编辑器</h3>
+<p>此外，开发前还需准备一个合手的编辑器。我目前是使用Atom搭配solidity插件来开发。solidity插件除了支持语法高亮之外，也会透过Solium检查并提示基本的语法错误，相当方便。其他编辑器应该也有类似的插件可选择。</p>
+
+<h2 id="二-开发所需的工具">二 开发所需的工具</h2>
+
+<p>首先开发机上必须装好Node.js，再使用以下命令安装所需的工具：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cjhmacpro:helloworld chenjh$ npm install -g ethereumjs-testrpc truffle
+cjhmacpro:helloworld chenjh$ testrpc
+
+</code></pre>
+</div>
+
+<h2 id="三-新建项目">三 新建项目</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ mkdir myproject
+$ truffle
+Truffle v4.1.14 - a development framework for Ethereum
+$ cd myproject
+$ truffle init  
+（如果truffle init报错，可以直接git clone以下模板，否则不需要执行）
+$ git clone
+https://github.com/trufflesuite/truffle-init-bare.git
+或者
+$ git clone
+https://github.com/truffle-box/metacoin-box.git
+
+</code></pre>
+</div>
+
+<p>完成后，你将拥有如下目录：</p>
+
+<p><img src="http://p96hyfqf4.bkt.clouddn.com/truffle%20init%20%E7%BB%93%E6%9E%84.png" alt="" /></p>
+
+<ul>
+  <li>app/ - 你的应用文件运行的默认目录。这里面包括推荐的javascript文件和css样式文件目录，但你可以完全决定如何使用这些目录。</li>
+  <li>contract/ - Truffle默认的合约文件存放地址。</li>
+  <li>migrations/ - 存放发布脚本文件</li>
+  <li>test/ - 用来测试应用和合约的测试文件</li>
+  <li>truffle.js - Truffle的配置文件</li>
+</ul>
+
+<p>注意：truffle init可能会报错，报错信息如下，没有找到好的方法，直接clone.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Downloading...
+Error: Error making request to https://raw.githubusercontent.com/truffle-box/bare-box/master/truffle.js. Got error: tunneling socket could not be established, cause=connect EHOSTUNREACH 0.0.4.63:80 - Local (192.168.1.4:58993). Please check the format of the requested resource.
+    at Request._callback (/Users/chenjh/.nvm/versions/node/v8.12.0/lib/node_modules/truffle/build/webpack:/packages/truffle-box/lib/utils/unbox.js:45:1)
+    at self.callback (/Users/chenjh/.nvm/versions/node/v8.12.0/lib/node_modules/truffle/build/webpack:/~/request/request.js:185:1)
+    at emitOne (events.js:116:13)
+    at Request.emit (events.js:211:7)
+    at Request.onRequestError (/Users/chenjh/.nvm/versions/node/v8.12.0/lib/node_modules/truffle/build/webpack:/~/request/request.js:877:1)
+    at emitOne (events.js:116:13)
+    at ClientRequest.emit (events.js:211:7)
+    at ClientRequest.onError (/Users/chenjh/.nvm/versions/node/v8.12.0/lib/node_modules/truffle/build/webpack:/~/tunnel-agent/index.js:179:1)
+    at Object.onceWrapper (events.js:315:30)
+    at emitOne (events.js:116:13)
+</code></pre>
+</div>
+
+<h2 id="四-编译项目">四 编译项目</h2>
+
+<h3 id="命令">命令</h3>
+<p>要编译您的合约，使用：</p>
+
+<p><code class="highlighter-rouge">truffle compile</code></p>
+
+<p>Truffle仅默认编译自上次编译后被修改过的文件，来减少不必要的编译。如果你想编译全部文件，可以使用–compile-all选项。</p>
+
+<p><code class="highlighter-rouge">truffle compile --compile-all</code></p>
+
+<h3 id="约定">约定</h3>
+
+<p>Truffle需要定义的合约名称和文件名准确匹配。举例来说，如果文件名为MyContract.sol，那么合约文件须为如下两者之一：</p>
+
+<p>contract MyContract {
+  …
+}
+// or
+library MyContract {
+  …
+}
+这种匹配是区分大小写的，也就是说大小写也要一致。推荐大写每一个开头字母，如上述代码定义。</p>
+
+<h3 id="依赖">依赖</h3>
+
+<p>你可以通过使用import来声明依赖。Truffle将会按正确顺序依次编译合约，并在需要的时候自动关联库。</p>
+
+<h3 id="编译目录">编译目录</h3>
+
+<p>编译的输出位于./build/contracts目录。如果目录不存在会自动创建。这些编译文件对于Truffle框架能否正常工作至关重要。你不应该在正常的编译或发布以外手动修改这些文件。</p>
+
+<h2 id="五-移植">五 移植</h2>
+
+<p>是由一些Javascript文件组成来协助发布到以太坊网络。主要目的是用来缓存你的发布任务，它的存在基于你的发布需求会改变的前提。当你的工程发生了重要的改变，你将创建新的移植脚本来将这些变化带到区块链上。之前运行移植的历史记录通过一个特殊的Migrations合约来记录到链上，下面有详细说明。</p>
+
+<h3 id="命令-1">命令</h3>
+
+<p>执行移植，使用下述命令：</p>
+
+<p><code class="highlighter-rouge">truffle migrate</code></p>
+
+<p>这个命令会执行所有的位于migrations目录内的移植脚本。如果你之前的移植是成功执行的。truffle migrate仅会执行新创建的移植。如果没有新的移植脚本，这个命令不同执行任何操作。可以使用选项–reset来从头执行移植脚本。</p>
+
+<h3 id="移植脚本文件">移植脚本文件</h3>
+
+<p>一个样例文件如下：</p>
+
+<p>文件名：4_example_migration.js</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>module.exports = function(deployer) {
+  // deployment steps
+  deployer.deploy(MyContract);
+};
+</code></pre>
+</div>
+
+<p>需要注意的是文件名以数字开头，一个描述性的后缀结尾。数字前缀是必须的，用于记录移植是否成功。后缀仅是为了提高可读性，以方便理解。</p>
+
+<p>移植js里的exports的函数接受一个deployer对象作为第一个参数。这个对象用于发布过程，提供了一个清晰的语法支持，同时提供一些通过的合约部署职责，比如保存发布的文件以备稍后使用。deployer对象是用来缓存(stage)发布任务的主要操作接口。API接口见后说明。</p>
+
+<p>像所有其它在Truffle中的代码一样，Truffle为你提供了你自己代码的合约抽象层(contract abstractions)，并且进行了初始化，以方便你可以便利的与以太坊的网络交互。这些抽象接口是发布流程的一部分，稍后你将会看到。</p>
+
+<h3 id="初始移植">初始移植</h3>
+
+<p>Truffle需要一个移植合约来使用移植特性。这个合约内需要指定的接口，但你可以按你的意味修改合约。对大多数工程来说，这个合约会在第一次移植时进行的第一次部署，后续都不会再更新。通过truffle init创建一个全新工程时，你会获得一个默认的合约。</p>
+
+<p>文件名:contracts/Migration.sol</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>contract Migrations {
+  address public owner;
+
+  // A function with the signature `last_completed_migration()`, returning a uint, is required.
+  uint public last_completed_migration;
+
+  modifier restricted() {
+    if (msg.sender == owner) _
+  }
+
+  function Migrations() {
+    owner = msg.sender;
+  }
+
+  // A function with the signature `setCompleted(uint)` is required.
+  function setCompleted(uint completed) restricted {
+    last_completed_migration = completed;
+  }
+
+  function upgrade(address new_address) restricted {
+    Migrations upgraded = Migrations(new_address);
+    upgraded.setCompleted(last_completed_migration);
+  }
+}
+</code></pre>
+</div>
+
+<p>如果你想使用移植特性，你必须在你第一次部署合约时，部署这个合约。可以使用如下方式来创建一次移植。</p>
+
+<p>文件名：migrations/1_initial_migrations.js</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>module.exports = function(deployer) {
+  // Deploy the Migrations contract as our only task
+  deployer.deploy(Migrations);
+};
+</code></pre>
+</div>
+<p>由此，你可以接着创建递增的数字前缀来部署其它合约。</p>
+
+<h2 id="六-合约交互">六 合约交互</h2>
+
+<h3 id="背景">背景</h3>
+
+<p>标准的与以太坊网络交互的方法是通过以太坊官方构建的<a href="https://github.com/ethereum/web3.js">Web3</a>库。尽管这个库非常有用，但使用其提供接口与合约交互有些困难,特别是以太坊的新手。为降低学习曲线，Truffle使用<a href="https://github.com/trufflesuite/truffle-artifactor">Ether Pudding</a>库，它也是基于Web3的基础之上，目的是为了让交互更简单。</p>
+
+<h3 id="读写数据">读写数据</h3>
+<p>以太坊网络把在网络上读与写数据进行了区分，这个区分对于如何写程序影响很大。通常来说，写数据被称作<strong>交易(transaction)</strong>，读数据被称作<strong>调用(call)</strong>。对于交易与调用，他们分别有如下特性：</p>
+
+<h3 id="交易transaction">交易(Transaction)</h3>
+
+<p>交易本质上改变了整个以太坊网络的数据状态。一个交易可以是向另一个帐户发送ether(以太坊网络代币)这样的简单行为，也可以是执行合约函数，添加一个新合约到以太坊网络这样的复杂行为。交易的典型特征是写入(或修改)数据。交易需要花费ether，也被称作gas，交易的执行需要时间。当你通过交易执行一个合约的函数时，你并不能立即得到执行结果，因为交易并不是立即执行的。大多娄情况下，通过执行交易不会返回值；它会返回一个交易的ID.总的来说，交易具有如下特征：</p>
+
+<ul>
+  <li>需要gas（Ether）</li>
+  <li>改变网络的状态</li>
+  <li>不会立即执行</li>
+  <li>不会暴露返回结果(仅有交易ID)</li>
+</ul>
+
+<h3 id="调用">调用</h3>
+
+<p>调用，则与上述的交易非常不同。调用可以在网络上执行代码，但没有数据会被改变(也许仅仅是些临时变量被改变)。调用的执行是免费的，典型的行为就是读取数据。通过调用执行一个合约函数，你会立即得到结果。总的来说，调用具有如下特征：</p>
+
+<ul>
+  <li>免费（不花费gas）</li>
+  <li>不改变网络状态</li>
+  <li>立即执行</li>
+  <li>有返回结果。
+如果选择，取决于你想干什么，或者说想写数据，还是读数据。</li>
+</ul>
+
+<h3 id="接口abstract">接口(abstract)</h3>
+
+<p>为了来体验一下合约接口的作用，我们使用框架自带的默认metacoin的合约例子。</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>import "ConvertLib.sol";
+
+contract MetaCoin {
+  mapping (address =&gt; uint) balances;
+
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+
+    function MetaCoin() {
+        balances[tx.origin] = 10000;
+    }
+
+    function sendCoin(address receiver, uint amount) returns(bool sufficient) {
+        if (balances[msg.sender] &lt; amount) return false;
+        balances[msg.sender] -= amount;
+        balances[receiver] += amount;
+        Transfer(msg.sender, receiver, amount);
+        return true;
+    }
+    function getBalanceInEth(address addr) returns(uint){
+        return ConvertLib.convert(getBalance(addr),2);
+    }
+    function getBalance(address addr) returns(uint) {
+        return balances[addr];
+    }
+}
+</code></pre>
+</div>
+<p>合约有三个方法和一个构造方法。所有三个方法可以被执行为交易或调用。</p>
+
+<p>现在我们来看看Truffle和Ether Pudding为我们提供的叫MetaCoin的Javascript对象，可以在前端中使用：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>// Print the deployed version of MetaCoin
+console.log(MetaCoin.deployed());
+
+// outputs:
+//
+// Contract
+// - address: "0xa9f441a487754e6b27ba044a5a8eb2eec77f6b92"
+// - allEvents: ()
+// - getBalance: ()
+// - getBalanceInEth: ()
+// - sendCoin: ()
+
+</code></pre>
+</div>
+<p>接口层提供了合约中以应的函数名。它还包含一个地址，指向到MetaCoin合约的部署版本。</p>
+
+<h3 id="执行合约函数">执行合约函数</h3>
+
+<p>通过这套框架为我们提供的接口，我们可以简单的在以太坊网络上执行合约函数。</p>
+
+<h3 id="执行交易">执行交易</h3>
+
+<p>在上述例子MetaCoin合约中，我们有三个可以执行的函数。如果你对这三个函数稍加分析就会发现，只有sendCoin会对网络造成更改。sendCoin函数的目标将Meta Coin从一个帐户发送到另一些帐户，这些更改需要被永久存下来。</p>
+
+<p>当调用sendCoin，我们将把他们作为一个交易来执行。下面的例子我们来演示下把10个币，从一个帐户发到另一个帐户，改变要永久的保存在网络上：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var account_one = "0x1234..."; // an address
+var account_two = "0xabcd..."; // another address
+
+var meta = MetaCoin.deployed();
+meta.sendCoin(account_two, 10, {from: account_one}).then(function(tx_id) {
+  // If this callback is called, the transaction was successfully processed.
+  // Note that Ether Pudding takes care of watching the network and triggering
+  // this callback.
+  alert("Transaction successful!")
+}).catch(function(e) {
+  // There was an error! Handle it.
+})
+</code></pre>
+</div>
+<p>上述代码有一些有趣点，我们来了解一下：</p>
+
+<p>我们直接调用接口的sendCoin函数。最终是默认以交易的方式来执行的。
+交易被成功执行时，回调函数会直到交易被执行时才真正被触发。这样带来的一个好处是你不用一直去检查交易的状态。
+我们对sendCoin函数传递了第三个参数，需要注意的是原始合约函数的定义中并没有第三个参数。这里你看到的是一个特殊的对象，用于编辑一些交易中的指定细节，它可以总是做为第三个参数传进。这里，我们设置from的地址为account_one.</p>
+
+<h3 id="执行调用">执行调用</h3>
+
+<p>继续用MetaCoin的例子。其中的getBalance函数就是一个很好的从网络中读取数据的例子。它压根不需要进行任何数据上的变更，它只是返回传入的地址的帐户余额，我们来简单看一下：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>var account_one = "0x1234..."; // an address
+
+var meta = MetaCoin.deployed();
+meta.getBalance.call(account_one, {from: account_one}).then(function(balance) {
+  // If this callback is called, the call was successfully executed.
+  // Note that this returns immediately without any waiting.
+  // Let's print the return value.
+  console.log(balance.toNumber());
+}).catch(function(e) {
+  // There was an error! Handle it.
+})
+</code></pre>
+</div>
+<p>一些有意思的地方如下：</p>
+<ul>
+  <li>我们必须通过.call()来显示的向以太坊网络表明，我们并不会持久化一些数据变化。</li>
+  <li>我们得到了返回结果，而不是一个交易ID。这里有个需要注意的是，以太坊网网络可以处理非常大的数字，我们被返回了一个BigNumber对象，框架再将这个对象转化了一个number类型。</li>
+</ul>
+
+<p>警告：我们在上述的例子中将返回值转成了一个number类型，是因为例子中的返回值比较小，如果将一个BigNumber转换为比javascript支持的number最大整数都大，你将会出现错误或不可预期的行为。</p>
+
+<h3 id="捕捉事件catching-events">捕捉事件(Catching Events)</h3>
+<p>你的合约可以触发事件，你可以进行捕捉以进行更多的控制。事件API与Web3一样。可以参考Web3 documentation来了解更多。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var meta = MetaCoin.deployed();
+var transfers = meta.Transfer({fromBlock: "latest"});
+transfers.watch(function(error, result) {
+  // This will catch all Transfer events, regardless of how they originated.
+  if (error == null) {
+    console.log(result.args);
+  }
+}
+</code></pre>
+</div>
+
+<h3 id="methoddeployed">METHOD:DEPLOYED()</h3>
+<p>每一个抽象出来的合约接口都有一个deployed()方法，上述例子中，你已经见到过。调用这个函数返回一个实例，这个实例代表的是之前部署到网络的合约所对应的抽象接口的实例。</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>var meta = MetaCoin.deployed();
+</code></pre>
+</div>
+<p>警告：这仅对使用truffle deploy部署的合约，且一定是在project configuration中配置发布的才有效。如果不是这样，这个函数执行时会抛出异常。</p>
+
+<h3 id="methodat">METHOD:AT()</h3>
+
+<p>类似于deployed()，你可以通过一个地址来得到一个代表合约的抽象接口实例。当然这个地址一定是这个合约的部署地址。</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>var meta = MetaCoin.at("0x1234...")
+</code></pre>
+</div>
+<p>警告：当你的地址不正确，或地址对应的合约不正确时，这个函数并不会抛出异常。但调用接口时会报错。请保证在使用at()时输入正确的地址。</p>
+
+<h3 id="methodnew">METHOD:NEW()</h3>
+<p>你可以通过这个方法来部署一个完全全新的合约到网络中。</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>MetaCoin.new().then(function(instance) {
+  // `instance` is a new instance of the abstraction.
+  // If this callback is called, the deployment was successful.
+  console.log(instance.address);
+}).catch(function(e) {
+  // There was an error! Handle it.
+});
+</code></pre>
+</div>
+<p>需要注意的是这是一个交易，会改变网络的状态。</p>
+
+<h2 id="七-合约测试">七 合约测试</h2>
+
+<h3 id="框架">框架</h3>
+
+<p>Truffle使用Mocha测试框架来做自动化测试，使用Chai来做断言。这两个库的结合可能让人耳目一新，我们基于这两者之上，提供一种方式来编译简单和可管理的合约自动化测试用例。</p>
+
+<h3 id="位置">位置</h3>
+
+<p>测试文件应置于./tests目录。Truffle只会运行以.js，.es，.es6和.jsx结尾的测试文件，其它的都会被忽略。</p>
+
+<h3 id="命令-2">命令</h3>
+
+<p>要执行测试，执行下面的命令：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>truffle test
+</code></pre>
+</div>
+<p>你也可以对单个文件执行测试：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>truffle test ./path/to/test/file.js
+</code></pre>
+</div>
+
+<h3 id="注意事项">注意事项</h3>
+
+<p>EthereumJS TestRPC在进行自动化测试时相比其它客户端会快非常多。而且，TestRPC包含了一些，Truffle可以用来加速测试的特性。作为一个能用流程，我们建议你在开发和测试环节使用TestRPC。当你筹备好要发布到现上时，才使用Geth或其它官方以太坊客户端来进行一次测试。</p>
+
+<h2 id="八-控制台">八 控制台</h2>
+
+<h3 id="背景-1">背景</h3>
+
+<p>有时在进行测试和debug时，或手动执行交易时与合约进行直接交互是需要的。Truffle提供了一种更加简单的方式，通过交互式控制台来与你的那些准备好的合约进行交互。</p>
+
+<h3 id="命令-3">命令</h3>
+
+<p>启动控制台，使用：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>truffle console
+</code></pre>
+</div>
+<p>这会使用默认网络来调起一个控制台，会自动连接到一个运行中的以太坊客户端。你可以使用选项–network来修改这个特性，</p>
+
+<p>当你加载了控制台，你会看到下面的输出：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ truffle console
+truffle(default)&gt;
+</code></pre>
+</div>
+<p>default的意思是说，你当前连接到的是默认网络。</p>
+
+<h3 id="特性">特性</h3>
+
+<p>控制台支持Truffle命令行支持的命令，比如，你可以在控制台中执行migrate –reset，其效果与在命令行中执行truffle migrate –reset的效果一致。Truffle的控制台额外增加如下特性：</p>
+
+<ul>
+  <li>所有已经编译的合约都可用。就像在开发测试，前端代码中，或者移植代码中那样使用。</li>
+  <li>在每个命令后，你的合约会被重新加载。如使用migrate –reset命令后，你可以立即使用新分配的地址和二进制。</li>
+  <li>web3库也可以使用，且也连到你了的以太坊客户端。</li>
+  <li>所有命令返回的promise，会自动解析，直接打印出结果，你可以不用输入then()，简化了命令。如下：
+    <div class="highlighter-rouge"><pre class="highlight"><code>truffle(default)&gt; MyContract.deployed().getValue.call(); //
+5
+</code></pre>
+    </div>
+  </li>
+</ul>
+
+<h2 id="九-外部脚本">九 外部脚本</h2>
+
+<h3 id="命令-4">命令</h3>
+
+<p>要执行外部(external)脚本，执行下述命令：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ truffle exec &lt;path/to/file.js&gt;
+</code></pre>
+</div>
+<h3 id="文件结构">文件结构</h3>
+
+<p>为了外部脚本能正常执行，Truffle需要它们能通过Javascript的模块的方式导出一个函数，且有一个回调函数作为参数：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>module.exports = function(callback) {
+  // perform actions
+}
+</code></pre>
+</div>
+<p>脚本内，你可以执行你想要做的任何事，这个回调在脚本执行结束后被调用。回调函数只有一个参数，这个参数传的是错误状态。如果出现错误，整个执行会中止，并返回一个非0的退出码(exit code)。</p>
+
+<h2 id="十-工作流">十 工作流</h2>
+
+<h3 id="truffle-watch">Truffle watch</h3>
+
+<p>监控文件系统的文件变化，重编译，重部署你的合约。在被修改后需要的时候，会重构建前端代码。</p>
+
+<h3 id="truffle-serve">Truffle serve</h3>
+
+<p>监控文件系统的变化，重编译，部署，构建，并在http://localhost:8080/提供服务。</p>
+
+<h2 id="配置文件">配置文件</h2>
+
+<h3 id="build">BUILD</h3>
+
+<p>这个是前端的构建配置。默认调用默认构建器，在上述构建章节，有所说明。但你也可以自定的构建流程，查看高级构建流程章节来了解更多。</p>
+
+<p>例子：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>build: {
+  "index.html": "index.html",
+  "app.js": [
+    "javascripts/app.js"
+  ],
+  "app.css": [
+    "stylesheets/app.css"
+  ],
+  "images/": "images/"
+}
+</code></pre>
+</div>
+
+<h3 id="networks">NETWORKS</h3>
+
+<p>指定在移植(Migration)时使用哪个网络。当在某个特定的网络上编译或运行移植时，合约会缓存起来方便后续使用。当你的合约抽象层检查到你连到某个网络上时，它会使用这个这个网络上原有的缓存合约来简化部署流程。网络通过以太坊的RPC调用中的net_version来进行标识。</p>
+
+<p>下述的networks对象，通过一个网络名做为配置的键，值对应定义了其网络参数。networks的对应选项不是必须的，但如果一旦指定，每个网络必须定义一个对应的network_id。如果你想指定一个默认网络，你可以通过将netword_id的值标记为default来实现，当没有匹配到其它的网络时，就会使用默认网络。需要注意的是整个配置中，应该有且仅有一个default的网络。一般来说，默认网络主要用于开发，配置，合约等数据没有长期保存的需要，网络ID也会因TestRPC的重启而频繁改变时。</p>
+
+<p>网络名称用于用户接口调用时使用，在移植中的使用方式如下：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ truffle migrate --network live
+</code></pre>
+</div>
+<p>你还可以选择性的指定rpc的配置信息。下面是一个truffle.js示例：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>module.exports = {
+  networks: {
+    development: {
+      host: "localhost",
+      port: 8545,
+      network_id: "*" // match any network
+    },
+    ganache: {
+      host: "localhost", // Random IP for example purposes (do not use)
+      port: 7545,
+      network_id: "*", // Ethereum public networ
+    },
+
+    "live": {
+      network_id: 1, // Ethereum public network
+      // optional config values
+      // host - defaults to "localhost"
+      // port - defaults to 8545
+      // gas
+      // gasPrice
+      // from - default address to use for any transaction Truffle makes during migrations
+    },
+    "morden": {
+      network_id: 2, // Official Ethereum test network
+      host: "178.25.19.88", // Random IP for example purposes (do not use)
+      port: 80
+    }
+  }
+};
+
+</code></pre>
+</div>
+<p>Truffle 2.0升级3.0升级变化点如下：</p>
+<ul>
+  <li>默认网络配置项rpc被移除了。取而代之的是在networks配置项下的一个专门的名为development的网络配置项。development中会指定的ip和port，和配置的网络类型1，默认是任意*。</li>
+  <li>如果没有指定网络，在执行migrate等命令时默认使用名为development的网络。</li>
+  <li>为了避免出现部署到错误网络的情况，你也可以完全移除配置项development。如果已经移除development的网络配置，但在truffle migrate等命令时不指定网络会有下述错误发生：</li>
+</ul>
+
+<h3 id="rpc">RPC</h3>
+
+<p>关于如何连接到以太坊客户端的一些细节。host和port是需要，另外还需要一些其它的。</p>
+
+<ul>
+  <li>host：指向以太坊客户端的地址。本机开发时，一般为localhost</li>
+  <li>port:以太坊客户端接收请求的端口，默认是8545</li>
+  <li>gas:部署时的Gas限制，默认是4712388</li>
+  <li>gasPrice:部署时的Gas价格。默认是100000000000(100 Shannon)</li>
+  <li>from:移植时使用的源地址。如果没有指定，默认是你的以太坊客户端第一个可用帐户。</li>
+</ul>
+
+<p>示例：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>rpc: {
+  host: "localhost",
+  port: 8545
+}
+</code></pre>
+</div>
+
+<h3 id="mocha">MOCHA</h3>
+
+<p>MochaJS测试框架的配置选项，详细参考documentation。</p>
+
+<p>示例：</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>mocha: {
+  useColors: true
+}
+</code></pre>
+</div>
+
+  </section>
+  <h2 style="color:red"><strong>版权声明：博客中的文章版权归博主所有，未经授权，禁止转载，转载请注明出处，合作请联系：chenjh07507(微信)</strong></h2>
+</article>
+
+<section>
+
+            <div class="content-play">
+              <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏一个呗</a></p>
+              <div class="hide_box-play"></div>
+              <div class="shang_box-play">
+                <a class="shang_close-play" href="javascript:void(0)" onclick="dashangToggle()" title="关闭"><img src="/images/payimg/close.jpg" alt="取消" /></a>
+                <div class="shang_tit-play">
+                  <p>感谢您的支持，我会继续努力的!</p>
+                </div>
+                <div class="shang_payimg">
+                    <img src="/images/payimg/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+                </div>
+              <div class="shang_payimg">    
+                    <img src="/images/payimg/weipayimg.jpg" alt="扫码支持" title="扫一扫" />
+                </div>
+                <div class="pay_explain">扫码打赏，你说多少就多少</div>
+                <div class="shang_payselect">
+                  <div class="pay_item checked" data-id="alipay">
+                    <span class="pay_logo"><img src="/images/payimg/alipay.jpg" alt="支付宝" /></span>
+                  </div>
+                  <div class="pay_item" data-id="weipay">
+                    <span class="pay_logo"><img src="/images/payimg/wechat.jpg" alt="微信" /></span>
+                  </div>
+                </div>
+                <div class="shang_info-play">
+                  <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+                </div>
+              </div>
+            </div>
+            <script type="text/javascript">
+            function dashangToggle(){
+              $(".hide_box-play").fadeToggle();
+              $(".shang_box-play").fadeToggle();
+            }
+            </script>
+
+            <div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';"></div>
+
+            <style type="text/css">
+              .content-play{width:80%;margin-top: 20px;margin-bottom: 10px;height:40px;}
+              .hide_box-play{z-index:999;filter:alpha(opacity=50);background:#666;opacity: 0.5;-moz-opacity: 0.5;left:0;top:0;height:99%;width:100%;position:fixed;display:none;}
+              .shang_box-play{width:540px;height:540px;padding:10px;background-color:#fff;border-radius:10px;position:fixed;z-index:1000;left:50%;top:50%;margin-left:-280px;margin-top:-280px;border:1px dotted #dedede;display:none;}
+              .shang_box-play img{border:none;border-width:0;}
+              .dashang{display:block;width:100px;margin:5px auto;height:25px;line-height:25px;padding:10px;background-color:#E74851;color:#fff;text-align:center;text-decoration:none;border-radius:10px;font-weight:bold;font-size:16px;transition: all 0.3s;}
+              .dashang:hover{opacity:0.8;padding:15px;font-size:18px;}
+              .shang_close-play{float:right;display:inline-block;
+                margin-right: 10px;margin-top: 20px;
+              }
+              .shang_logo{display:block;text-align:center;margin:20px auto;}
+              .shang_tit-play{width: 100%;height: 75px;text-align: center;line-height: 66px;color: #a3a3a3;font-size: 16px;background: url('/images/payimg/cy-reward-title-bg.jpg');font-family: 'Microsoft YaHei';margin-top: 7px;margin-right:2px;}
+              .shang_tit-play p{color:#a3a3a3;text-align:center;font-size:16px;}
+              .shang_payimg{width:140px;padding:10px;padding-left: 80px; /*border:6px solid #EA5F00;**/margin:0 auto;border-radius:3px;height:140px;display:inline-block;}
+              .shang_payimg img{display:inline-block;margin-right:10px;float:left;text-align:center;width:140px;height:140px; }
+              .pay_explain{text-align:center;margin:10px auto;font-size:12px;color:#545454;}
+              .shang_payselect{text-align:center;margin:0 auto;margin-top:40px;cursor:pointer;height:60px;width:500px;margin-left:110px;}
+              .shang_payselect .pay_item{display:inline-block;margin-right:140px;float:left;}
+              .shang_info-play{clear:both;}
+              .shang_info-play p,.shang_info-play a{color:#C3C3C3;text-align:center;font-size:12px;text-decoration:none;line-height:2em;}
+            </style>
+
+       <ul class="pager">
+        
+        <li class="previous">
+            <a href="/2018/09/30/%E5%9C%A8metamask%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84token/" data-toggle="tooltip" data-placement="top" title="在metamask中部署自己的token">上一篇：  <span>在metamask中部署自己的token</span>
+            </a>
+        </li>
+        
+        
+        <li class="next">
+            <a href="/2018/10/17/EOS%E7%9A%84Scatter%E9%92%B1%E5%8C%85%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8/" data-toggle="tooltip" data-placement="top" title="EOS的Scatter钱包介绍与使用">下一篇：  <span>EOS的Scatter钱包介绍与使用</span>
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+<section class="post-comments">
+  <!--PC和WAP自适应版-->
+<div id="SOHUCS" sid=智能合约项目开发(truffle框架使用) ></div>
+<script type="text/javascript">
+(function(){
+var appid = 'cytfSz8yx';
+var conf = 'prod_ad710bf09d342725ed536beddc68aa27';
+var width = window.innerWidth || document.documentElement.clientWidth;
+if (width < 960) {
+window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("http://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+</section>
+
+ <section class="footer">
+  <footer>
+    <div class="footer_div">
+      <nav class="cover-navigation navigation--social">
+        <ul class="navigation">
+
+          
+          <!-- Weibo -->
+          <li class="navigation__item_social">
+            <a href="http://weibo.com/http://weibo.com/bitchenjh" title="@http://weibo.com/bitchenjh 的微博" target="_blank">
+              <i class='social fa fa-weibo fa-2x'></i>
+              <span class="label">Weibo</span>
+            </a>
+          </li>
+           
+          <!-- Github -->
+          <li class="navigation__item_social">
+            <a href="https://github.com/bitchenjh" title="@bitchenjh 的 Github" target="_blank">
+              <i class='social fa fa-github fa-2x'></i>
+              <span class="label">Github</span>
+            </a>
+          </li>
+            
+
+          <!-- RSS -->
+          <li class="navigation__item_social">
+            <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+              <i class='social fa fa-rss fa-2x'></i>
+              <span class="label">RSS</span>
+            </a>
+          </li>
+
+          
+          <!-- Email -->
+          <li class="navigation__item_social">
+            <a href="mailto:cjhcjlu@163.com" title="Contact me">
+              <i class='social fa fa-envelope fa-2x'></i>
+              <span class="label">Email</span>
+            </a>
+          </li>
+          
+
+        </ul>
+      </nav>
+
+    </div>
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <thead>
+        <tr id="bar_head">
+          <th colspan="11">友情链接</th>
+        </tr>
+      </thead>
+
+      <tr align="center" valign="middle">
+          <td><a href="http://www.kongyixueyuan.com">区块链技术视频网站</a></td>
+
+          <td><a href="https://www.ethereum.org">以太坊官网</a></td>
+
+          <td><a href="https://solidity.readthedocs.io/en/develop/">Solidity</a></td>
+
+          <td><a href="http://truffleframework.com/">Truffle FrameWork</a></td>
+
+          <td><a href="http://embark.readthedocs.io">Embark FrameWork</a></td>
+
+      </tr>
+      <tr align="center" valign="middle">
+
+          <td><a href="https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=3302cc3b-074e-44da-90b1-5055f1dc0d9c&amp;lang=zh">IBM开源技术微讲堂</a></td>
+
+          <td><a href="https://www.bitcoin.com/">Bitcoin.com</a></td>
+
+          <td><a href="https://github.com/bitshares/bitshares1-core">bitshares1-core</a></td>
+
+          <td><a href="https://ipfs.io">ipfs官网</a></td>
+
+          <td><a href="http://ipfser.org">ipfs中文网</a></td>
+
+      </tr>
+    </table>
+
+    <div class="footer_div">
+      <p class="copyright text-muted">
+        Copyright &copy; 2018 陈建辉区块链博客 QQ：905739007
+      </p>
+      <div align="right">
+        <link rel="stylesheet" href="http://cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <!-- 访问统计 -->
+        <span id="busuanzi_container_site_pv">
+            本站总访问量
+            <span id="busuanzi_value_site_pv"></span>次
+        </span>
+
+      </div>
+      <div>
+  </footer>
+</section>
+
+    </div>
+  </div>
+
+  <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+<script type="text/javascript" src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+</body>
+
+</html>

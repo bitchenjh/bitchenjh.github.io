@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>Fabcar案例测试</title>
+  <meta name="description" content="">
+  <meta name="author" content="陈建辉">
+
+  <meta name="keywords" content=""
+  />
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Fabcar案例测试">
+  <meta name="twitter:description" content="">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Fabcar案例测试">
+  <meta property="og:description" content="">
+  <meta property="og:site_name" content="e"
+  />
+
+
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link href="/images/favicon.png" rel="shortcut icon" type="image/png">
+
+
+  <link rel="stylesheet" href=" /css/main.css ">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="canonical" href="http://localhost:4000/2018/07/12/4-Fabcar%E6%A1%88%E4%BE%8B%E6%B5%8B%E8%AF%95/">
+  <link rel="alternate" type="application/rss+xml" title="陈建辉区块链博客" href="http://localhost:4000 /feed.xml
+    ">
+
+  <meta name="google-site-verification" content="1-1ZlHoRvM0T2FqPbW2S-qLgYXN6rsn52kErlMPd_gw" />
+
+  <!-- 站点统计 -->
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+  </script>
+
+<!--注释掉51客服系统，这是个插件-->
+  <!--<script>(function() {var _53code = document.createElement("script");_53code.src = "https://tb.53kf.com/code/code/10174862/1";var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(_53code, s);})();</script>-->
+
+  <!-- 百度统计 -->
+  
+
+  <!-- google 统计 -->
+  
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+</head>
+
+
+<body>
+
+  <span class="mobile btn-mobile-menu">        
+      <div class="nav_container">
+         <nav class="nav-menu-item" style = "float:right">
+            <i class="nav-menu-item">
+              <a href="/#blog" title="" class="blog-button">  博客主页
+              </a>
+            </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/archive" title="archive" class="btn-mobile-menu__icon">
+                      所有文章
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/tags" title="tags" class="btn-mobile-menu__icon">
+                      分类
+                  </a>
+                </i>
+            
+                <i class="nav-menu-item">
+
+                  <a href="/about" title="about" class="btn-mobile-menu__icon">
+                      关于我
+                  </a>
+                </i>
+            
+          </nav>
+          
+      </div>
+    </span> <header class="panel-cover panel-cover--collapsed" style="background-image: url('/images/background-cover.jpg')">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+      <div class="panel-main__content">
+        <!-- 头像效果-start -->
+        <div class="ih-item circle effect right_to_left">
+          <a href="/#blog" title="前往 陈建辉区块链博客 的主页" class="blog-button">
+            <div class="img"><img src="/images/avatar.jpg" alt="img"></div>
+            <div class="info">
+              <div class="info-back">
+                <h2 style="font-size: 14px">
+                   微信:chenjh07507 
+                </h2>´
+                <p style="font-size: 6px">
+                   区块链从业人员 
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- 头像效果-end -->
+        <h1 class="panel-cover__title panel-title"><a href="/#blog" title="link to homepage for 陈建辉区块链博客" class="blog-button">陈建辉区块链博客</a></h1>
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">陈建辉，项目经理，高级软件工程师，早期区块链从业人员，拥有多年传统金融软件开发经验</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" /> 
+
+
+        <div class="navigation-wrapper">
+          <div>
+            <nav class="cover-navigation cover-navigation--primary">
+              <ul class="navigation">
+                <li class="navigation__item"><a href="/#blog" title="" class="blog-button">博客主页</a></li>
+                
+                <li class="navigation__item"><a href="/archive" title="archive">所有文章</a></li>
+                
+                <li class="navigation__item"><a href="/tags" title="tags">分类</a></li>
+                
+                <li class="navigation__item"><a href="/about" title="about">关于我</a></li>
+                
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="panel-cover--overlay cover-clear"></div>
+  
+
+  </div>
+</header>
+
+
+  <div class="content-wrapper">
+    <div class="content-wrapper__inner">
+      <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title">Fabcar案例测试</h1>
+    <div class="post-meta">
+      <img src="/images/calendar.png" width="20px"/>
+      <time datetime="2018-07-12 00:00:00 +0800" itemprop="datePublished" class="post-meta__date date">2018-07-12</time>
+
+      <span id="busuanzi_container_page_pv"> | 阅读：<span id="busuanzi_value_page_pv"></span>次</span>
+    </p>
+    </div>
+  </header>
+
+  <section class="post">
+    <blockquote>
+  <p>作者：陈建辉</p>
+
+  <p>博客：www.chenjianhui.org</p>
+</blockquote>
+
+<blockquote>
+  <p>备注：如有错误，请指正，不断更新迭代</p>
+</blockquote>
+
+<h1 id="node测试">node测试</h1>
+
+<p>关闭网络</p>
+
+<p><code class="highlighter-rouge">$ sudo ./byfn.sh -m down</code></p>
+
+<h3 id="进入到fabric-samplesfabcar目录中">进入到fabric-samples/fabcar目录中</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ cd ../fabcar/
+$ ls
+</code></pre>
+</div>
+
+<blockquote>
+  <p>如果是完整的环境,目录中应该包含如下文件:</p>
+
+  <p><code class="highlighter-rouge">enrollAdmin.js    invoke.js    package.json     query.js     registerUser.js     startFabric.sh</code></p>
+</blockquote>
+
+<h3 id="移除所有处于活动中的docker容器">移除所有处于活动中的Docker容器</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ sudo docker rm -f $(docker ps -aq)
+</code></pre>
+</div>
+
+<p>docker rm : 删除当前指定的Docker容器</p>
+
+<p>​	docker rm -f $(docker ps -aq)</p>
+
+<p>​	-f: 强制删除</p>
+
+<p>查看Docker</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ sudo docker ps
+</code></pre>
+</div>
+
+<h3 id="清除所有的网络缓存">清除所有的网络缓存:</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ sudo docker network prune
+</code></pre>
+</div>
+
+<h3 id="删除链码图像链码镜像">删除链码图像(链码镜像)</h3>
+
+<p>删除fabcar智能合约的底层链码图像。如果您是第一次运行此项目可以不执行(系统上不会有此链接代码图像)</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ sudo docker rmi dev-peer0.org1.example.com-fabcar-1.0-5c906e402ed29f20260ae42283216aa75549c571e2e380f3615826365d8269ba
+</code></pre>
+</div>
+
+<p>删除指定的Docker镜像文件</p>
+
+<p>​	docker rmi image_id</p>
+
+<h3 id="安装客户端">安装客户端</h3>
+
+<p>安装应用程序的Fabric依赖关系</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ npm install
+</code></pre>
+</div>
+
+<blockquote>
+  <p>可能报错，需要：Sudo chown -R cjh:cjh ../fabcar</p>
+
+  <p>下载最好使用稳定的VPN**</p>
+</blockquote>
+
+<blockquote>
+  <p>npm install:  根据 package.json 读取依赖的信息并安装</p>
+
+  <p><strong>如果未安装Node则先按如下步骤安装Node及npm</strong></p>
+
+  <h4 id="安装nvm">安装nvm</h4>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code>$ sudo apt update
+$ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.10/install.sh | bash
+
+$ export NVM_DIR="$HOME/.nvm"
+$ [ -s "$NVM_DIR/nvm.sh" ] &amp;&amp; \. "$NVM_DIR/nvm.sh"
+</code></pre>
+  </div>
+
+  <h4 id="安装node">安装Node</h4>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code>$ nvm install v8.11.1
+</code></pre>
+  </div>
+
+  <p>检查Node版本</p>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code>$ node -v
+</code></pre>
+  </div>
+
+  <p>输出:   <code class="highlighter-rouge">v8.11.1</code></p>
+
+  <p>检查npm版本</p>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code>$ npm -v
+</code></pre>
+  </div>
+
+  <p>输出:   <code class="highlighter-rouge">5.6.0</code></p>
+</blockquote>
+
+<h3 id="启动网络">启动网络</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ sudo ./startFabric.sh
+</code></pre>
+</div>
+
+<p>该命令将启动各种Fabric实体，并启动用Golang编写的链式代码的智能合约容器</p>
+
+<hr />
+
+<blockquote>
+  <p>如出现以下错误</p>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code>ERROR: manifest for hyperledger/fabric-ca:latest not found
+</code></pre>
+  </div>
+
+  <p>则说明环境中缺少 fabric-ca 镜像</p>
+
+  <div class="highlighter-rouge"><pre class="highlight"><code>下载镜像
+$ sudo docker pull hyperledger/fabric-ca:x86_64-1.1.0-preview
+
+将其标记为最新
+$ sudo docker tag hyperledger/fabric-ca:x86_64-1.1.0-preview hyperledger/fabric-ca:latest
+
+检查
+$ sudo docker images
+
+重新启动
+$ sudo ./startFabric.sh
+
+</code></pre>
+  </div>
+</blockquote>
+
+<hr />
+
+<h4 id="可选执行流式处理ca日志-打开新的终端并执行如下命令">可选执行(流式处理CA日志, 打开新的终端并执行如下命令)</h4>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ sudo docker logs -f ca.example.com
+</code></pre>
+</div>
+
+<h3 id="注册管理员用户">注册管理员用户</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ node enrollAdmin.js
+</code></pre>
+</div>
+
+<p>命令执行后输出如下内容:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Successfully enrolled admin user "admin"
+Assigned the admin user to the fabric client ::{"name":"admin","mspid":"Org1MSP","roles":null,"affiliation":"","enrollmentSecret":"","enrollment":{"signingIdentity":"dc412dcc161b5732737e98e77fda03433b55408d79b10195f0ff150fc995924a","identity":{"certificate":"-----BEGIN CERTIFICATE-----\nMIICATCCAaigAwIBAgIUMjxyVKytJHiYigb+usxuVlmeI8kwCgYIKoZIzj0EAwIw\nczELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNh\nbiBGcmFuY2lzY28xGTAXBgNVBAoTEG9yZzEuZXhhbXBsZS5jb20xHDAaBgNVBAMT\nE2NhLm9yZzEuZXhhbXBsZS5jb20wHhcNMTgwNDI2MDcyNzAwWhcNMTkwNDI2MDcz\nMjAwWjAhMQ8wDQYDVQQLEwZjbGllbnQxDjAMBgNVBAMTBWFkbWluMFkwEwYHKoZI\nzj0CAQYIKoZIzj0DAQcDQgAEszinoLQrvnKVYl9FUT8ebxT2jIz5lKCk5olL1cox\n/JchmLPG8Ew1roM2TgG64rvT1nrl1EvMwmD8oEOMgmGqwKNsMGowDgYDVR0PAQH/\nBAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFNG9kJBZBDSOwFxVHTDByNOl\nMvDSMCsGA1UdIwQkMCKAIEI5qg3NdtruuLoM2nAYUdFFBNMarRst3dusalc2Xkl8\nMAoGCCqGSM49BAMCA0cAMEQCIA1Ugh8NW3tS0GkuUrURdwQrSnFkdWTQhJ1/GvRd\nJbeTAiBGdDpHu/6mZG8dpguA0EaqSHrWJBQra4Vj1Fm9F1+zNg==\n-----END CERTIFICATE-----\n"}}}
+</code></pre>
+</div>
+
+<p>成功执行后会调用证书签名请求（CSR），并最终将eCert和密钥材料输出到此文件夹中<code class="highlighter-rouge"> ./hfc-key-store</code>, 应用程序将在创建用户或加载身份对象时查找此位置</p>
+
+<h3 id="注册-user1用户">注册 user1用户</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ node registerUser.js
+</code></pre>
+</div>
+
+<p>user1</p>
+
+<p>该命令执行后调用CSR并将密钥和eCert输出到<code class="highlighter-rouge">./hfc-key-store</code>子目录中</p>
+
+<p>执行命令后输出如下:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Successfully loaded admin from persistence
+Successfully registered user1 - secret:mrOjTeyeUmWY
+Successfully enrolled member user "user1"
+User1 was successfully registered and enrolled and is ready to intreact with the fabric network
+</code></pre>
+</div>
+
+<h3 id="查询分类帐">查询分类帐</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ node query.js
+</code></pre>
+</div>
+
+<p>命令执行后输出如下</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Successfully loaded user1 from persistence
+Query has completed, checking results
+Response is  [{"Key":"CAR0", "Record"{"colour":"blue","make":"Toyota","model":"Prius","owner":"Tomoko"}},
+{"Key":"CAR1", "Record":{"colour":"red","make":"Ford","model":"Mustang","owner":"Brad"}},{"Key":"CAR2", "Record":{"colour":"green","make":"Hyundai","model":"Tucson","owner":"Jin Soo"}},{"Key":"CAR3", "Record":{"colour":"yellow","make":"Volkswagen","model":"Passat","owner":"Max"}},{"Key":"CAR4", "Record":{"colour":"black","make":"Tesla","model":"S","owner":"Adriana"}},{"Key":"CAR5", "Record":{"colour":"purple","make":"Peugeot","model":"205","owner":"Michel"}},{"Key":"CAR6", "Record":
+{"colour":"white","make":"Chery","model":"S22L","owner":"Aarav"}},{"Key":"CAR7", "Record":{"colour":"violet","make":"Fiat","model":"Punto","owner":"Pari"}},{"Key":"CAR8", "Record":{"colour":"indigo","make":"Tata","model":"Nano","owner":"Valeria"}},{"Key":"CAR9", "Record":{"colour":"brown","make":"Holden","model":"Barina","owner":"Shotaro"}}]
+</code></pre>
+</div>
+
+<p>由Adriana拥有的黑色特斯拉Model S，由Brad拥有的红色Ford Mustang，由Pari拥有的紫色Fiat Punto等等。</p>
+
+<p>分类账是基于K-V的，在上面的信息中，Key为CAR0至CAR9</p>
+
+<p>打开query.js</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ cat query.js
+</code></pre>
+</div>
+
+<p>发现应用程序的初始部分定义了某些变量，例如通道名称，证书存储位置和网络端点</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var channel = fabric_client.newChannel('mychannel');
+var peer = fabric_client.newPeer('grpc://localhost:7051');
+channel.addPeer(peer);
+
+var member_user = null;
+var store_path = path.join(__dirname, 'hfc-key-store');
+console.log('Store path:'+store_path);
+var tx_id = null;
+</code></pre>
+</div>
+
+<p>query.js文件有如下代码使用第二个身份<code class="highlighter-rouge">user1</code>作为此应用程序的签署实体。指定<code class="highlighter-rouge">user1</code>为签名者</p>
+
+<p><code class="highlighter-rouge">fabric_client.getUserContext('user1', true);</code></p>
+
+<p>这是实现查询功能的语句块：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>// queryCar chaincode function - requires 1 argument, ex: args: ['CAR4'],
+// queryAllCars chaincode function - requires no arguments , ex: args: [''],
+const request = {
+  //targets : --- letting this default to the peers assigned to the channel
+  chaincodeId: 'fabcar',
+  fcn: 'queryAllCars',
+  args: ['']
+};
+
+调用链码命令:
+	chaincode query -n 链码名称 -C 通道名称 -c 调用链码时所需要传递的参数
+	-c '{"Args":["FunctionName", "查询Key"]}'
+</code></pre>
+</div>
+
+<p>当应用程序运行时，它会调用对等<code class="highlighter-rouge">fabcar</code>体上的链式代码，运行其中的<code class="highlighter-rouge">queryAllCars</code>函数,且不传递任何参数.</p>
+
+<p>使用编辑器打开query.js</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ vim query.js
+</code></pre>
+</div>
+
+<p>修改其查询块内容,更改<code class="highlighter-rouge">queryAllCars</code>为<code class="highlighter-rouge">queryCar</code>并将<code class="highlighter-rouge">CAR4</code>作为特定Key为参数传递来执行此操作</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>const request = {
+  //targets : --- letting this default to the peers assigned to the channel
+  chaincodeId: 'fabcar',
+  fcn: 'queryCar',
+  args: ['CAR4']
+};
+</code></pre>
+</div>
+
+<p>保存退出后运行:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ node query.js
+</code></pre>
+</div>
+
+<p>执行后返回如下</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Successfully loaded user1 from persistence
+Query has completed, checking results
+Response is  {"colour":"black","make":"Tesla","model":"S","owner":"Adriana"}
+</code></pre>
+</div>
+
+<p>使用该<code class="highlighter-rouge">queryCar</code>功能，我们可以查询任何关键字（例如<code class="highlighter-rouge">CAR0</code>）并获取与该车相对应的任何品牌，型号，颜色和所有者</p>
+
+<h3 id="更新分类帐">更新分类帐</h3>
+
+<p>修改 <code class="highlighter-rouge">invoke.js</code>, 找到<code class="highlighter-rouge">var request</code>中的<code class="highlighter-rouge">fcn</code>与<code class="highlighter-rouge">args</code>, 添加一条新的数据</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ vim invoke.js
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>	var request = {
+                //targets: let default to the peer assigned to the client
+                chaincodeId: 'fabcar',
+                fcn: 'createCar',
+                args: ['CAR10','Chevy','Volt','Red','Nick'],
+                chainId: 'mychannel',
+                txId: tx_id
+        };
+</code></pre>
+</div>
+
+<p>保存退出后执行</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ node invoke.js
+</code></pre>
+</div>
+
+<p>执行成功,输出如下</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Successfully loaded user1 from persistence
+Assigning transaction_id:  801d0636b9aa94cc7782af21ec2a10ebb12f929bd722afcee1f2b7b923485c82
+Transaction proposal was good
+Successfully sent Proposal and received ProposalResponse: Status - 200, message - "OK"
+The transaction has been committed on peer localhost:7053
+Send transaction promise and event listener promise have completed
+Successfully sent transaction to the orderer.
+Successfully committed the change to the ledger by the peer
+</code></pre>
+</div>
+
+<p>返回<code class="highlighter-rouge">query.js</code>并将参数由<code class="highlighter-rouge">CAR4</code>更改为<code class="highlighter-rouge">CAR10</code></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ vim query.js
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>const request = {
+  //targets : --- letting this default to the peers assigned to the channel
+  chaincodeId: 'fabcar',
+  fcn: 'queryCar',
+  args: ['CAR10']
+};
+</code></pre>
+</div>
+
+<p>查询:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>node query.js
+</code></pre>
+</div>
+
+<p>输出内容如下:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Successfully loaded user1 from persistence
+Query has completed, checking results
+Response is  {"colour":"Red","make":"Chevy","model":"Volt","owner":"Nick"}
+</code></pre>
+</div>
+
+<p>修改 <code class="highlighter-rouge">invoke.js</code>, 修改CAR10的拥有者为 Dave</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ vim invoke.js
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>var request = {
+  //targets: let default to the peer assigned to the client
+  chaincodeId: 'fabcar',
+  fcn: 'changeCarOwner',
+  args: ['CAR10','Dave'],
+  chainId: 'mychannel',
+  txId: tx_id
+};
+</code></pre>
+</div>
+
+<p>保存退出并执行</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ node invoke.js
+$ node query.js
+</code></pre>
+</div>
+
+<p>运行输出结果:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Successfully loaded user1 from persistence
+Query has completed, checking results
+Response is  {"colour":"Red","make":"Chevy","model":"Volt","owner":"Dave"}
+</code></pre>
+</div>
+
+<h2 id="问题">问题:</h2>
+
+<p>在执行  node invoke.js  命令后出现如下错误</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Store path:$HOME/hyfa/fabric-samples/fabcar/hfc-key-store
+Successfully loaded user1 from persistence
+Assigning transaction_id:  f80947242014765a46a17d797b45c8ed9a5db5cc936a57c731219d9e25646051
+Transaction proposal was good
+Successfully sent Proposal and received ProposalResponse: Status - 200, message - "OK"
+Failed to invoke successfully :: TypeError: Cannot read property 'getConnectivityState' of undefined
+$HOME/hyfa/fabric-samples/fabcar/node_modules/fabric-client/lib/EventHub.js:308
+			if(self._stream) state = self._stream.call.channel_.getConnectivityState();
+			                                                    ^
+
+TypeError: Cannot read property 'getConnectivityState' of undefined
+    at ClientDuplexStream.&lt;anonymous&gt; ($HOME/hyfa/fabric-samples/fabcar/node_modules/fabric-client/lib/EventHub.js:308:56)
+    at emitOne (events.js:116:13)
+    at ClientDuplexStream.emit (events.js:211:7)
+    at addChunk (_stream_readable.js:263:12)
+    at readableAddChunk (_stream_readable.js:250:11)
+    at ClientDuplexStream.Readable.push (_stream_readable.js:208:10)
+    at Object.onReceiveMessage ($HOME/hyfa/fabric-samples/fabcar/node_modules/grpc/src/client_interceptors.js:1302:19)
+    at InterceptingListener.recvMessageWithContext ($HOME/hyfa/fabric-samples/fabcar/node_modules/grpc/src/client_interceptors.js:629:19)
+    at $HOME/hyfa/fabric-samples/fabcar/node_modules/grpc/src/client_interceptors.js:728:14
+</code></pre>
+</div>
+
+<p><strong>docker此问题可以无视, 不会影响到后继查询命令  <code class="highlighter-rouge">node query.js</code>  的执行</strong></p>
+
+  </section>
+  <h2 style="color:red"><strong>版权声明：博客中的文章版权归博主所有，未经授权，禁止转载，转载请注明出处，合作请联系：chenjh07507(微信)</strong></h2>
+</article>
+
+<section>
+
+            <div class="content-play">
+              <p><a href="javascript:void(0)" onclick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏一个呗</a></p>
+              <div class="hide_box-play"></div>
+              <div class="shang_box-play">
+                <a class="shang_close-play" href="javascript:void(0)" onclick="dashangToggle()" title="关闭"><img src="/images/payimg/close.jpg" alt="取消" /></a>
+                <div class="shang_tit-play">
+                  <p>感谢您的支持，我会继续努力的!</p>
+                </div>
+                <div class="shang_payimg">
+                    <img src="/images/payimg/alipayimg.jpg" alt="扫码支持" title="扫一扫" />
+                </div>
+              <div class="shang_payimg">    
+                    <img src="/images/payimg/weipayimg.jpg" alt="扫码支持" title="扫一扫" />
+                </div>
+                <div class="pay_explain">扫码打赏，你说多少就多少</div>
+                <div class="shang_payselect">
+                  <div class="pay_item checked" data-id="alipay">
+                    <span class="pay_logo"><img src="/images/payimg/alipay.jpg" alt="支付宝" /></span>
+                  </div>
+                  <div class="pay_item" data-id="weipay">
+                    <span class="pay_logo"><img src="/images/payimg/wechat.jpg" alt="微信" /></span>
+                  </div>
+                </div>
+                <div class="shang_info-play">
+                  <p>打开<span id="shang_pay_txt">支付宝</span>扫一扫，即可进行扫码打赏哦</p>
+                </div>
+              </div>
+            </div>
+            <script type="text/javascript">
+            function dashangToggle(){
+              $(".hide_box-play").fadeToggle();
+              $(".shang_box-play").fadeToggle();
+            }
+            </script>
+
+            <div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';"></div>
+
+            <style type="text/css">
+              .content-play{width:80%;margin-top: 20px;margin-bottom: 10px;height:40px;}
+              .hide_box-play{z-index:999;filter:alpha(opacity=50);background:#666;opacity: 0.5;-moz-opacity: 0.5;left:0;top:0;height:99%;width:100%;position:fixed;display:none;}
+              .shang_box-play{width:540px;height:540px;padding:10px;background-color:#fff;border-radius:10px;position:fixed;z-index:1000;left:50%;top:50%;margin-left:-280px;margin-top:-280px;border:1px dotted #dedede;display:none;}
+              .shang_box-play img{border:none;border-width:0;}
+              .dashang{display:block;width:100px;margin:5px auto;height:25px;line-height:25px;padding:10px;background-color:#E74851;color:#fff;text-align:center;text-decoration:none;border-radius:10px;font-weight:bold;font-size:16px;transition: all 0.3s;}
+              .dashang:hover{opacity:0.8;padding:15px;font-size:18px;}
+              .shang_close-play{float:right;display:inline-block;
+                margin-right: 10px;margin-top: 20px;
+              }
+              .shang_logo{display:block;text-align:center;margin:20px auto;}
+              .shang_tit-play{width: 100%;height: 75px;text-align: center;line-height: 66px;color: #a3a3a3;font-size: 16px;background: url('/images/payimg/cy-reward-title-bg.jpg');font-family: 'Microsoft YaHei';margin-top: 7px;margin-right:2px;}
+              .shang_tit-play p{color:#a3a3a3;text-align:center;font-size:16px;}
+              .shang_payimg{width:140px;padding:10px;padding-left: 80px; /*border:6px solid #EA5F00;**/margin:0 auto;border-radius:3px;height:140px;display:inline-block;}
+              .shang_payimg img{display:inline-block;margin-right:10px;float:left;text-align:center;width:140px;height:140px; }
+              .pay_explain{text-align:center;margin:10px auto;font-size:12px;color:#545454;}
+              .shang_payselect{text-align:center;margin:0 auto;margin-top:40px;cursor:pointer;height:60px;width:500px;margin-left:110px;}
+              .shang_payselect .pay_item{display:inline-block;margin-right:140px;float:left;}
+              .shang_info-play{clear:both;}
+              .shang_info-play p,.shang_info-play a{color:#C3C3C3;text-align:center;font-size:12px;text-decoration:none;line-height:2em;}
+            </style>
+
+       <ul class="pager">
+        
+        <li class="previous">
+            <a href="/2018/07/12/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/" data-toggle="tooltip" data-placement="top" title="非对称加密">上一篇：  <span>非对称加密</span>
+            </a>
+        </li>
+        
+        
+        <li class="next">
+            <a href="/2018/07/12/%E9%93%BE%E7%A0%811-%E6%B5%8B%E8%AF%95%E4%BD%93%E9%AA%8C%E9%93%BE%E7%A0%81/" data-toggle="tooltip" data-placement="top" title="测试链码">下一篇：  <span>测试链码</span>
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+<section class="post-comments">
+  <!--PC和WAP自适应版-->
+<div id="SOHUCS" sid=Fabcar案例测试 ></div>
+<script type="text/javascript">
+(function(){
+var appid = 'cytfSz8yx';
+var conf = 'prod_ad710bf09d342725ed536beddc68aa27';
+var width = window.innerWidth || document.documentElement.clientWidth;
+if (width < 960) {
+window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="http://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("http://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+</section>
+
+ <section class="footer">
+  <footer>
+    <div class="footer_div">
+      <nav class="cover-navigation navigation--social">
+        <ul class="navigation">
+
+          
+          <!-- Weibo -->
+          <li class="navigation__item_social">
+            <a href="http://weibo.com/http://weibo.com/bitchenjh" title="@http://weibo.com/bitchenjh 的微博" target="_blank">
+              <i class='social fa fa-weibo fa-2x'></i>
+              <span class="label">Weibo</span>
+            </a>
+          </li>
+           
+          <!-- Github -->
+          <li class="navigation__item_social">
+            <a href="https://github.com/bitchenjh" title="@bitchenjh 的 Github" target="_blank">
+              <i class='social fa fa-github fa-2x'></i>
+              <span class="label">Github</span>
+            </a>
+          </li>
+            
+
+          <!-- RSS -->
+          <li class="navigation__item_social">
+            <a href="/feed.xml" rel="author" title="RSS" target="_blank">
+              <i class='social fa fa-rss fa-2x'></i>
+              <span class="label">RSS</span>
+            </a>
+          </li>
+
+          
+          <!-- Email -->
+          <li class="navigation__item_social">
+            <a href="mailto:cjhcjlu@163.com" title="Contact me">
+              <i class='social fa fa-envelope fa-2x'></i>
+              <span class="label">Email</span>
+            </a>
+          </li>
+          
+
+        </ul>
+      </nav>
+
+    </div>
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <thead>
+        <tr id="bar_head">
+          <th colspan="11">友情链接</th>
+        </tr>
+      </thead>
+
+      <tr align="center" valign="middle">
+          <td><a href="http://www.kongyixueyuan.com">区块链技术视频网站</a></td>
+
+          <td><a href="https://www.ethereum.org">以太坊官网</a></td>
+
+          <td><a href="https://solidity.readthedocs.io/en/develop/">Solidity</a></td>
+
+          <td><a href="http://truffleframework.com/">Truffle FrameWork</a></td>
+
+          <td><a href="http://embark.readthedocs.io">Embark FrameWork</a></td>
+
+      </tr>
+      <tr align="center" valign="middle">
+
+          <td><a href="https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=3302cc3b-074e-44da-90b1-5055f1dc0d9c&amp;lang=zh">IBM开源技术微讲堂</a></td>
+
+          <td><a href="https://www.bitcoin.com/">Bitcoin.com</a></td>
+
+          <td><a href="https://github.com/bitshares/bitshares1-core">bitshares1-core</a></td>
+
+          <td><a href="https://ipfs.io">ipfs官网</a></td>
+
+          <td><a href="http://ipfser.org">ipfs中文网</a></td>
+
+      </tr>
+    </table>
+
+    <div class="footer_div">
+      <p class="copyright text-muted">
+        Copyright &copy; 2018 陈建辉区块链博客 QQ：905739007
+      </p>
+      <div align="right">
+        <link rel="stylesheet" href="http://cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <!-- 访问统计 -->
+        <span id="busuanzi_container_site_pv">
+            本站总访问量
+            <span id="busuanzi_value_site_pv"></span>次
+        </span>
+
+      </div>
+      <div>
+  </footer>
+</section>
+
+    </div>
+  </div>
+
+  <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+<script type="text/javascript" src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+</body>
+
+</html>
