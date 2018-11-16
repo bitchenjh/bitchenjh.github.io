@@ -112,7 +112,7 @@
             <div class="info">
               <div class="info-back">
                 <h2 style="font-size: 14px">
-                   微信:chenjh07507 
+                  
                 </h2>´
                 <p style="font-size: 6px">
                    区块链从业人员 
@@ -183,9 +183,11 @@
 </blockquote>
 
 <h2 id="internal包简介">Internal包简介</h2>
+
 <p>Internal包主要是封装了js的命令行界面，并且包含了命令行所调用的api信息。</p>
 
 <h2 id="ethapiapi包分析">ethapi/api包分析</h2>
+
 <p>ethapi/api包主要是进入js的命令行界面后，输入的命令实现部分。
 js的命令实现在ethapi/api和node/api中。目前一共有三种api的命令。
 (1)第一种是admin相关的命令，这个是通过安全的RPC通道实现的。其结构体为PrivateAdminAPI</p>
@@ -217,6 +219,7 @@ type PublicBlockChainAPI struct {
 </div>
 
 <h2 id="otto包">otto包</h2>
+
 <p>以太坊的命令是通过在js虚拟机上来实现命令的。而在go语言中，有第三方的otto包，可以直接在go语言中实现js命令。而以太坊代码则使用了otto包来实现搭建js命令。
 在otto包中，set方法是设置变量的值，get方法是获取变量的值。</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>// Set the property of the given name to the given value.
@@ -236,7 +239,9 @@ type PublicBlockChainAPI struct {
     func (self Otto) Run(src interface{}) (Value, error)
 </code></pre>
 </div>
+
 <h2 id="如何编写自己的以太坊命令">如何编写自己的以太坊命令</h2>
+
 <p>接上篇ethapi.api-analysis分析，如果我们需要在相关模块添加相关命令，首先我们需要找到相关命令所对应的api结构体。
 各个命令对应的结构体，包的位置如下：</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>     admin  PrivateAdminAPI,PublicAdminAPI  node/api
@@ -316,7 +321,7 @@ var methods = function () {
 </code></pre>
 </div>
 
-<h3 id="eth包中添加一个命令案例">eth包中添加一个命令案例</h3>
+<h2 id="eth包中添加一个命令案例">eth包中添加一个命令案例</h2>
 
 <p>ethclient/ethclient.go</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>// Forking tool's client for the Ethereum RPC API
@@ -391,7 +396,7 @@ Postman：
 https://www.cnblogs.com/Evsward/p/eth-rpc.html</p>
 
   </section>
-  <h2 style="color:red"><strong>版权声明：博客中的文章版权归博主所有，未经授权，禁止转载，转载请注明出处，合作请联系：chenjh07507(微信)</strong></h2>
+  <h2 style="color:red"><strong>温馨提示：希望本博文对大家带来帮助，欢迎交流合作，请联系：905739007(QQ)</strong></h2>
 </article>
 
 <section>

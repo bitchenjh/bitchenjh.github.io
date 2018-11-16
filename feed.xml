@@ -5,8 +5,8 @@
     <description>陈建辉，项目经理，高级软件工程师，早期区块链从业人员，拥有多年传统金融软件开发经验</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 16 Nov 2018 18:18:54 +0800</pubDate>
-    <lastBuildDate>Fri, 16 Nov 2018 18:18:54 +0800</lastBuildDate>
+    <pubDate>Fri, 16 Nov 2018 18:48:30 +0800</pubDate>
+    <lastBuildDate>Fri, 16 Nov 2018 18:48:30 +0800</lastBuildDate>
     <generator>Jekyll v3.5.1</generator>
     
       <item>
@@ -22,9 +22,11 @@
 &lt;/blockquote&gt;
 
 &lt;h2 id=&quot;internal包简介&quot;&gt;Internal包简介&lt;/h2&gt;
+
 &lt;p&gt;Internal包主要是封装了js的命令行界面，并且包含了命令行所调用的api信息。&lt;/p&gt;
 
 &lt;h2 id=&quot;ethapiapi包分析&quot;&gt;ethapi/api包分析&lt;/h2&gt;
+
 &lt;p&gt;ethapi/api包主要是进入js的命令行界面后，输入的命令实现部分。
 js的命令实现在ethapi/api和node/api中。目前一共有三种api的命令。
 (1)第一种是admin相关的命令，这个是通过安全的RPC通道实现的。其结构体为PrivateAdminAPI&lt;/p&gt;
@@ -56,6 +58,7 @@ type PublicBlockChainAPI struct {
 &lt;/div&gt;
 
 &lt;h2 id=&quot;otto包&quot;&gt;otto包&lt;/h2&gt;
+
 &lt;p&gt;以太坊的命令是通过在js虚拟机上来实现命令的。而在go语言中，有第三方的otto包，可以直接在go语言中实现js命令。而以太坊代码则使用了otto包来实现搭建js命令。
 在otto包中，set方法是设置变量的值，get方法是获取变量的值。&lt;/p&gt;
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// Set the property of the given name to the given value.
@@ -75,7 +78,9 @@ type PublicBlockChainAPI struct {
     func (self Otto) Run(src interface{}) (Value, error)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+
 &lt;h2 id=&quot;如何编写自己的以太坊命令&quot;&gt;如何编写自己的以太坊命令&lt;/h2&gt;
+
 &lt;p&gt;接上篇ethapi.api-analysis分析，如果我们需要在相关模块添加相关命令，首先我们需要找到相关命令所对应的api结构体。
 各个命令对应的结构体，包的位置如下：&lt;/p&gt;
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;     admin  PrivateAdminAPI,PublicAdminAPI  node/api
@@ -155,7 +160,7 @@ var methods = function () {
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;h3 id=&quot;eth包中添加一个命令案例&quot;&gt;eth包中添加一个命令案例&lt;/h3&gt;
+&lt;h2 id=&quot;eth包中添加一个命令案例&quot;&gt;eth包中添加一个命令案例&lt;/h2&gt;
 
 &lt;p&gt;ethclient/ethclient.go&lt;/p&gt;
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;// Forking tool's client for the Ethereum RPC API
@@ -251,11 +256,12 @@ https://www.cnblogs.com/Evsward/p/eth-rpc.html&lt;/p&gt;
 &lt;h2 id=&quot;scatter钱包介绍与使用&quot;&gt;Scatter钱包介绍与使用&lt;/h2&gt;
 
 &lt;h3 id=&quot;一scatter-钱包介绍&quot;&gt;一、Scatter 钱包介绍&lt;/h3&gt;
-&lt;p&gt; Scatter钱包是—款安装在chorme浏览器上的插件EOS钱包，类似于以太坊的metamask。Scatter钱包得到过多个节点的推荐，比如EOSNewYork，generEOS。你可以向你信任的EOS节点社区咨询关于Scatter的安全性等间题。通过Scatter钱包，我们可以在PC端很方便的体验建立在EOS上的Dapp
-官网 ：https://get-scatter.com/                                       
-Scatter钱包开源代码：https://github.com/EOSEssentials/Scatter&lt;/p&gt;
+
+&lt;p&gt; Scatter钱包是—款安装在chorme浏览器上的插件EOS钱包，类似于以太坊的metamask。Scatter钱包得到过多个节点的推荐，比如EOSNewYork，generEOS。你可以向你信任的EOS节点社区咨询关于Scatter的安全性等间题。通过Scatter钱包，我们可以在PC端很方便的体验建立在EOS上的Dapp官网 ：https://get-scatter.com/   
+Scatter钱包开源代码：https://github.com/EOSEssentials/Scatter                            &lt;/p&gt;
 
 &lt;h3 id=&quot;二-eos帐户的概念&quot;&gt;二、 EOS帐户的概念&lt;/h3&gt;
+
 &lt;p&gt;帐户是存储在区块链中的人类可读名称。它可以由个人或一组个人拥有，具体取决于权限配置。需要一个帐户来将交易转移或推送到区块链。
 与BTC、ETH不同的是，在EOS上，一切的操作都是以帐户为基础的。EOS的账户可以自定义，有12位字符，字母和1-5阿拉伯数字自由组合（只能是12345abcdefghijklmnopqrstuvwxyz这里的字符）。小于12位的帐户，需要参加竞拍获得。每个账户可以是一个自然人，也或者是一个大公司，或者是一个智能合约。&lt;/p&gt;
 
@@ -266,6 +272,7 @@ Scatter钱包开源代码：https://github.com/EOSEssentials/Scatter&lt;/p&gt;
 &lt;p&gt;EOS的操作以人类可读的帐户为基础，就犹如支付宝和微信，在转账时，我们输入对方帐户就可以了。非常的方便。比起ETH和BTC，EOS的转帐更接近我们的实际生活应用（BTC和ETH的转账地址是一长串没有意义的字符串，我们脑子记不住的）。&lt;/p&gt;
 
 &lt;h3 id=&quot;eos帐户的创建过程&quot;&gt;EOS帐户的创建过程&lt;/h3&gt;
+
 &lt;p&gt;1、想好你要注册的名称，为12位字符长度，只能是1-5的数字和26个英文字母的组合。&lt;/p&gt;
 
 &lt;p&gt;用eospark.com，或者eosflar.io查询一下你想要的账户名有没有被注册过。&lt;/p&gt;
@@ -309,18 +316,23 @@ Scatter钱包开源代码：https://github.com/EOSEssentials/Scatter&lt;/p&gt;
 &lt;p&gt;3、权限可以分配给一个或多个公钥（public keys）。&lt;/p&gt;
 
 &lt;h3 id=&quot;eos帐户的查询&quot;&gt;EOS帐户的查询&lt;/h3&gt;
-&lt;p&gt;我们可以用eospark.com或eosflar.io来查询帐户，查询时，可以使用EOS帐户查询，也可以使用公钥查询，例如ok的EOS充值帐户查询结果如下：
-&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/eos%E8%B4%A6%E6%88%B7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;我们可以用eospark.com或eosflar.io来查询帐户，查询时，可以使用EOS帐户查询，也可以使用公钥查询，例如ok的EOS充值帐户查询结果如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/eos%E8%B4%A6%E6%88%B7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;eos公钥私钥的作用&quot;&gt;EOS公钥、私钥的作用&lt;/h3&gt;
+
 &lt;p&gt;虽然转账用的是账号，但公私钥仍然非常重要。
 通过公钥可以查询到账号，也可以创建帐户，通过私钥签名可以对账号执行很多操作，例如导入钱包的时候，就需要用到私钥。私钥一定要备份、保管好。丢了私钥就等于丢了EOS资产。&lt;/p&gt;
 
 &lt;h3 id=&quot;在scatter中新增密钥对&quot;&gt;在scatter中新增密钥对&lt;/h3&gt;
+
 &lt;p&gt;账户申请好了之后，可以去scatter中新增密钥对，记得一定要先申请账户，再去新增。&lt;/p&gt;
 
 &lt;h3 id=&quot;在scatter中设置身份&quot;&gt;在scatter中设置身份&lt;/h3&gt;
-&lt;p&gt;密钥对设置好了，可以去设置省份了&lt;/p&gt;
+
+&lt;p&gt;密钥对设置好了，可以去设置身份&lt;/p&gt;
 </description>
         <pubDate>Wed, 17 Oct 2018 00:00:00 +0800</pubDate>
         <link>http://localhost:4000/2018/10/17/EOS%E7%9A%84Scatter%E9%92%B1%E5%8C%85%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BD%BF%E7%94%A8/</link>
@@ -967,20 +979,22 @@ https://ethereum.org/token&lt;/p&gt;
 
 &lt;h2 id=&quot;remix的三种编译环境&quot;&gt;Remix的三种编译环境&lt;/h2&gt;
 
-&lt;p&gt;Remix has 3 different environment options that can be used to deploy/test Solidity contracts: JavaScript VM, Injected Web3, and Web3 Provider. This option can be changed under the Environment drop down under the Run tab&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Remix has 3 different environment options that can be used to deploy/test Solidity contracts: JavaScript VM, Injected Web3, and Web3 Provider. This option can be changed under the Environment drop down under the Run tab
 
-&lt;p&gt;JavaScript VM:
-This is Remix’s own internal sandbox. It does not connect to MainNet, TestNet, or any private network. It’s an in-memory blockchain that can be used for simple testing and quick mining.&lt;/p&gt;
+JavaScript VM:
+This is Remix’s own internal sandbox. It does not connect to MainNet, TestNet, or any private network. It’s an in-memory blockchain that can be used for simple testing and quick mining.
 
-&lt;p&gt;Injected Web3:
-This is the option to use for the browser plugin (MetaMask). Here, you are telling Remix to defer all control of the blockchain integration to the MetaMask plugin. At this point, MetaMask controls which network you are connecting to.&lt;/p&gt;
+Injected Web3:
+This is the option to use for the browser plugin (MetaMask). Here, you are telling Remix to defer all control of the blockchain integration to the MetaMask plugin. At this point, MetaMask controls which network you are connecting to.
 
-&lt;p&gt;In the plugin, you can connect to MainNet, Ropsten, Rinkeby, etc through Infura’s node network. In this case, you’re not running a node locally. MetaMask also has a localhost option where you can run your own node locally and MetaMask will send all transactions to it (this local network can be a private network using any node client or you can use a test blockchain like TestRPC).&lt;/p&gt;
+In the plugin, you can connect to MainNet, Ropsten, Rinkeby, etc through Infura’s node network. In this case, you’re not running a node locally. MetaMask also has a localhost option where you can run your own node locally and MetaMask will send all transactions to it (this local network can be a private network using any node client or you can use a test blockchain like TestRPC).
 
-&lt;p&gt;Web3 Provider:
-This allows you to enter a URL in Remix to connect to the blockchain. The most common setup here is to be running a local node and connecting to it through it’s IP/port.&lt;/p&gt;
+Web3 Provider:
+This allows you to enter a URL in Remix to connect to the blockchain. The most common setup here is to be running a local node and connecting to it through it’s IP/port.
 
-&lt;p&gt;This is pretty much the same as using MetaMask’s localhost option, but you’re just cutting the plugin out of being the middleman. Just like option #2, the network your connected to depends on how you’ve configured your local node (it can be main, test, private, etc.).&lt;/p&gt;
+This is pretty much the same as using MetaMask’s localhost option, but you’re just cutting the plugin out of being the middleman. Just like option #2, the network your connected to depends on how you’ve configured your local node (it can be main, test, private, etc.).
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
 </description>
         <pubDate>Sat, 29 Sep 2018 00:00:00 +0800</pubDate>
         <link>http://localhost:4000/2018/09/29/Remix%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/</link>
@@ -1111,8 +1125,9 @@ truffle migrate
 
 &lt;p&gt;9、在 New RPC URL 中输入 “http://127.0.0.1:7545”&lt;/p&gt;
 
-&lt;p&gt;10、返回 MetaMask 主界面，可以看到账户信息
-&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/metamask%E6%88%AA%E5%9B%BE.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;10、返回 MetaMask 主界面，可以看到账户信息&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/metamask%E6%88%AA%E5%9B%BE.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 </description>
         <pubDate>Sat, 15 Sep 2018 00:00:00 +0800</pubDate>
         <link>http://localhost:4000/2018/09/15/%E4%BB%A5%E5%A4%AA%E5%9D%8ADapp%E5%BC%80/</link>
@@ -1734,7 +1749,7 @@ contract MyAdvancedToken is owned, TokenERC20 {
       </item>
     
       <item>
-        <title>UTXO与账户模型(转)</title>
+        <title>UTXO与账户模型</title>
         <description>&lt;blockquote&gt;
   &lt;p&gt;作者：陈建辉&lt;/p&gt;
 
@@ -1750,6 +1765,7 @@ contract MyAdvancedToken is owned, TokenERC20 {
 &lt;p&gt;区块链网络中有两种记账模式，除了 UTXO 模型还有 Account Based 结构，也就是普通账户模型，也叫账户余额模型，前者在比特币系的数字货币中被广泛使用，后者更多是用在智能合约型的区块链上。&lt;/p&gt;
 
 &lt;h3 id=&quot;普通账户模型&quot;&gt;普通账户模型&lt;/h3&gt;
+
 &lt;p&gt;我们先从传统的账户模型出发来聊聊是如何记账的，假设我们现在有一个支付系统，在这个支付系统中有村长和张三两个账户，村长账户里有 100 万，现在要转账给张三 10 万，这其中涉及的操作是这样的：&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.	检查村长的账户余额是否大于 10 万；
@@ -1759,6 +1775,7 @@ contract MyAdvancedToken is owned, TokenERC20 {
 &lt;/div&gt;
 
 &lt;h3 id=&quot;utxo-模型&quot;&gt;UTXO 模型&lt;/h3&gt;
+
 &lt;p&gt;UTXO 全称是：“Unspent Transaction Output”，这指的是：未花费的交易输出。这里面三个单词分别表示 “未花费的”“交易”“输出”，接下来我来详细讲解一下 UTXO 的含义。
 UTXO 的核心设计思路是无状态，它记录的是交易事件，而不记录最终状态，也就是说只记录变更事件，用户需要根据历史记录自行计算余额。
 有点像MySQL 中的 Binlog，主从模式的情况下，按照 Binlog 来更新数据，Redis 的 AOF 模式备份模式也是如此，UTXO 也是类似的思路。
@@ -1774,6 +1791,7 @@ UTXO 的核心设计思路是无状态，它记录的是交易事件，而不�
 对于村长来说，首先构造交易的输入输出，满足上述条件，然后广播到全网，接收方自行判断交易是否属于自己。这里满足约束条件构成的交易模型，也就是村长记录的三条转账事件就是 UTXO 模型。&lt;/p&gt;
 
 &lt;h3 id=&quot;账户余额模型与-utxo-的比较&quot;&gt;账户余额模型与 UTXO 的比较&lt;/h3&gt;
+
 &lt;p&gt;我们可以归纳出 UTXO 与普通账户模型的一些区别。
 	1.	存储空间，UTXO 占用空间比账户模型高，因为账户模型只记录最终状态。 
 	2.	易用性，UTXO 比较难处理，账户模型简单容易理解。例如 UTXO 在使用上，还需要配合高效的 UTXO 组装算法，这个算法要求尽可能降低输入输出的个数，还要让“零钱“归整，算法的复杂度相比账户余额无疑要高。 
@@ -1782,6 +1800,7 @@ UTXO 的核心设计思路是无状态，它记录的是交易事件，而不�
 UTXO 似乎天然是为数字货币设计的，具有较高频次跨账户转移场景都使用 UTXO 会比较好，考虑到智能合约的普适性，UTXO 与智能合约并不能很好地兼容，但是这也对开发者的自身水平提出了更高的要求。&lt;/p&gt;
 
 &lt;h3 id=&quot;区块链中的-utxo-模型&quot;&gt;区块链中的 UTXO 模型&lt;/h3&gt;
+
 &lt;p&gt;我们借用比特币开发者文档中 UTXO 模型的图示，来看看 UTXO 实际的构造形式。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;http://p96hyfqf4.bkt.clouddn.com/UTXO%E4%B8%8E%E8%B4%A6%E6%88%B7%E6%A8%A1%E5%9E%8B.png&quot; alt=&quot;&quot; /&gt;
@@ -1851,6 +1870,7 @@ UTXO 似乎天然是为数字货币设计的，具有较高频次跨账户转移
 在比特币中将小于 100kb 的交易称为标准交易，超过 100kb 的称为非标准交易。它的前向 input 以及生成一个 out 约占用 161~250 bytes 。所以在比特币中，大约的 inputs/ouputs 的最大数目限制为 100KB/161B ~= 600 个。&lt;/p&gt;
 
 &lt;h3 id=&quot;utxo-的特性及缺点&quot;&gt;UTXO 的特性及缺点&lt;/h3&gt;
+
 &lt;p&gt;从计算的角度来说，UTXO 具有非常好的并行支付能力，也就是我们上文中所说的如果没有尺寸限制，一笔交易可以包含任意笔输入输出，同时也没有次序要求，在一笔交易中哪一个 UTXO 在前，哪个在后面不影响最终结果。
 从存储的角度来说，UTXO 具有较好的可裁剪特性，可裁剪性指的是 UTXO 类型的交易，如果从最老的那一笔 UTXO 开始截断数据库，那么之前的数据可以删除掉了。
 如果想进一步压缩数据尺寸，可以在任意位置截断，记录 UTXO 对应的交易哈希即可，然后从其他节点获取并校验 UTXO，这也是 SPV 轻钱包工作的基础之一。
@@ -1868,6 +1888,7 @@ UTXO 是比特币上的原生设计，在区块链以前是没有这种逻辑数
 &lt;/ol&gt;
 
 &lt;h3 id=&quot;总结&quot;&gt;总结&lt;/h3&gt;
+
 &lt;p&gt;好了，今天我们分别介绍了普通账户模型和 UTXO 模型，并从不同角度比较了二者的优劣。
 从技术选择上来看，比特币选择 UTXO 是为了满足支付的安全性，以太坊选择普通账户模型是为了智能合约的自由度。&lt;/p&gt;
 
